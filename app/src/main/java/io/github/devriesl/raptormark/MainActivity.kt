@@ -20,9 +20,9 @@ class MainActivity : AppCompatActivity() {
     external fun stringFromJNI(): String
 
     companion object {
-        // Used to load the 'native-lib' library on application startup.
+        // Used to load the 'fio-jni' library on application startup.
         init {
-            System.loadLibrary("native-lib")
+            System.loadLibrary("fio-jni")
         }
     }
 }
