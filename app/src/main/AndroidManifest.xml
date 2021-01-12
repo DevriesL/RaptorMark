@@ -9,7 +9,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.RaptorMark">
-        <activity android:name=".MainActivity">
+        <activity android:name=".RaptorActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
