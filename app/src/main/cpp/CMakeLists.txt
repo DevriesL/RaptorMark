@@ -16,9 +16,12 @@ add_library(fio-lib STATIC
         fio-lib/t/read-to-pipe-async.c)
 
 target_compile_options(fio-lib PUBLIC
-        -std=gnu99 -Wwrite-strings -Wall -Wdeclaration-after-statement
+        -Wwrite-strings -Wall -Wdeclaration-after-statement
         -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -DFIO_INTERNAL -ffast-math
         -O3 -U_FORTIFY_SOURCE -D_FORTIFY_SOURCE=2)
+
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=gnu99")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 
 add_library(fio-jni SHARED
         fio-jni.cpp)
