@@ -10,8 +10,12 @@
 #include "strntol.h"
 #include "pattern.h"
 #include "../minmax.h"
+#ifndef CONFIG_STRCASESTR
 #include "../oslib/strcasestr.h"
+#endif
+#ifndef CONFIG_HAVE_STRNDUP
 #include "../oslib/strndup.h"
+#endif
 
 /**
  * parse_file() - parses binary file to fill buffer

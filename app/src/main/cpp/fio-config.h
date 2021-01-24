@@ -47,7 +47,8 @@
 #define CONFIG_HAS_BLKZONED
 #define CONFIG_HAVE_KERNEL_RWF_T
 #define CONFIG_HAVE_GETTID
-#define CONFIG_HAVE_STATX
+// statx is only supported in Android R (API level 30)
+// #define CONFIG_HAVE_STATX
 #define CONFIG_HAVE_STATX_SYSCALL
 #define CONFIG_HAVE_TIMERFD_CREATE
 #define CONFIG_HAVE_THP

@@ -34,7 +34,9 @@
 
 #include "oslib/asprintf.h"
 #include "oslib/getopt.h"
+#ifndef CONFIG_STRCASESTR
 #include "oslib/strcasestr.h"
+#endif
 
 #include "crc/test.h"
 #include "lib/pow2.h"

@@ -261,8 +261,10 @@ static int fio_ioring_prep(struct thread_data *td, struct io_u *io_u)
 				sqe->len = 1;
 			}
 		}
+#ifdef CONFIG_PWRITEV2
 		if (!td->o.odirect && o->uncached)
 			sqe->rw_flags = RWF_UNCACHED;
+#endif
 		if (o->nowait)
 			sqe->rw_flags |= RWF_NOWAIT;
 		if (ld->ioprio_class_set)
