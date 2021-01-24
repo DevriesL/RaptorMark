@@ -1,3 +1,4 @@
+#define FIO_VERSION "fio-3.25"
 #define CONFIG_64BIT
 #define CONFIG_LITTLE_ENDIAN
 #define CONFIG_PSHARED

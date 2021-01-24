@@ -15,6 +15,8 @@ add_library(fio-lib STATIC
         fio-lib/helper_thread.c fio-lib/steadystate.c fio-lib/zone-dist.c fio-lib/zbd.c
         fio-lib/t/read-to-pipe-async.c)
 
+target_include_directories(fio-lib PUBLIC fio-lib)
+
 target_compile_options(fio-lib PUBLIC
         -Wwrite-strings -Wall -Wdeclaration-after-statement
         -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -DFIO_INTERNAL -ffast-math
