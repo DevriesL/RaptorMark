@@ -35,6 +35,7 @@
 #include <assert.h>
 
 #include "../flist.h"
+#include "../fio_time.h"
 
 static int bs = 4096;
 static int max_us = 10000;
@@ -100,26 +101,6 @@ struct work_item {
 
 static struct reader_thread reader_thread;
 static struct writer_thread writer_thread;
-
-uint64_t utime_since(const struct timespec *s, const struct timespec *e)
-{
-	long sec, usec;
-	uint64_t ret;
-
-	sec = e->tv_sec - s->tv_sec;
-	usec = (e->tv_nsec - s->tv_nsec) / 1000;
-	if (sec > 0 && usec < 0) {
-		sec--;
-		usec += 1000000;
-	}
-
-	if (sec < 0 || (sec == 0 && usec < 0))
-		return 0;
-
-	ret = sec * 1000000ULL + usec;
-
-	return ret;
-}
 
 static struct work_item *find_seq(struct writer_thread *w, unsigned int seq)
 {
