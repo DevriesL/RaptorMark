@@ -23,7 +23,7 @@
  */
 #include "fio.h"
 
-int main(int argc, char *argv[], char *envp[])
+int fio(int argc, char *argv[], char *envp[])
 {
 	int ret = 1;
 

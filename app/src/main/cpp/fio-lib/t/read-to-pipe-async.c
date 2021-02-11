@@ -558,7 +558,7 @@ static void prune_done_entries(struct writer_thread *wt)
 	}
 }
 
-int main(int argc, char *argv[])
+int read_to_pipe_async(int argc, char *argv[])
 {
 	pthread_condattr_t cattr;
 	struct timespec s, re, we;
