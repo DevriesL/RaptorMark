@@ -1,7 +1,7 @@
 #ifndef FIO_JNI_H
 #define FIO_JNI_H
 
-#define CLASS_NAME_RAPTOR_MARK "io/github/devriesl/raptormark/RaptorActivity"
+#define CLASS_NAME_RAPTOR_MARK "io/github/devriesl/raptormark/data/TestBaseJNI"
 
 int fio(int argc, char *argv[], char *envp[]);
 

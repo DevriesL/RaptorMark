@@ -49,11 +49,4 @@ class RaptorActivity : AppCompatActivity() {
             else -> null
         }
     }
-
-    companion object {
-        // Used to load the 'fio-jni' library on application startup.
-        init {
-            System.loadLibrary("fio-jni")
-        }
-    }
 }
