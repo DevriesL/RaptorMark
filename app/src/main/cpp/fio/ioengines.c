@@ -705,3 +705,22 @@ int fio_show_ioengine_help(const char *engine)
 	free_ioengine(&td);
 	return ret;
 }
+
+int fio_list_ioengines(char *engineList[])
+{
+	struct flist_head *entry;
+	struct thread_data td;
+	struct ioengine_ops *io_ops;
+	int num = 0;
+
+	memset(&td, 0, sizeof(struct thread_data));
+
+	fio_load_dynamic_engines(&td);
+	flist_for_each(entry, &engine_list) {
+		io_ops = flist_entry(entry, struct ioengine_ops, list);
+		engineList[num] = strdup(io_ops->name);
+        num++;
+	}
+
+	return num;
+}
