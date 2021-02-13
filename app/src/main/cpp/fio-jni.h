@@ -1,7 +1,7 @@
 #ifndef FIO_JNI_H
 #define FIO_JNI_H
 
-#define CLASS_NAME_RAPTOR_MARK "io/github/devriesl/raptormark/data/TestBaseJNI"
+#define CLASS_NAME_RAPTOR_MARK "io/github/devriesl/raptormark/data/FIONativeTest"
 
 #define MAX_ENGINE_NUM 32
 

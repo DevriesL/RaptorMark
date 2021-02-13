@@ -1,6 +1,6 @@
 package io.github.devriesl.raptormark.data
 
-abstract class TestBaseJNI {
+abstract class FIONativeTest {
     abstract fun getTestName(): String
 
     protected open external fun native_ListEngines(): String

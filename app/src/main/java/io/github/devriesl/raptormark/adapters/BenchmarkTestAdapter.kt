@@ -30,7 +30,7 @@ class BenchmarkTestAdapter : ListAdapter<TestItem, BenchmarkTestAdapter.ViewHold
     ) : RecyclerView.ViewHolder(binding.root) {
         fun bind(item: TestItem) {
             binding.apply {
-                viewModel = BenchmarkTestViewModel(item.jni)
+                viewModel = BenchmarkTestViewModel(item.nativeTest)
                 executePendingBindings()
             }
         }
