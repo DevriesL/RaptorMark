@@ -1,8 +1,14 @@
 package io.github.devriesl.raptormark.data
 
-class EngineSettingInfo : BaseSettingInfo() {
+import io.github.devriesl.raptormark.R
+import io.github.devriesl.raptormark.di.StringProvider
+
+class EngineSettingInfo(
+    stringProvider: StringProvider,
+    settingDataSource: SettingDataSource
+) : BaseSettingInfo(stringProvider, settingDataSource) {
     override fun getSettingTitle(): String {
-        TODO("Not yet implemented")
+        return stringProvider.getString(R.string.engine_config_title)
     }
 
     override fun getSettingData(): String {
@@ -10,6 +16,6 @@ class EngineSettingInfo : BaseSettingInfo() {
     }
 
     override fun getSettingDesc(): String {
-        TODO("Not yet implemented")
+        return stringProvider.getString(R.string.engine_config_desc)
     }
 }
