@@ -5,11 +5,11 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import io.github.devriesl.raptormark.data.SettingItem
+import io.github.devriesl.raptormark.data.InfoItem
 import io.github.devriesl.raptormark.databinding.ListItemSettingInfoBinding
 import io.github.devriesl.raptormark.viewmodels.SettingInfoViewModel
 
-class SettingInfoAdapter : ListAdapter<SettingItem, SettingInfoAdapter.ViewHolder>(InfoDiffCallback()) {
+class SettingInfoAdapter : ListAdapter<InfoItem, SettingInfoAdapter.ViewHolder>(InfoDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return ViewHolder(
@@ -28,22 +28,22 @@ class SettingInfoAdapter : ListAdapter<SettingItem, SettingInfoAdapter.ViewHolde
     class ViewHolder(
         private val binding: ListItemSettingInfoBinding
     ) : RecyclerView.ViewHolder(binding.root) {
-        fun bind(item: SettingItem) {
+        fun bind(item: InfoItem) {
             binding.apply {
-                viewModel = SettingInfoViewModel(item.settingInfo)
+                viewModel = SettingInfoViewModel(item.infoRepo)
                 executePendingBindings()
             }
         }
     }
 }
 
-private class InfoDiffCallback : DiffUtil.ItemCallback<SettingItem>() {
+private class InfoDiffCallback : DiffUtil.ItemCallback<InfoItem>() {
 
-    override fun areItemsTheSame(oldItem: SettingItem, newItem: SettingItem): Boolean {
+    override fun areItemsTheSame(oldItem: InfoItem, newItem: InfoItem): Boolean {
         return oldItem.id == newItem.id
     }
 
-    override fun areContentsTheSame(oldItem: SettingItem, newItem: SettingItem): Boolean {
+    override fun areContentsTheSame(oldItem: InfoItem, newItem: InfoItem): Boolean {
         return oldItem == newItem
     }
 }

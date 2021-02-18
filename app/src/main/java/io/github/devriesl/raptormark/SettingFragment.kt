@@ -7,8 +7,8 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import dagger.hilt.android.AndroidEntryPoint
 import io.github.devriesl.raptormark.adapters.SettingInfoAdapter
-import io.github.devriesl.raptormark.data.SettingItem
-import io.github.devriesl.raptormark.data.EngineSettingInfo
+import io.github.devriesl.raptormark.data.InfoItem
+import io.github.devriesl.raptormark.data.EngineInfoRepo
 import io.github.devriesl.raptormark.data.SettingDataSource
 import io.github.devriesl.raptormark.databinding.FragmentSettingBinding
 import io.github.devriesl.raptormark.di.StringProvider
@@ -29,12 +29,12 @@ class SettingFragment : Fragment() {
     ): View {
         val binding = FragmentSettingBinding.inflate(inflater, container, false)
         val adapter = SettingInfoAdapter()
-        val settingList: List<SettingItem> = listOf(
-            SettingItem(ENGINE_CONFIG_SETTING_ID, EngineSettingInfo(stringProvider, settingDataSource)),
+        val infoList: List<InfoItem> = listOf(
+            InfoItem(ENGINE_CONFIG_SETTING_ID, EngineInfoRepo(stringProvider, settingDataSource)),
         )
 
         binding.settingList.adapter = adapter
-        adapter.submitList(settingList)
+        adapter.submitList(infoList)
 
         return binding.root
     }

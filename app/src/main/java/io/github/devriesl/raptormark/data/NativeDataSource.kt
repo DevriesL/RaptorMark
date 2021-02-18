@@ -1,6 +1,6 @@
 package io.github.devriesl.raptormark.data
 
-object NativeMethods {
+object NativeDataSource {
 
     external fun native_ListEngines(): String
 

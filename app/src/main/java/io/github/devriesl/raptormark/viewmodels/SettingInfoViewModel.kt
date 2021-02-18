@@ -1,13 +1,11 @@
 package io.github.devriesl.raptormark.viewmodels
 
 import androidx.lifecycle.ViewModel
-import io.github.devriesl.raptormark.data.BaseSettingInfo
-import io.github.devriesl.raptormark.data.SettingInfoRepository
+import io.github.devriesl.raptormark.data.InfoRepository
 
-class SettingInfoViewModel(settingInfo: BaseSettingInfo) : ViewModel() {
-    private val settingInfoRepository: SettingInfoRepository = SettingInfoRepository(settingInfo)
+class SettingInfoViewModel(infoRepo: InfoRepository) : ViewModel() {
 
-    val infoTitle = settingInfoRepository.getTitle()
-    val infoData = settingInfoRepository.getData()
-    val infoDesc = settingInfoRepository.getDesc()
+    val infoTitle = infoRepo.getInfoTitle()
+    val infoData = infoRepo.getInfoData()
+    val infoDesc = infoRepo.getInfoDesc()
 }

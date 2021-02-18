@@ -1,11 +1,9 @@
 package io.github.devriesl.raptormark.viewmodels
 
 import androidx.lifecycle.ViewModel
-import io.github.devriesl.raptormark.data.BenchmarkTestRepository
-import io.github.devriesl.raptormark.data.FIONativeTest
+import io.github.devriesl.raptormark.data.TestRepository
 
-class BenchmarkTestViewModel(nativeTest: FIONativeTest) : ViewModel() {
-    private val benchmarkTestRepository: BenchmarkTestRepository = BenchmarkTestRepository(nativeTest)
+class BenchmarkTestViewModel(testRepo: TestRepository) : ViewModel() {
 
-    val testName = benchmarkTestRepository.getName()
+    val testName = testRepo.getTestName()
 }

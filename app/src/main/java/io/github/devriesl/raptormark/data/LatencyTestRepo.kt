@@ -1,11 +1,11 @@
 package io.github.devriesl.raptormark.data
 
-class SeqRwNativeTest : FIONativeTest() {
+class LatencyTestRepo : TestRepository() {
     override fun getTestName(): String {
         return TEST_NAME
     }
 
     companion object {
-        const val TEST_NAME = "Sequential Read/Write Throughput"
+        const val TEST_NAME = "Asynchronous Read/Write Latency"
     }
 }

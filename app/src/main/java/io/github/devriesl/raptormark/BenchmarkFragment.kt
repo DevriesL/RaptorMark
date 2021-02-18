@@ -7,9 +7,9 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import io.github.devriesl.raptormark.adapters.BenchmarkTestAdapter
 import io.github.devriesl.raptormark.data.TestItem
-import io.github.devriesl.raptormark.data.LatencyNativeTest
-import io.github.devriesl.raptormark.data.RandRwNativeTest
-import io.github.devriesl.raptormark.data.SeqRwNativeTest
+import io.github.devriesl.raptormark.data.LatencyTestRepo
+import io.github.devriesl.raptormark.data.RandRwTestRepo
+import io.github.devriesl.raptormark.data.SeqRwTestRepo
 import io.github.devriesl.raptormark.databinding.FragmentBenchmarkBinding
 
 class BenchmarkFragment : Fragment() {
@@ -21,9 +21,9 @@ class BenchmarkFragment : Fragment() {
         val binding = FragmentBenchmarkBinding.inflate(inflater, container, false)
         val adapter = BenchmarkTestAdapter()
         val testList: List<TestItem> = listOf(
-            TestItem(SEQ_RW_TEST_ID, SeqRwNativeTest()),
-            TestItem(RAND_RW_TEST_ID, RandRwNativeTest()),
-            TestItem(LATENCY_TEST_ID, LatencyNativeTest()),
+            TestItem(SEQ_RW_TEST_ID, SeqRwTestRepo()),
+            TestItem(RAND_RW_TEST_ID, RandRwTestRepo()),
+            TestItem(LATENCY_TEST_ID, LatencyTestRepo()),
         )
 
         binding.benchmarkList.adapter = adapter

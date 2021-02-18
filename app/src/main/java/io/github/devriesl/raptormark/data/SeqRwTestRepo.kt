@@ -1,11 +1,11 @@
 package io.github.devriesl.raptormark.data
 
-class RandRwNativeTest : FIONativeTest() {
+class SeqRwTestRepo : TestRepository() {
     override fun getTestName(): String {
         return TEST_NAME
     }
 
     companion object {
-        const val TEST_NAME = "Random Read/Write Throughput"
+        const val TEST_NAME = "Sequential Read/Write Throughput"
     }
 }

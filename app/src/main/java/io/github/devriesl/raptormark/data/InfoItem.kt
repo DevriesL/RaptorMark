@@ -1,6 +1,6 @@
 package io.github.devriesl.raptormark.data
 
-data class SettingItem(
+data class InfoItem(
     var id: String = "",
-    var settingInfo: BaseSettingInfo
+    var infoRepo: InfoRepository
 )

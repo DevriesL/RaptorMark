@@ -4,10 +4,10 @@ import io.github.devriesl.raptormark.R
 import io.github.devriesl.raptormark.di.StringProvider
 import org.json.JSONObject
 
-class EngineSettingInfo(
+class EngineInfoRepo(
     stringProvider: StringProvider,
     settingDataSource: SettingDataSource
-) : BaseSettingInfo(stringProvider, settingDataSource) {
+) : InfoRepository(stringProvider, settingDataSource) {
 
     private var engineList: ArrayList<String> = ArrayList()
     private var engineConfig: String
@@ -18,7 +18,7 @@ class EngineSettingInfo(
     }
 
     private fun getEngineList() {
-        val jsonObject = JSONObject(NativeMethods.native_ListEngines())
+        val jsonObject = JSONObject(NativeDataSource.native_ListEngines())
         val jsonArray = jsonObject.getJSONArray("engines")
         for (i in 0 until jsonArray.length()) {
             val engineObject: JSONObject = jsonArray.getJSONObject(i)
@@ -38,15 +38,15 @@ class EngineSettingInfo(
         }
     }
 
-    override fun getSettingTitle(): String {
+    override fun getInfoTitle(): String {
         return stringProvider.getString(R.string.engine_config_title)
     }
 
-    override fun getSettingData(): String {
+    override fun getInfoData(): String {
         return engineConfig
     }
 
-    override fun getSettingDesc(): String {
+    override fun getInfoDesc(): String {
         return stringProvider.getString(R.string.engine_config_desc)
     }
 
