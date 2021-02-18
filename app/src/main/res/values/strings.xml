@@ -5,6 +5,11 @@
     <string name="history_page_title">HISTORY</string>
     <string name="setting_page_title">SETTING</string>
 
+    <!-- Benchmark resources -->
+    <string name="seq_rw_test_title">Sequential Read/Write Throughput</string>
+    <string name="rand_rw_test_title">Random Read/Write Throughput</string>
+    <string name="latency_test_title">Asynchronous Read/Write Latency</string>
+
     <!-- Setting resources -->
     <string name="engine_config_title">IO Engine</string>
     <string name="engine_config_desc">The engine to issue I/O operations.</string>

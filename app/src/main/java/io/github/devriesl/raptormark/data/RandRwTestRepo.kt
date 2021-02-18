@@ -1,11 +1,10 @@
 package io.github.devriesl.raptormark.data
 
-class RandRwTestRepo : TestRepository() {
-    override fun getTestName(): String {
-        return TEST_NAME
-    }
+import io.github.devriesl.raptormark.R
+import io.github.devriesl.raptormark.di.StringProvider
 
-    companion object {
-        const val TEST_NAME = "Random Read/Write Throughput"
+class RandRwTestRepo(stringProvider: StringProvider) : TestRepository(stringProvider) {
+    override fun getTestName(): String {
+        return stringProvider.getString(R.string.rand_rw_test_title)
     }
 }
