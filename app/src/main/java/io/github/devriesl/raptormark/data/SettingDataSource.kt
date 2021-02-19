@@ -7,7 +7,7 @@ import org.json.JSONObject
 
 class SettingDataSource private constructor(context: Context) {
     private val sharedPrefs = context.getSharedPreferences(SHARED_PREFS_NAME, Context.MODE_PRIVATE)
-    private var engineConfig: String
+    private var engineConfig: String? = null
 
     init {
         engineConfig = getEngineConfig()
@@ -37,7 +37,7 @@ class SettingDataSource private constructor(context: Context) {
     }
 
     fun getEngineConfig(): String {
-        val defaultEngine = getPreferredEngine()
+        val defaultEngine = engineConfig ?: getPreferredEngine()
         val engine = sharedPrefs.getString(ENGINE_CONFIG_KEY, defaultEngine)
         return engine ?: defaultEngine
     }
