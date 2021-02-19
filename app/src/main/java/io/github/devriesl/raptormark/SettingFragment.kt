@@ -28,7 +28,7 @@ class SettingFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         val binding = FragmentSettingBinding.inflate(inflater, container, false)
-        val adapter = SettingInfoAdapter()
+        val adapter = SettingInfoAdapter(childFragmentManager, viewLifecycleOwner)
         val infoList: List<InfoItem> = listOf(
             InfoItem(ENGINE_CONFIG_SETTING_ID, EngineInfoRepo(stringProvider, settingDataSource)),
         )

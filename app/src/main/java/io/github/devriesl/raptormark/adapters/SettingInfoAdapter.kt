@@ -2,6 +2,8 @@ package io.github.devriesl.raptormark.adapters
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.fragment.app.FragmentManager
+import androidx.lifecycle.LifecycleOwner
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -9,7 +11,10 @@ import io.github.devriesl.raptormark.data.InfoItem
 import io.github.devriesl.raptormark.databinding.ListItemSettingInfoBinding
 import io.github.devriesl.raptormark.viewmodels.SettingInfoViewModel
 
-class SettingInfoAdapter : ListAdapter<InfoItem, SettingInfoAdapter.ViewHolder>(InfoDiffCallback()) {
+class SettingInfoAdapter(
+    private val fragmentManager: FragmentManager,
+    private val viewLifecycleOwner: LifecycleOwner
+) : ListAdapter<InfoItem, SettingInfoAdapter.ViewHolder>(InfoDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return ViewHolder(
@@ -17,7 +22,7 @@ class SettingInfoAdapter : ListAdapter<InfoItem, SettingInfoAdapter.ViewHolder>(
                 LayoutInflater.from(parent.context),
                 parent,
                 false
-            )
+            ), fragmentManager, viewLifecycleOwner
         )
     }
 
@@ -26,11 +31,15 @@ class SettingInfoAdapter : ListAdapter<InfoItem, SettingInfoAdapter.ViewHolder>(
     }
 
     class ViewHolder(
-        private val binding: ListItemSettingInfoBinding
+        private val binding: ListItemSettingInfoBinding,
+        private val fragmentManager: FragmentManager,
+        private val viewLifecycleOwner: LifecycleOwner
     ) : RecyclerView.ViewHolder(binding.root) {
         fun bind(item: InfoItem) {
             binding.apply {
+                setClickListener { viewModel?.showDialog(fragmentManager) }
                 viewModel = SettingInfoViewModel(item.infoRepo)
+                lifecycleOwner = viewLifecycleOwner
                 executePendingBindings()
             }
         }

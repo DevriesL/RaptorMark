@@ -1,7 +1,10 @@
 package io.github.devriesl.raptormark.data
 
+import androidx.fragment.app.DialogFragment
 import io.github.devriesl.raptormark.R
 import io.github.devriesl.raptormark.di.StringProvider
+import io.github.devriesl.raptormark.dialogs.IDialogResultReceiver
+import io.github.devriesl.raptormark.dialogs.SingleChoiceDialog
 import org.json.JSONObject
 
 class EngineInfoRepo(
@@ -48,6 +51,15 @@ class EngineInfoRepo(
 
     override fun getInfoDesc(): String {
         return stringProvider.getString(R.string.engine_config_desc)
+    }
+
+    override fun registerDialog(receiver: IDialogResultReceiver): DialogFragment {
+        return SingleChoiceDialog(getInfoTitle(), engineList, receiver)
+    }
+
+    override fun setDialogResult(result: Any) {
+        engineConfig = result as String
+        settingDataSource.setEngineConfig(engineConfig)
     }
 
     companion object {
