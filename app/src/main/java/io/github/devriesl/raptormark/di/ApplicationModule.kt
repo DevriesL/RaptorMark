@@ -7,7 +7,6 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
-import io.github.devriesl.raptormark.data.LocalSettingDataSource
 import io.github.devriesl.raptormark.data.SettingDataSource
 import javax.inject.Singleton
 
@@ -21,5 +20,7 @@ object ApplicationModule {
 
     @Singleton
     @Provides
-    fun bindSettingDataSource(@ApplicationContext context: Context): SettingDataSource = LocalSettingDataSource(context)
+    fun bindSettingDataSource(@ApplicationContext context: Context): SettingDataSource {
+        return SettingDataSource.getInstance(context)
+    }
 }
