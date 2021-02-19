@@ -9,7 +9,8 @@ import io.github.devriesl.raptormark.data.TestItem
 import io.github.devriesl.raptormark.databinding.ListItemBenchmarkTestBinding
 import io.github.devriesl.raptormark.viewmodels.BenchmarkTestViewModel
 
-class BenchmarkTestAdapter : ListAdapter<TestItem, BenchmarkTestAdapter.ViewHolder>(TestDiffCallback()) {
+class BenchmarkTestAdapter :
+    ListAdapter<TestItem, BenchmarkTestAdapter.ViewHolder>(TestDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return ViewHolder(
@@ -35,15 +36,15 @@ class BenchmarkTestAdapter : ListAdapter<TestItem, BenchmarkTestAdapter.ViewHold
             }
         }
     }
-}
 
-private class TestDiffCallback : DiffUtil.ItemCallback<TestItem>() {
+    private class TestDiffCallback : DiffUtil.ItemCallback<TestItem>() {
 
-    override fun areItemsTheSame(oldItem: TestItem, newItem: TestItem): Boolean {
-        return oldItem.id == newItem.id
-    }
+        override fun areItemsTheSame(oldItem: TestItem, newItem: TestItem): Boolean {
+            return oldItem.id == newItem.id
+        }
 
-    override fun areContentsTheSame(oldItem: TestItem, newItem: TestItem): Boolean {
-        return oldItem == newItem
+        override fun areContentsTheSame(oldItem: TestItem, newItem: TestItem): Boolean {
+            return oldItem == newItem
+        }
     }
 }

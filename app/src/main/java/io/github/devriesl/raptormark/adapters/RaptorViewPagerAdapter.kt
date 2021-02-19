@@ -7,11 +7,8 @@ import io.github.devriesl.raptormark.HistoryFragment
 import io.github.devriesl.raptormark.RaptorActivity
 import io.github.devriesl.raptormark.SettingFragment
 
-const val BENCHMARK_PAGE_INDEX = 0
-const val HISTORY_PAGE_INDEX = 1
-const val SETTING_PAGE_INDEX = 2
-
-class RaptorViewPagerAdapter(raptorActivity: RaptorActivity) : FragmentStateAdapter(raptorActivity) {
+class RaptorViewPagerAdapter(raptorActivity: RaptorActivity) :
+    FragmentStateAdapter(raptorActivity) {
 
     /**
      * Mapping of the ViewPager page indexes to their respective Fragments
@@ -26,5 +23,11 @@ class RaptorViewPagerAdapter(raptorActivity: RaptorActivity) : FragmentStateAdap
 
     override fun createFragment(position: Int): Fragment {
         return tabFragmentsCreators[position]?.invoke() ?: throw IndexOutOfBoundsException()
+    }
+
+    companion object {
+        const val BENCHMARK_PAGE_INDEX = 0
+        const val HISTORY_PAGE_INDEX = 1
+        const val SETTING_PAGE_INDEX = 2
     }
 }

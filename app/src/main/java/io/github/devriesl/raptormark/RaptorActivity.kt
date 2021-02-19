@@ -5,9 +5,9 @@ import android.os.Bundle
 import com.google.android.material.tabs.TabLayoutMediator
 import dagger.hilt.android.AndroidEntryPoint
 import io.github.devriesl.raptormark.adapters.RaptorViewPagerAdapter
-import io.github.devriesl.raptormark.adapters.BENCHMARK_PAGE_INDEX
-import io.github.devriesl.raptormark.adapters.HISTORY_PAGE_INDEX
-import io.github.devriesl.raptormark.adapters.SETTING_PAGE_INDEX
+import io.github.devriesl.raptormark.adapters.RaptorViewPagerAdapter.Companion.BENCHMARK_PAGE_INDEX
+import io.github.devriesl.raptormark.adapters.RaptorViewPagerAdapter.Companion.HISTORY_PAGE_INDEX
+import io.github.devriesl.raptormark.adapters.RaptorViewPagerAdapter.Companion.SETTING_PAGE_INDEX
 import io.github.devriesl.raptormark.databinding.ActivityRaptorBinding
 
 @AndroidEntryPoint

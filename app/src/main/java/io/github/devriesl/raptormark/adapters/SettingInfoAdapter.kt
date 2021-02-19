@@ -44,15 +44,15 @@ class SettingInfoAdapter(
             }
         }
     }
-}
 
-private class InfoDiffCallback : DiffUtil.ItemCallback<InfoItem>() {
+    private class InfoDiffCallback : DiffUtil.ItemCallback<InfoItem>() {
 
-    override fun areItemsTheSame(oldItem: InfoItem, newItem: InfoItem): Boolean {
-        return oldItem.id == newItem.id
-    }
+        override fun areItemsTheSame(oldItem: InfoItem, newItem: InfoItem): Boolean {
+            return oldItem.id == newItem.id
+        }
 
-    override fun areContentsTheSame(oldItem: InfoItem, newItem: InfoItem): Boolean {
-        return oldItem == newItem
+        override fun areContentsTheSame(oldItem: InfoItem, newItem: InfoItem): Boolean {
+            return oldItem == newItem
+        }
     }
 }
