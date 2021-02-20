@@ -6,6 +6,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import dagger.hilt.android.AndroidEntryPoint
+import io.github.devriesl.raptormark.Constants.SEQ_RW_TEST_ID
+import io.github.devriesl.raptormark.Constants.RAND_RW_TEST_ID
+import io.github.devriesl.raptormark.Constants.LATENCY_TEST_ID
 import io.github.devriesl.raptormark.adapters.BenchmarkTestAdapter
 import io.github.devriesl.raptormark.data.*
 import io.github.devriesl.raptormark.databinding.FragmentBenchmarkBinding
@@ -37,11 +40,5 @@ class BenchmarkFragment : Fragment() {
         adapter.submitList(testList)
 
         return binding.root
-    }
-
-    companion object {
-        const val SEQ_RW_TEST_ID = "seq_rw_test"
-        const val RAND_RW_TEST_ID = "rand_rw_test"
-        const val LATENCY_TEST_ID = "latency_test"
     }
 }
