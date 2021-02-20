@@ -7,16 +7,16 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import dagger.hilt.android.AndroidEntryPoint
 import io.github.devriesl.raptormark.adapters.BenchmarkTestAdapter
-import io.github.devriesl.raptormark.data.TestItem
-import io.github.devriesl.raptormark.data.LatencyTestRepo
-import io.github.devriesl.raptormark.data.RandRwTestRepo
-import io.github.devriesl.raptormark.data.SeqRwTestRepo
+import io.github.devriesl.raptormark.data.*
 import io.github.devriesl.raptormark.databinding.FragmentBenchmarkBinding
 import io.github.devriesl.raptormark.di.StringProvider
 import javax.inject.Inject
 
 @AndroidEntryPoint
 class BenchmarkFragment : Fragment() {
+    @Inject
+    lateinit var settingDataSource: SettingDataSource
+
     @Inject
     lateinit var stringProvider: StringProvider
 
@@ -28,9 +28,9 @@ class BenchmarkFragment : Fragment() {
         val binding = FragmentBenchmarkBinding.inflate(inflater, container, false)
         val adapter = BenchmarkTestAdapter()
         val testList: List<TestItem> = listOf(
-            TestItem(SEQ_RW_TEST_ID, SeqRwTestRepo(stringProvider)),
-            TestItem(RAND_RW_TEST_ID, RandRwTestRepo(stringProvider)),
-            TestItem(LATENCY_TEST_ID, LatencyTestRepo(stringProvider)),
+            TestItem(SEQ_RW_TEST_ID, SeqRwTestRepo(stringProvider, settingDataSource)),
+            TestItem(RAND_RW_TEST_ID, RandRwTestRepo(stringProvider, settingDataSource)),
+            TestItem(LATENCY_TEST_ID, LatencyTestRepo(stringProvider, settingDataSource)),
         )
 
         binding.benchmarkList.adapter = adapter
