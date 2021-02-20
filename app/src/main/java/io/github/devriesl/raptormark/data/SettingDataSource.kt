@@ -7,6 +7,7 @@ import org.json.JSONObject
 
 class SettingDataSource private constructor(context: Context) {
     private val sharedPrefs = context.getSharedPreferences(SHARED_PREFS_NAME, Context.MODE_PRIVATE)
+    private val appFilesDir = context.filesDir
     private var engineConfig: String? = null
 
     init {
@@ -47,6 +48,10 @@ class SettingDataSource private constructor(context: Context) {
             putString(ENGINE_CONFIG_KEY, engine)
             commit()
         }
+    }
+
+    fun getAppStoragePath(): String {
+        return appFilesDir.absolutePath
     }
 
     companion object {
