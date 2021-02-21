@@ -6,6 +6,8 @@
     <string name="setting_page_title">SETTING</string>
 
     <!-- Benchmark resources -->
+    <string name="start_button_label">START</string>
+    <string name="start_button_desc">Start benchmark test</string>
     <string name="seq_rw_test_title">Sequential Read/Write Throughput</string>
     <string name="rand_rw_test_title">Random Read/Write Throughput</string>
     <string name="latency_test_title">Asynchronous Read/Write Latency</string>
