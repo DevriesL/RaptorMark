@@ -11,6 +11,8 @@ extern "C" {
 #define IO_URING_KERNEL_VERSION_MAJOR 5
 #define IO_URING_KERNEL_VERSION_MINOR 4
 
+#define ARGV_OPTION_MAX_LENGTH 256
+
 typedef struct {
     char *key;
     int val;

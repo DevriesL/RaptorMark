@@ -3,6 +3,7 @@
 #include <string.h>
 #include <ctype.h>
 #include <sys/utsname.h>
+#include <cJSON.h>
 #include "common.h"
 #include "helper.h"
 
@@ -56,6 +57,36 @@ bool checkEngineAvailability(char *engine) {
     }
 
     return available;
+}
+
+void json2Options(char *jsonStr, int *argc, char ***argv) {
+    cJSON *root, *options, *option;
+    root = cJSON_Parse(jsonStr);
+
+    options = cJSON_GetObjectItem(root, "options");
+    *argc = cJSON_GetArraySize(options);
+    *argv = (char**)calloc(*argc, sizeof(char*));
+
+    int i = 0;
+    cJSON_ArrayForEach(option, options)
+    {
+        cJSON *name = cJSON_GetObjectItem(option, "name");
+        cJSON *value = cJSON_GetObjectItem(option, "value");
+
+        (*argv)[i] = (char*) calloc(ARGV_OPTION_MAX_LENGTH, sizeof(char));
+        sprintf((*argv)[i], "--%s", name->valuestring);
+        if (cJSON_IsString(value))
+            sprintf((*argv)[i] + strlen((*argv)[i]), "=%s", value->valuestring);
+
+        i++;
+    }
+}
+
+void freeOptions(int *argc, char ***argv) {
+    for (int i = 0; i < *argc; i++)
+        free((*argv)[i]);
+
+    free(*argv);
 }
 
 #ifdef __cplusplus
