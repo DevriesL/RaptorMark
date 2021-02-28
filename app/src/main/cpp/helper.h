@@ -32,6 +32,8 @@ static strPairStruct engineLut[] = {
 };
 
 bool checkEngineAvailability(char *engine);
+void json2Options(const char *jsonStr, int *argc, char ***argv);
+void freeOptions(int *argc, char ***argv);
 
 #ifdef __cplusplus
 }

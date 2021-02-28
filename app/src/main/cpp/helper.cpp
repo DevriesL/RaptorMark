@@ -59,7 +59,7 @@ bool checkEngineAvailability(char *engine) {
     return available;
 }
 
-void json2Options(char *jsonStr, int *argc, char ***argv) {
+void json2Options(const char *jsonStr, int *argc, char ***argv) {
     cJSON *root, *options, *option;
     root = cJSON_Parse(jsonStr);
 
