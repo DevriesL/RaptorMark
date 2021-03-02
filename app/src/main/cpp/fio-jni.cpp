@@ -9,30 +9,30 @@
 extern "C" {
 #endif
 
-JNIEXPORT void JNICALL native_FIOTest(JNIEnv *env, jobject instance, jstring jsonCommand)
+JNIEXPORT jint JNICALL native_FIOTest(JNIEnv *env, jobject instance, jstring jsonCommand)
 {
     const char *jsonStr = env->GetStringUTFChars(jsonCommand, NULL);
-    int argc;
+    int ret, argc;
     char **argv;
 
     json2Options(jsonStr, &argc, &argv);
-
-    fio(argc, argv, NULL);
-
+    ret = fio(argc, argv, NULL);
     freeOptions(&argc, &argv);
+
+    return ret;
 }
 
-JNIEXPORT void JNICALL native_LatencyTest(JNIEnv *env, jobject instance, jstring jsonCommand)
+JNIEXPORT jint JNICALL native_LatencyTest(JNIEnv *env, jobject instance, jstring jsonCommand)
 {
     const char *jsonStr = env->GetStringUTFChars(jsonCommand, NULL);
-    int argc;
+    int ret, argc;
     char **argv;
 
     json2Options(jsonStr, &argc, &argv);
-
-    read_to_pipe_async(argc, argv);
-
+    ret = read_to_pipe_async(argc, argv);
     freeOptions(&argc, &argv);
+
+    return ret;
 }
 
 JNIEXPORT jstring JNICALL native_ListEngines(JNIEnv *env, jobject instance)
@@ -69,8 +69,8 @@ JNIEXPORT jstring JNICALL native_ListEngines(JNIEnv *env, jobject instance)
 #endif
 
 static const JNINativeMethod FIOMethods[] = {
-        {"native_FIOTest",      "(Ljava/lang/String;)V", (void *)native_FIOTest},
-        {"native_LatencyTest",  "(Ljava/lang/String;)V", (void *)native_LatencyTest},
+        {"native_FIOTest",      "(Ljava/lang/String;)I", (void *)native_FIOTest},
+        {"native_LatencyTest",  "(Ljava/lang/String;)I", (void *)native_LatencyTest},
         {"native_ListEngines",  "()Ljava/lang/String;",  (void *)native_ListEngines}
 };
 
