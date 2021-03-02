@@ -14,7 +14,7 @@ extern "C" {
 #define ARGV_OPTION_MAX_LENGTH 256
 
 typedef struct {
-    char *key;
+    const char *key;
     int val;
 } strPairStruct;
 
