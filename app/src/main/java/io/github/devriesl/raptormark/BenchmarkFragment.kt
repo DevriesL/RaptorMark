@@ -6,9 +6,11 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import dagger.hilt.android.AndroidEntryPoint
-import io.github.devriesl.raptormark.Constants.SEQ_RW_TEST_ID
-import io.github.devriesl.raptormark.Constants.RAND_RW_TEST_ID
 import io.github.devriesl.raptormark.Constants.LATENCY_TEST_ID
+import io.github.devriesl.raptormark.Constants.RAND_RD_TEST_ID
+import io.github.devriesl.raptormark.Constants.RAND_WR_TEST_ID
+import io.github.devriesl.raptormark.Constants.SEQ_RD_TEST_ID
+import io.github.devriesl.raptormark.Constants.SEQ_WR_TEST_ID
 import io.github.devriesl.raptormark.adapters.BenchmarkTestAdapter
 import io.github.devriesl.raptormark.data.*
 import io.github.devriesl.raptormark.databinding.FragmentBenchmarkBinding
@@ -31,8 +33,10 @@ class BenchmarkFragment : Fragment() {
         val binding = FragmentBenchmarkBinding.inflate(inflater, container, false)
         val adapter = BenchmarkTestAdapter()
         val testList: List<TestItem> = listOf(
-            TestItem(SEQ_RW_TEST_ID, SeqRwTestRepo(stringProvider, settingDataSource)),
-            TestItem(RAND_RW_TEST_ID, RandRwTestRepo(stringProvider, settingDataSource)),
+            TestItem(SEQ_RD_TEST_ID, SeqRdTestRepo(stringProvider, settingDataSource)),
+            TestItem(SEQ_WR_TEST_ID, SeqWrTestRepo(stringProvider, settingDataSource)),
+            TestItem(RAND_RD_TEST_ID, RandRdTestRepo(stringProvider, settingDataSource)),
+            TestItem(RAND_WR_TEST_ID, RandWrTestRepo(stringProvider, settingDataSource)),
             TestItem(LATENCY_TEST_ID, LatencyTestRepo(stringProvider, settingDataSource)),
         )
 
