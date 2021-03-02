@@ -13,4 +13,8 @@ class LatencyTestRepo(
     override fun getTestName(): String {
         return stringProvider.getString(R.string.latency_test_title)
     }
+
+    override fun runTest() {
+        TODO("Not yet implemented")
+    }
 }

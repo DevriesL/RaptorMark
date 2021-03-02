@@ -1,6 +1,7 @@
 package io.github.devriesl.raptormark
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -42,6 +43,19 @@ class BenchmarkFragment : Fragment() {
 
         binding.benchmarkList.adapter = adapter
         adapter.submitList(testList)
+
+        binding.startButton.setOnClickListener {
+            run breaker@{
+                testList.forEach {
+                    try {
+                        it.testRepo.runTest()
+                    } catch (ex: Exception) {
+                        Log.e(it.id, "Error running test", ex)
+                        return@breaker
+                    }
+                }
+            }
+        }
 
         return binding.root
     }

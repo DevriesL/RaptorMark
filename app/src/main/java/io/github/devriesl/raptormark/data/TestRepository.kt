@@ -11,6 +11,8 @@ abstract class TestRepository(
 
     abstract fun getTestName(): String
 
+    abstract fun runTest()
+
     fun getTestFilePath(): String {
         return settingDataSource.getAppStoragePath() + "/" + testFileName + TEST_FILE_NAME_SUFFIX
     }
