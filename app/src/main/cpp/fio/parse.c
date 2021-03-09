@@ -37,6 +37,7 @@ static const char *opt_type_names[] = {
 	"OPT_BOOL",
 	"OPT_FLOAT_LIST",
 	"OPT_STR_SET",
+	"OPT_STR_VAL_ZONE",
 	"OPT_DEPRECATED",
 	"OPT_SOFT_DEPRECATED",
 	"OPT_UNSUPPORTED",
@@ -501,7 +502,7 @@ static int str_match_len(const struct value_pair *vp, const char *str)
 
 static const char *opt_type_name(const struct fio_option *o)
 {
-	compiletime_assert(ARRAY_SIZE(opt_type_names) - 1 == FIO_OPT_UNSUPPORTED,
+	compiletime_assert(FIO_ARRAY_SIZE(opt_type_names) - 1 == FIO_OPT_UNSUPPORTED,
 				"opt_type_names[] index");
 
 	if (o->type <= FIO_OPT_UNSUPPORTED)
@@ -599,9 +600,35 @@ static int __handle_option(const struct fio_option *o, const char *ptr,
 		fallthrough;
 	case FIO_OPT_ULL:
 	case FIO_OPT_INT:
-	case FIO_OPT_STR_VAL: {
+	case FIO_OPT_STR_VAL:
+	case FIO_OPT_STR_VAL_ZONE:
+	{
 		fio_opt_str_val_fn *fn = o->cb;
 		char tmp[128], *p;
+		size_t len = strlen(ptr);
+
+		if (len > 0 && ptr[len - 1] == 'z') {
+			if (o->type == FIO_OPT_STR_VAL_ZONE) {
+				char *ep;
+				unsigned long long val;
+
+				errno = 0;
+				val = strtoul(ptr, &ep, 10);
+				if (errno == 0 && ep != ptr && *ep == 'z') {
+					ull = ZONE_BASE_VAL + (uint32_t)val;
+					ret = 0;
+					goto store_option_value;
+				} else {
+					log_err("%s: unexpected zone value '%s'\n",
+						o->name, ptr);
+					return 1;
+				}
+			} else {
+				log_err("%s: 'z' suffix isn't applicable\n",
+					o->name);
+				return 1;
+			}
+		}
 
 		if (!is_time && o->is_time)
 			is_time = o->is_time;
@@ -655,6 +682,7 @@ static int __handle_option(const struct fio_option *o, const char *ptr,
 			}
 		}
 
+store_option_value:
 		if (fn)
 			ret = fn(data, &ull);
 		else {
@@ -786,6 +814,11 @@ static int __handle_option(const struct fio_option *o, const char *ptr,
 		if (o->off1) {
 			cp = td_var(data, o, o->off1);
 			*cp = strdup(ptr);
+			if (strlen(ptr) > o->maxlen - 1) {
+				log_err("value exceeds max length of %d\n",
+					o->maxlen);
+				return 1;
+			}
 		}
 
 		if (fn)
