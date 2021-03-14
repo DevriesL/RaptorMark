@@ -39,6 +39,7 @@
 
 static int bs = 4096;
 static int max_us = 10000;
+static int write_fd = STDOUT_FILENO;
 static char *file;
 static int separate_writer = 1;
 
@@ -204,7 +205,7 @@ static int write_work(struct work_item *work)
 	ssize_t ret;
 
 	clock_gettime(CLOCK_MONOTONIC, &s);
-	ret = write(STDOUT_FILENO, work->buf, work->buf_size);
+	ret = write(write_fd, work->buf, work->buf_size);
 	clock_gettime(CLOCK_MONOTONIC, &e);
 	assert(ret == work->buf_size);
 
@@ -493,7 +494,7 @@ static void exit_thread(struct thread_data *thread,
 
 static int usage(char *argv[])
 {
-	fprintf(stderr, "%s: [-b blocksize] [-t max usec] [-w separate writer] -f file\n", argv[0]);
+	fprintf(stderr, "%s: [-b blocksize] [-t max usec] [-w separate writer] -f file [-o write fd]\n", argv[0]);
 	return 1;
 }
 
@@ -507,6 +508,9 @@ static int parse_options(int argc, char *argv[])
 			if (file)
 				return usage(argv);
 			file = strdup(optarg);
+			break;
+		case 'o':
+			write_fd = atoi(optarg);
 			break;
 		case 'b':
 			bs = atoi(optarg);
@@ -579,6 +583,8 @@ int read_to_pipe_async(int argc, char *argv[])
 	if (fd < 0) {
 		perror("open");
 		return 2;
+	} else {
+		free(file);
 	}
 
 	if (fstat(fd, &sb) < 0) {
