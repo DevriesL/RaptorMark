@@ -60,8 +60,11 @@ bool checkEngineAvailability(char *engine) {
 }
 
 void json2Options(const char *jsonStr, int *argc, char ***argv) {
-    cJSON *root, *options, *option;
+    cJSON *root, *options, *option, *shortOpts;
     root = cJSON_Parse(jsonStr);
+
+    shortOpts = cJSON_GetObjectItem(root, "shortopts");
+    bool isShortOpts = cJSON_IsBool(shortOpts) && (shortOpts->type & cJSON_True);
 
     options = cJSON_GetObjectItem(root, "options");
     *argc = cJSON_GetArraySize(options);
@@ -74,7 +77,7 @@ void json2Options(const char *jsonStr, int *argc, char ***argv) {
         cJSON *value = cJSON_GetObjectItem(option, "value");
 
         (*argv)[i] = (char*) calloc(ARGV_OPTION_MAX_LENGTH, sizeof(char));
-        sprintf((*argv)[i], "--%s", name->valuestring);
+        sprintf((*argv)[i], isShortOpts ? "-%s" :"--%s", name->valuestring);
         if (cJSON_IsString(value))
             sprintf((*argv)[i] + strlen((*argv)[i]), "=%s", value->valuestring);
 
