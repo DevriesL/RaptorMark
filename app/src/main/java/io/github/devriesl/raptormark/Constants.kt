@@ -8,6 +8,9 @@ object Constants {
     const val RAND_WR_TEST_ID = "rand_wr_test"
     const val LATENCY_TEST_ID = "latency_test"
 
+    const val FILE_PATH_OPT_NAME = "filename"
+    const val IO_ENGINE_OPT_NAME = "ioengine"
+
     const val PRIMARY_PREFERRED_ENGINE = "io_uring"
     const val SECONDARY_PREFERRED_ENGINE = "psync"
 }
