@@ -1,5 +1,6 @@
 #include <jni.h>
 #include <string>
+#include <unistd.h>
 #include "cJSON.h"
 #include "common.h"
 #include "helper.h"
@@ -9,8 +10,22 @@
 extern "C" {
 #endif
 
-JNIEXPORT jint JNICALL native_FIOTest(JNIEnv *env, jobject instance, jstring jsonCommand)
-{
+JNIEXPORT void JNICALL native_PipeStdLogcat(JNIEnv *env, jobject instance) {
+    int pipes[2];
+    char readBuffer[256];
+
+    pipe(pipes);
+    dup2(pipes[1], STDOUT_FILENO);
+    dup2(pipes[1], STDERR_FILENO);
+    FILE *inputFile = fdopen(pipes[0], "r");
+
+    while (true) {
+        fgets(readBuffer, sizeof(readBuffer), inputFile);
+        __android_log_write(2, "FIO_Native", readBuffer);
+    }
+}
+
+JNIEXPORT jint JNICALL native_FIOTest(JNIEnv *env, jobject instance, jstring jsonCommand) {
     const char *jsonStr = env->GetStringUTFChars(jsonCommand, NULL);
     int ret, argc;
     char **argv;
@@ -22,8 +37,7 @@ JNIEXPORT jint JNICALL native_FIOTest(JNIEnv *env, jobject instance, jstring jso
     return ret;
 }
 
-JNIEXPORT jint JNICALL native_LatencyTest(JNIEnv *env, jobject instance, jstring jsonCommand)
-{
+JNIEXPORT jint JNICALL native_LatencyTest(JNIEnv *env, jobject instance, jstring jsonCommand) {
     const char *jsonStr = env->GetStringUTFChars(jsonCommand, NULL);
     int ret, argc;
     char **argv;
@@ -35,8 +49,7 @@ JNIEXPORT jint JNICALL native_LatencyTest(JNIEnv *env, jobject instance, jstring
     return ret;
 }
 
-JNIEXPORT jstring JNICALL native_ListEngines(JNIEnv *env, jobject instance)
-{
+JNIEXPORT jstring JNICALL native_ListEngines(JNIEnv *env, jobject instance) {
     char *engineList[MAX_ENGINE_NUM];
     int index, engineNum;
 
@@ -46,8 +59,7 @@ JNIEXPORT jstring JNICALL native_ListEngines(JNIEnv *env, jobject instance)
     cJSON *engines = cJSON_AddArrayToObject(root, "engines");
 
     if (engineNum > 0) {
-        for (index = 0; index < engineNum; index++)
-        {
+        for (index = 0; index < engineNum; index++) {
             cJSON *engine = cJSON_CreateObject();
             char *engineName = engineList[index];
             bool engineAvailable = checkEngineAvailability(engineName);
@@ -69,9 +81,10 @@ JNIEXPORT jstring JNICALL native_ListEngines(JNIEnv *env, jobject instance)
 #endif
 
 static const JNINativeMethod FIOMethods[] = {
-        {"native_FIOTest",      "(Ljava/lang/String;)I", (void *)native_FIOTest},
-        {"native_LatencyTest",  "(Ljava/lang/String;)I", (void *)native_LatencyTest},
-        {"native_ListEngines",  "()Ljava/lang/String;",  (void *)native_ListEngines}
+        {"native_PipeStdLogcat", "()V",                   (void *) native_PipeStdLogcat},
+        {"native_FIOTest",       "(Ljava/lang/String;)I", (void *) native_FIOTest},
+        {"native_LatencyTest",   "(Ljava/lang/String;)I", (void *) native_LatencyTest},
+        {"native_ListEngines",   "()Ljava/lang/String;",  (void *) native_ListEngines}
 };
 
 JNIEXPORT jint JNI_OnLoad(JavaVM *vm, void *reserved) {
