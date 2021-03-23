@@ -67,10 +67,13 @@ void json2Options(const char *jsonStr, int *argc, char ***argv) {
     bool isShortOpts = cJSON_IsBool(shortOpts) && (shortOpts->type & cJSON_True);
 
     options = cJSON_GetObjectItem(root, "options");
-    *argc = cJSON_GetArraySize(options);
+    *argc = (cJSON_GetArraySize(options) + 1);
     *argv = (char**)calloc(*argc, sizeof(char*));
 
-    int i = 0;
+    (*argv)[0] = (char*) calloc(ARGV_OPTION_MAX_LENGTH, sizeof(char));
+    sprintf((*argv)[0], "%s", getprogname());
+
+    int i = 1;
     cJSON_ArrayForEach(option, options)
     {
         cJSON *name = cJSON_GetObjectItem(option, "name");
