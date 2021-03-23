@@ -10,7 +10,7 @@ class RandRdTestRepo(
     settingDataSource: SettingDataSource
 ) : TestRepository(stringProvider, settingDataSource) {
     override val testFileName = RAND_RD_TEST_ID
-    override val testTypeValue = IO_TYPE_RAND_RD_VALUE
+    override var testTypeValue = IO_TYPE_RAND_RD_VALUE
 
     override fun getTestName(): String {
         return stringProvider.getString(R.string.rand_rd_test_title)

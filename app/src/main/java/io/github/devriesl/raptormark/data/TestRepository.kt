@@ -23,7 +23,7 @@ abstract class TestRepository(
     val settingDataSource: SettingDataSource
 ) {
     abstract val testFileName: String
-    abstract val testTypeValue: String
+    open var testTypeValue: String = String()
 
     abstract fun getTestName(): String
 

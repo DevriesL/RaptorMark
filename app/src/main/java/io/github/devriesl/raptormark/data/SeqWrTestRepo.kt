@@ -10,7 +10,7 @@ class SeqWrTestRepo(
     settingDataSource: SettingDataSource
 ) : TestRepository(stringProvider, settingDataSource) {
     override val testFileName = SEQ_WR_TEST_ID
-    override val testTypeValue = IO_TYPE_SEQ_WR_VALUE
+    override var testTypeValue = IO_TYPE_SEQ_WR_VALUE
 
     override fun getTestName(): String {
         return stringProvider.getString(R.string.seq_wr_test_title)
