@@ -20,7 +20,8 @@ object Constants {
 
     const val DEFAULT_IO_DEPTH_VALUE = "8"
     const val DEFAULT_RUNTIME_LIMIT = "60"
-    const val DEFAULT_BLOCK_SIZE_VALUE = "4k"
+    const val DEFAULT_SEQ_BLOCK_SIZE_VALUE = "1024k"
+    const val DEFAULT_RAND_BLOCK_SIZE_VALUE = "4k"
     const val DEFAULT_IO_SIZE_VALUE = "4g"
     const val DIRECT_IO_CONSTANT_VALUE = "1"
     const val PRIMARY_PREFERRED_ENGINE = "io_uring"

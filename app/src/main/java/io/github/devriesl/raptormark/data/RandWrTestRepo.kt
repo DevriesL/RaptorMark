@@ -11,6 +11,7 @@ class RandWrTestRepo(
 ) : TestRepository(stringProvider, settingDataSource) {
     override val testFileName = RAND_WR_TEST_ID
     override var testTypeValue = IO_TYPE_RAND_WR_VALUE
+    override var isRandTest = true
 
     override fun getTestName(): String {
         return stringProvider.getString(R.string.rand_wr_test_title)
