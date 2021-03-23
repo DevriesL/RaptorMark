@@ -9,8 +9,15 @@ object Constants {
     const val LATENCY_TEST_ID = "latency_test"
 
     const val FILE_PATH_OPT_NAME = "filename"
+    const val IO_DEPTH_OPT_NAME = "iodepth"
+    const val RUNTIME_OPT_NAME = "runtime"
+    const val BLOCK_SIZE_OPT_NAME = "blocksize"
+    const val IO_TYPE_OPT_NAME = "readwrite"
     const val IO_ENGINE_OPT_NAME = "ioengine"
 
+    const val DEFAULT_IO_DEPTH_VALUE = "8"
+    const val DEFAULT_RUNTIME_LIMIT = "60"
+    const val DEFAULT_BLOCK_SIZE_VALUE = "4k"
     const val PRIMARY_PREFERRED_ENGINE = "io_uring"
     const val SECONDARY_PREFERRED_ENGINE = "psync"
 }
