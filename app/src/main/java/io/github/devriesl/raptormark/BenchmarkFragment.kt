@@ -1,6 +1,7 @@
 package io.github.devriesl.raptormark
 
 import android.os.Bundle
+import android.os.Process.THREAD_PRIORITY_FOREGROUND
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -17,6 +18,7 @@ import io.github.devriesl.raptormark.data.*
 import io.github.devriesl.raptormark.databinding.FragmentBenchmarkBinding
 import io.github.devriesl.raptormark.di.StringProvider
 import javax.inject.Inject
+import kotlin.concurrent.thread
 
 @AndroidEntryPoint
 class BenchmarkFragment : Fragment() {
@@ -45,13 +47,15 @@ class BenchmarkFragment : Fragment() {
         adapter.submitList(testList)
 
         binding.startButton.setOnClickListener {
-            run breaker@{
-                testList.forEach {
-                    try {
-                        it.testRepo.runTest()
-                    } catch (ex: Exception) {
-                        Log.e(it.id, "Error running test", ex)
-                        return@breaker
+            thread(start = true, priority = THREAD_PRIORITY_FOREGROUND) {
+                run breaker@{
+                    testList.forEach {
+                        try {
+                            it.testRepo.runTest()
+                        } catch (ex: Exception) {
+                            Log.e(it.id, "Error running test", ex)
+                            return@breaker
+                        }
                     }
                 }
             }
