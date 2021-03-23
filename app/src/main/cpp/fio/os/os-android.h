@@ -65,10 +65,9 @@
 #include <stdio.h>
 #include <linux/ashmem.h>
 #include <linux/shm.h>
+#include <android/sharedmem.h>
 #define shmid_ds shmid64_ds
 #define SHM_HUGETLB    04000
-
-#define ASHMEM_DEVICE	"/dev/ashmem"
 
 static inline int shmctl(int __shmid, int __cmd, struct shmid_ds *__buf)
 {
@@ -85,28 +84,14 @@ static inline int shmctl(int __shmid, int __cmd, struct shmid_ds *__buf)
 
 static inline int shmget(key_t __key, size_t __size, int __shmflg)
 {
-	int fd,ret;
+	int fd;
 	char keybuf[11];
 
-	fd = open(ASHMEM_DEVICE, O_RDWR);
-	if (fd < 0)
-		return fd;
+	sprintf(keybuf, "%d", __key);
 
-	sprintf(keybuf,"%d",__key);
-	ret = ioctl(fd, ASHMEM_SET_NAME, keybuf);
-	if (ret < 0)
-		goto error;
-
-	/* Stores size in first 8 bytes, allocate extra space */
-	ret = ioctl(fd, ASHMEM_SET_SIZE, __size + sizeof(uint64_t));
-	if (ret < 0)
-		goto error;
+	fd = ASharedMemory_create(keybuf, __size + sizeof(uint64_t));
 
 	return fd;
-
-error:
-	close(fd);
-	return ret;
 }
 
 static inline void *shmat(int __shmid, const void *__shmaddr, int __shmflg)
