@@ -20,4 +20,9 @@ object Constants {
     const val DEFAULT_BLOCK_SIZE_VALUE = "4k"
     const val PRIMARY_PREFERRED_ENGINE = "io_uring"
     const val SECONDARY_PREFERRED_ENGINE = "psync"
+
+    const val IO_TYPE_SEQ_RD_VALUE = "read"
+    const val IO_TYPE_SEQ_WR_VALUE = "write"
+    const val IO_TYPE_RAND_RD_VALUE = "randread"
+    const val IO_TYPE_RAND_WR_VALUE = "randwrite"
 }
