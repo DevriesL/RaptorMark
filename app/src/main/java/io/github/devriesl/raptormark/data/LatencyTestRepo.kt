@@ -15,6 +15,5 @@ class LatencyTestRepo(
     }
 
     override fun runTest() {
-        TODO("Not yet implemented")
     }
 }

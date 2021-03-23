@@ -15,8 +15,4 @@ class SeqRdTestRepo(
     override fun getTestName(): String {
         return stringProvider.getString(R.string.seq_rd_test_title)
     }
-
-    override fun runTest() {
-        TODO("Not yet implemented")
-    }
 }

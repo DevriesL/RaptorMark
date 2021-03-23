@@ -16,8 +16,4 @@ class RandRdTestRepo(
     override fun getTestName(): String {
         return stringProvider.getString(R.string.rand_rd_test_title)
     }
-
-    override fun runTest() {
-        TODO("Not yet implemented")
-    }
 }

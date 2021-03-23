@@ -1,11 +1,11 @@
 package io.github.devriesl.raptormark.data
 
 import io.github.devriesl.raptormark.Constants.BLOCK_SIZE_OPT_NAME
-import io.github.devriesl.raptormark.Constants.DEFAULT_RAND_BLOCK_SIZE_VALUE
-import io.github.devriesl.raptormark.Constants.DEFAULT_SEQ_BLOCK_SIZE_VALUE
 import io.github.devriesl.raptormark.Constants.DEFAULT_IO_DEPTH_VALUE
 import io.github.devriesl.raptormark.Constants.DEFAULT_IO_SIZE_VALUE
+import io.github.devriesl.raptormark.Constants.DEFAULT_RAND_BLOCK_SIZE_VALUE
 import io.github.devriesl.raptormark.Constants.DEFAULT_RUNTIME_LIMIT
+import io.github.devriesl.raptormark.Constants.DEFAULT_SEQ_BLOCK_SIZE_VALUE
 import io.github.devriesl.raptormark.Constants.DIRECT_IO_CONSTANT_VALUE
 import io.github.devriesl.raptormark.Constants.DIRECT_IO_OPT_NAME
 import io.github.devriesl.raptormark.Constants.FILE_PATH_OPT_NAME
@@ -16,9 +16,11 @@ import io.github.devriesl.raptormark.Constants.IO_TYPE_OPT_NAME
 import io.github.devriesl.raptormark.Constants.NEW_JOB_OPT_NAME
 import io.github.devriesl.raptormark.Constants.RUNTIME_OPT_NAME
 import io.github.devriesl.raptormark.Constants.TEST_FILE_NAME_SUFFIX
+import io.github.devriesl.raptormark.data.NativeDataSource.native_FIOTest
 import io.github.devriesl.raptormark.di.StringProvider
 import org.json.JSONArray
 import org.json.JSONObject
+import java.io.IOException
 
 abstract class TestRepository(
     val stringProvider: StringProvider,
@@ -30,7 +32,13 @@ abstract class TestRepository(
 
     abstract fun getTestName(): String
 
-    abstract fun runTest()
+    open fun runTest() {
+        val options = testOptionsBuilder()
+        val ret = native_FIOTest(options)
+        if (ret != 0) {
+            throw IOException("$ret")
+        }
+    }
 
     fun getTestFilePath(): String {
         return settingDataSource.getAppStoragePath() + "/" + testFileName + TEST_FILE_NAME_SUFFIX
