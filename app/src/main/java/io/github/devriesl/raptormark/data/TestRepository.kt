@@ -4,6 +4,8 @@ import io.github.devriesl.raptormark.Constants.BLOCK_SIZE_OPT_NAME
 import io.github.devriesl.raptormark.Constants.DEFAULT_BLOCK_SIZE_VALUE
 import io.github.devriesl.raptormark.Constants.DEFAULT_IO_DEPTH_VALUE
 import io.github.devriesl.raptormark.Constants.DEFAULT_RUNTIME_LIMIT
+import io.github.devriesl.raptormark.Constants.DIRECT_IO_CONSTANT_VALUE
+import io.github.devriesl.raptormark.Constants.DIRECT_IO_OPT_NAME
 import io.github.devriesl.raptormark.Constants.FILE_PATH_OPT_NAME
 import io.github.devriesl.raptormark.Constants.IO_DEPTH_OPT_NAME
 import io.github.devriesl.raptormark.Constants.IO_ENGINE_OPT_NAME
@@ -40,6 +42,7 @@ abstract class TestRepository(
         options.put(createOption(IO_DEPTH_OPT_NAME, DEFAULT_IO_DEPTH_VALUE))
         options.put(createOption(RUNTIME_OPT_NAME, DEFAULT_RUNTIME_LIMIT))
         options.put(createOption(BLOCK_SIZE_OPT_NAME, DEFAULT_BLOCK_SIZE_VALUE))
+        options.put(createOption(DIRECT_IO_OPT_NAME, DIRECT_IO_CONSTANT_VALUE))
         options.put(createOption(IO_ENGINE_OPT_NAME, settingDataSource.getEngineConfig()))
 
         root.put("options", options)
