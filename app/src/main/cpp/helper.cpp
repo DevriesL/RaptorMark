@@ -3,6 +3,7 @@
 #include <string.h>
 #include <ctype.h>
 #include <sys/utsname.h>
+#include <dlfcn.h>
 #include <cJSON.h>
 #include "common.h"
 #include "helper.h"
@@ -97,4 +98,26 @@ void freeOptions(int *argc, char ***argv) {
 
 #ifdef __cplusplus
 }
+
+int LibFIO::fio(int argc, char *argv[]) {
+    return libFunc.fio(argc, argv, nullptr);
+}
+
+int LibFIO::read_to_pipe_async(int argc, char *argv[]) {
+    return libFunc.read_to_pipe_async(argc, argv);
+}
+
+int LibFIO::fio_list_ioengines(char **list_buf) {
+    return libFunc.fio_list_ioengines(list_buf);
+}
+
+LibFIO::LibFIO(const char *func) {
+    libHandler = dlopen("libfio.so", RTLD_NOW);
+    libFunc.funcPtr = dlsym(libHandler, func);
+}
+
+LibFIO::~LibFIO() {
+    dlclose(libHandler);
+}
+
 #endif

@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.16)
 
 file(GLOB_RECURSE FIO_SOURCES "*.c")
 
-add_library(fio STATIC ${FIO_SOURCES})
+add_library(fio SHARED ${FIO_SOURCES})
 target_sources(fio INTERFACE ${FIO_SOURCES})
 
 target_include_directories(fio PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
@@ -14,3 +14,5 @@ target_compile_options(fio PUBLIC
         -D_GNU_SOURCE -DBITS_PER_LONG=64)
 
 target_precompile_headers(fio PUBLIC fio-config.h)
+
+target_link_libraries(fio android)

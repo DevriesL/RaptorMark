@@ -29,9 +29,10 @@ JNIEXPORT jint JNICALL native_FIOTest(JNIEnv *env, jobject instance, jstring jso
     const char *jsonStr = env->GetStringUTFChars(jsonCommand, NULL);
     int ret, argc;
     char **argv;
+    LibFIO libFio("fio");
 
     json2Options(jsonStr, &argc, &argv);
-    ret = fio(argc, argv, NULL);
+    ret = libFio.fio(argc, argv);
     freeOptions(&argc, &argv);
 
     return ret;
@@ -41,9 +42,10 @@ JNIEXPORT jint JNICALL native_LatencyTest(JNIEnv *env, jobject instance, jstring
     const char *jsonStr = env->GetStringUTFChars(jsonCommand, NULL);
     int ret, argc;
     char **argv;
+    LibFIO libFio("read_to_pipe_async");
 
     json2Options(jsonStr, &argc, &argv);
-    ret = read_to_pipe_async(argc, argv);
+    ret = libFio.read_to_pipe_async(argc, argv);
     freeOptions(&argc, &argv);
 
     return ret;
@@ -52,8 +54,9 @@ JNIEXPORT jint JNICALL native_LatencyTest(JNIEnv *env, jobject instance, jstring
 JNIEXPORT jstring JNICALL native_ListEngines(JNIEnv *env, jobject instance) {
     char *engineList[MAX_ENGINE_NUM];
     int index, engineNum;
+    LibFIO libFio("fio_list_ioengines");
 
-    engineNum = fio_list_ioengines(engineList);
+    engineNum = libFio.fio_list_ioengines(engineList);
 
     cJSON *root = cJSON_CreateObject();
     cJSON *engines = cJSON_AddArrayToObject(root, "engines");
