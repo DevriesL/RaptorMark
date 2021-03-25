@@ -17,6 +17,7 @@ object Constants {
     const val DIRECT_IO_OPT_NAME = "direct"
     const val IO_SIZE_OPT_NAME = "size"
     const val IO_ENGINE_OPT_NAME = "ioengine"
+    const val NUM_THREADS_OPT_NAME = "numjobs"
 
     const val DEFAULT_IO_DEPTH_VALUE = "8"
     const val DEFAULT_RUNTIME_LIMIT = "60"
@@ -25,6 +26,7 @@ object Constants {
     const val DEFAULT_IO_SIZE_VALUE = "2g"
     const val DIRECT_IO_CONSTANT_VALUE = "1"
     const val DEFAULT_IO_ENGINE = "libaio"
+    const val DEFAULT_NUM_THREADS = "8"
 
     const val IO_TYPE_SEQ_RD_VALUE = "read"
     const val IO_TYPE_SEQ_WR_VALUE = "write"

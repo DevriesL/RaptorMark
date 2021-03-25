@@ -3,6 +3,7 @@ package io.github.devriesl.raptormark.data
 import io.github.devriesl.raptormark.Constants.BLOCK_SIZE_OPT_NAME
 import io.github.devriesl.raptormark.Constants.DEFAULT_IO_DEPTH_VALUE
 import io.github.devriesl.raptormark.Constants.DEFAULT_IO_SIZE_VALUE
+import io.github.devriesl.raptormark.Constants.DEFAULT_NUM_THREADS
 import io.github.devriesl.raptormark.Constants.DEFAULT_RAND_BLOCK_SIZE_VALUE
 import io.github.devriesl.raptormark.Constants.DEFAULT_RUNTIME_LIMIT
 import io.github.devriesl.raptormark.Constants.DEFAULT_SEQ_BLOCK_SIZE_VALUE
@@ -14,6 +15,7 @@ import io.github.devriesl.raptormark.Constants.IO_ENGINE_OPT_NAME
 import io.github.devriesl.raptormark.Constants.IO_SIZE_OPT_NAME
 import io.github.devriesl.raptormark.Constants.IO_TYPE_OPT_NAME
 import io.github.devriesl.raptormark.Constants.NEW_JOB_OPT_NAME
+import io.github.devriesl.raptormark.Constants.NUM_THREADS_OPT_NAME
 import io.github.devriesl.raptormark.Constants.RUNTIME_OPT_NAME
 import io.github.devriesl.raptormark.Constants.TEST_FILE_NAME_SUFFIX
 import io.github.devriesl.raptormark.data.NativeDataSource.native_FIOTest
@@ -64,6 +66,7 @@ abstract class TestRepository(
         options.put(createOption(IO_SIZE_OPT_NAME, DEFAULT_IO_SIZE_VALUE))
         options.put(createOption(DIRECT_IO_OPT_NAME, DIRECT_IO_CONSTANT_VALUE))
         options.put(createOption(IO_ENGINE_OPT_NAME, settingDataSource.getEngineConfig()))
+        options.put(createOption(NUM_THREADS_OPT_NAME, DEFAULT_NUM_THREADS))
 
         root.put("options", options)
 
