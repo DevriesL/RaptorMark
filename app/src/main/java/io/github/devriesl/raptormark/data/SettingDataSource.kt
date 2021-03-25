@@ -1,8 +1,7 @@
 package io.github.devriesl.raptormark.data
 
 import android.content.Context
-import io.github.devriesl.raptormark.Constants.PRIMARY_PREFERRED_ENGINE
-import io.github.devriesl.raptormark.Constants.SECONDARY_PREFERRED_ENGINE
+import io.github.devriesl.raptormark.Constants.DEFAULT_IO_ENGINE
 import org.json.JSONObject
 
 class SettingDataSource private constructor(context: Context) {
@@ -12,14 +11,6 @@ class SettingDataSource private constructor(context: Context) {
 
     init {
         engineConfig = getEngineConfig()
-    }
-
-    private fun getPreferredEngine(): String {
-        return if (getEngineList().contains(PRIMARY_PREFERRED_ENGINE)) {
-            PRIMARY_PREFERRED_ENGINE
-        } else {
-            SECONDARY_PREFERRED_ENGINE
-        }
     }
 
     fun getEngineList(): ArrayList<String> {
@@ -38,7 +29,7 @@ class SettingDataSource private constructor(context: Context) {
     }
 
     fun getEngineConfig(): String {
-        val defaultEngine = engineConfig ?: getPreferredEngine()
+        val defaultEngine = engineConfig ?: DEFAULT_IO_ENGINE
         val engine = sharedPrefs.getString(ENGINE_CONFIG_KEY, defaultEngine)
         return engine ?: defaultEngine
     }
