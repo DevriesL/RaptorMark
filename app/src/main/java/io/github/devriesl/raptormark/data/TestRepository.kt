@@ -7,8 +7,11 @@ import io.github.devriesl.raptormark.Constants.DEFAULT_NUM_THREADS_VALUE
 import io.github.devriesl.raptormark.Constants.DEFAULT_RAND_BLOCK_SIZE_VALUE
 import io.github.devriesl.raptormark.Constants.DEFAULT_RUNTIME_LIMIT_VALUE
 import io.github.devriesl.raptormark.Constants.DEFAULT_SEQ_BLOCK_SIZE_VALUE
-import io.github.devriesl.raptormark.Constants.DIRECT_IO_CONSTANT_VALUE
+import io.github.devriesl.raptormark.Constants.CONSTANT_DIRECT_IO_VALUE
+import io.github.devriesl.raptormark.Constants.CONSTANT_ETA_PRINT_VALUE
+import io.github.devriesl.raptormark.Constants.CONSTANT_OUTPUT_FORMAT_VALUE
 import io.github.devriesl.raptormark.Constants.DIRECT_IO_OPT_NAME
+import io.github.devriesl.raptormark.Constants.ETA_PRINT_OPT_NAME
 import io.github.devriesl.raptormark.Constants.FILE_PATH_OPT_NAME
 import io.github.devriesl.raptormark.Constants.IO_DEPTH_OPT_NAME
 import io.github.devriesl.raptormark.Constants.IO_ENGINE_OPT_NAME
@@ -16,6 +19,7 @@ import io.github.devriesl.raptormark.Constants.IO_SIZE_OPT_NAME
 import io.github.devriesl.raptormark.Constants.IO_TYPE_OPT_NAME
 import io.github.devriesl.raptormark.Constants.NEW_JOB_OPT_NAME
 import io.github.devriesl.raptormark.Constants.NUM_THREADS_OPT_NAME
+import io.github.devriesl.raptormark.Constants.OUTPUT_FORMAT_OPT_NAME
 import io.github.devriesl.raptormark.Constants.RUNTIME_OPT_NAME
 import io.github.devriesl.raptormark.Constants.TEST_FILE_NAME_SUFFIX
 import io.github.devriesl.raptormark.data.NativeDataSource.native_FIOTest
@@ -64,9 +68,12 @@ abstract class TestRepository(
             )
         )
         options.put(createOption(IO_SIZE_OPT_NAME, DEFAULT_IO_SIZE_VALUE))
-        options.put(createOption(DIRECT_IO_OPT_NAME, DIRECT_IO_CONSTANT_VALUE))
+        options.put(createOption(DIRECT_IO_OPT_NAME, CONSTANT_DIRECT_IO_VALUE))
         options.put(createOption(IO_ENGINE_OPT_NAME, settingDataSource.getEngineConfig()))
         options.put(createOption(NUM_THREADS_OPT_NAME, DEFAULT_NUM_THREADS_VALUE))
+
+        options.put(createOption(ETA_PRINT_OPT_NAME, CONSTANT_ETA_PRINT_VALUE))
+        options.put(createOption(OUTPUT_FORMAT_OPT_NAME, CONSTANT_OUTPUT_FORMAT_VALUE))
 
         root.put("options", options)
 
