@@ -15,4 +15,4 @@ target_compile_options(fio PUBLIC
 
 target_precompile_headers(fio PUBLIC fio-config.h)
 
-target_link_libraries(fio android)
+target_link_libraries(fio libaio android)

@@ -27,6 +27,7 @@
 extern "C" {
 #endif
 
+#include <linux/fs.h>
 #include <sys/types.h>
 #include <string.h>
 #include <signal.h>

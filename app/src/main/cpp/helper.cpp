@@ -44,6 +44,7 @@ bool checkEngineAvailability(char *engine) {
     switch (getKeyFromStr(engine, engineLut, ENGINE_MAX)) {
         case ENGINE_MMAP:
         case ENGINE_PSYNC:
+        case ENGINE_LIBAIO:
             available = true;
             break;
         case ENGINE_IO_URING:

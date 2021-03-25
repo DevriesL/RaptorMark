@@ -21,6 +21,7 @@ typedef struct {
 enum {
     ENGINE_MMAP,
     ENGINE_PSYNC,
+    ENGINE_LIBAIO,
     ENGINE_IO_URING,
     ENGINE_MAX
 };
@@ -28,6 +29,7 @@ enum {
 static strPairStruct engineLut[] = {
         {"mmap",     ENGINE_MMAP},
         {"psync",    ENGINE_PSYNC},
+        {"libaio",   ENGINE_LIBAIO},
         {"io_uring", ENGINE_IO_URING},
 };
 

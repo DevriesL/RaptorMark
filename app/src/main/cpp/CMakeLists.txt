@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.16)
 project("raptormark")
 
 add_subdirectory(cjson)
+add_subdirectory(libaio)
 add_subdirectory(fio)
 
 add_library(fio-jni SHARED fio-jni.cpp helper.cpp)
