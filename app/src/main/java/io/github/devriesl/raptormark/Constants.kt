@@ -20,13 +20,13 @@ object Constants {
     const val NUM_THREADS_OPT_NAME = "numjobs"
 
     const val DEFAULT_IO_DEPTH_VALUE = "8"
-    const val DEFAULT_RUNTIME_LIMIT = "60"
+    const val DEFAULT_RUNTIME_LIMIT_VALUE = "60"
     const val DEFAULT_SEQ_BLOCK_SIZE_VALUE = "1024k"
     const val DEFAULT_RAND_BLOCK_SIZE_VALUE = "4k"
-    const val DEFAULT_IO_SIZE_VALUE = "2g"
+    const val DEFAULT_IO_SIZE_VALUE = "256m"
     const val DIRECT_IO_CONSTANT_VALUE = "1"
-    const val DEFAULT_IO_ENGINE = "libaio"
-    const val DEFAULT_NUM_THREADS = "8"
+    const val DEFAULT_IO_ENGINE_VALUE = "libaio"
+    const val DEFAULT_NUM_THREADS_VALUE = "8"
 
     const val IO_TYPE_SEQ_RD_VALUE = "read"
     const val IO_TYPE_SEQ_WR_VALUE = "write"
