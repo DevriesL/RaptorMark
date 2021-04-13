@@ -49,17 +49,18 @@ public:
 
     int fio_list_ioengines(char **list_buf);
 
-    LibFIO(const char *func);
+    LibFIO(const char *func, void *callback);
 
     ~LibFIO();
 
 private:
     void *libHandler;
+    void *callbackPtr;
 
     union {
         void *funcPtr = nullptr;
 
-        int (*fio)(int argc, char *argv[], char *envp[]);
+        int (*fio)(int argc, char *argv[], char *envp[], void *callback_ptr);
 
         int (*read_to_pipe_async)(int argc, char *argv[]);
 

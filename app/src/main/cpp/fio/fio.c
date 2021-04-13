@@ -23,9 +23,11 @@
  */
 #include "fio.h"
 
-int fio(int argc, char *argv[], char *envp[])
+int fio(int argc, char *argv[], char *envp[], void *callback_ptr)
 {
 	int ret = 1;
+
+	callback_func = callback_ptr;
 
 	compiletime_assert(TD_NR <= TD_ENG_FLAG_SHIFT, "TD_ENG_FLAG_SHIFT");
 

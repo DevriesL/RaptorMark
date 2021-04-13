@@ -6,6 +6,8 @@
 #include "fio.h"
 #include "oslib/asprintf.h"
 
+int (*callback_func)(const char *) = NULL;
+
 size_t log_info_buf(const char *buf, size_t len)
 {
 	/*
@@ -13,6 +15,10 @@ size_t log_info_buf(const char *buf, size_t len)
 	 */
 	if (!buf)
 		return 0;
+
+	if (callback_func) {
+		return callback_func(buf);
+	}
 
 	if (is_backend) {
 		ssize_t ret = fio_server_text_output(FIO_LOG_INFO, buf, len);

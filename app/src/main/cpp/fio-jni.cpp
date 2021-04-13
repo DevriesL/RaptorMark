@@ -10,26 +10,36 @@
 extern "C" {
 #endif
 
-JNIEXPORT void JNICALL native_PipeStdLogcat(JNIEnv *env, jobject instance) {
-    int pipes[2];
-    char readBuffer[256];
+typedef struct fio_context {
+    JavaVM  *javaVM;
+    jclass   nativeDataSrcClz;
+} FIOContext;
 
-    pipe(pipes);
-    dup2(pipes[1], STDOUT_FILENO);
-    dup2(pipes[1], STDERR_FILENO);
-    FILE *inputFile = fdopen(pipes[0], "r");
+FIOContext globalCtx;
 
-    while (true) {
-        fgets(readBuffer, sizeof(readBuffer), inputFile);
-        __android_log_write(2, "FIO_Native", readBuffer);
+int updateStatusCallback(const char *msg) {
+    JNIEnv *env;
+
+    if (globalCtx.javaVM->GetEnv(reinterpret_cast<void **>(&env), JNI_VERSION_1_6) != JNI_OK) {
+        return JNI_ERR;
     }
+
+    jstring javaMsg = env->NewStringUTF(msg);
+    jmethodID updateStatusMethod = env->GetStaticMethodID(globalCtx.nativeDataSrcClz,
+                                        METHOD_NAME_UPDATE_STATUS, "(Ljava/lang/String;)I");
+
+    int ret = env->CallStaticIntMethod(globalCtx.nativeDataSrcClz, updateStatusMethod, javaMsg);
+
+    env->DeleteLocalRef(javaMsg);
+
+    return ret;
 }
 
 JNIEXPORT jint JNICALL native_FIOTest(JNIEnv *env, jobject instance, jstring jsonCommand) {
     const char *jsonStr = env->GetStringUTFChars(jsonCommand, NULL);
     int ret, argc;
     char **argv;
-    LibFIO libFio("fio");
+    LibFIO libFio("fio", (void *)updateStatusCallback);
 
     json2Options(jsonStr, &argc, &argv);
     ret = libFio.fio(argc, argv);
@@ -42,7 +52,7 @@ JNIEXPORT jint JNICALL native_LatencyTest(JNIEnv *env, jobject instance, jstring
     const char *jsonStr = env->GetStringUTFChars(jsonCommand, NULL);
     int ret, argc;
     char **argv;
-    LibFIO libFio("read_to_pipe_async");
+    LibFIO libFio("read_to_pipe_async", (void *)updateStatusCallback);
 
     json2Options(jsonStr, &argc, &argv);
     ret = libFio.read_to_pipe_async(argc, argv);
@@ -54,7 +64,7 @@ JNIEXPORT jint JNICALL native_LatencyTest(JNIEnv *env, jobject instance, jstring
 JNIEXPORT jstring JNICALL native_ListEngines(JNIEnv *env, jobject instance) {
     char *engineList[MAX_ENGINE_NUM];
     int index, engineNum;
-    LibFIO libFio("fio_list_ioengines");
+    LibFIO libFio("fio_list_ioengines", (void *)updateStatusCallback);
 
     engineNum = libFio.fio_list_ioengines(engineList);
 
@@ -84,7 +94,6 @@ JNIEXPORT jstring JNICALL native_ListEngines(JNIEnv *env, jobject instance) {
 #endif
 
 static const JNINativeMethod FIOMethods[] = {
-        {"native_PipeStdLogcat", "()V",                   (void *) native_PipeStdLogcat},
         {"native_FIOTest",       "(Ljava/lang/String;)I", (void *) native_FIOTest},
         {"native_LatencyTest",   "(Ljava/lang/String;)I", (void *) native_LatencyTest},
         {"native_ListEngines",   "()Ljava/lang/String;",  (void *) native_ListEngines}
@@ -92,12 +101,18 @@ static const JNINativeMethod FIOMethods[] = {
 
 JNIEXPORT jint JNI_OnLoad(JavaVM *vm, void *reserved) {
     JNIEnv *env;
+
+    memset(&globalCtx, 0, sizeof(globalCtx));
+
     if (vm->GetEnv(reinterpret_cast<void **>(&env), JNI_VERSION_1_6) != JNI_OK) {
         return JNI_ERR;
     }
 
-    jclass c = env->FindClass(CLASS_NAME_RAPTOR_MARK);
+    jclass c = env->FindClass(CLASS_NAME_NATIVE_DATA_SRC);
     if (c == nullptr) return JNI_ERR;
+
+    globalCtx.javaVM = vm;
+    globalCtx.nativeDataSrcClz = (jclass)env->NewGlobalRef(c);
 
     jint rc = env->RegisterNatives(c, FIOMethods, sizeof(FIOMethods) / sizeof(JNINativeMethod));
     if (rc != JNI_OK) return rc;
@@ -111,8 +126,10 @@ JNIEXPORT void JNI_OnUnload(JavaVM *vm, void *reserved) {
         return;
     }
 
-    jclass c = env->FindClass(CLASS_NAME_RAPTOR_MARK);
+    jclass c = env->FindClass(CLASS_NAME_NATIVE_DATA_SRC);
     if (c == nullptr) return;
+
+    env->DeleteGlobalRef(globalCtx.nativeDataSrcClz);
 
     env->UnregisterNatives(c);
 }

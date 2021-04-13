@@ -558,6 +558,8 @@ extern char *trigger_remote_cmd;
 extern long long trigger_timeout;
 extern char *aux_path;
 
+extern int (*callback_func)(const char *);
+
 extern struct thread_segment segments[REAL_MAX_SEG];
 
 static inline struct thread_data *tnumber_to_td(unsigned int tnumber)

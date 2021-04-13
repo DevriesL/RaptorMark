@@ -100,7 +100,7 @@ void freeOptions(int *argc, char ***argv) {
 }
 
 int LibFIO::fio(int argc, char *argv[]) {
-    return libFunc.fio(argc, argv, nullptr);
+    return libFunc.fio(argc, argv, nullptr, callbackPtr);
 }
 
 int LibFIO::read_to_pipe_async(int argc, char *argv[]) {
@@ -111,7 +111,8 @@ int LibFIO::fio_list_ioengines(char **list_buf) {
     return libFunc.fio_list_ioengines(list_buf);
 }
 
-LibFIO::LibFIO(const char *func) {
+LibFIO::LibFIO(const char *func, void *callback) {
+    callbackPtr = callback;
     libHandler = dlopen("libfio.so", RTLD_NOW);
     libFunc.funcPtr = dlsym(libHandler, func);
 }
