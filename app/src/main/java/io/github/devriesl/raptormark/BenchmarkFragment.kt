@@ -38,6 +38,9 @@ class BenchmarkFragment : Fragment() {
             TestItem(SEQ_WR_TEST_ID, SeqWrTestRepo(stringProvider, settingDataSource)),
             TestItem(RAND_RD_TEST_ID, RandRdTestRepo(stringProvider, settingDataSource)),
             TestItem(RAND_WR_TEST_ID, RandWrTestRepo(stringProvider, settingDataSource)),
+        )
+
+        val advTestList: List<TestItem> = listOf(
             TestItem(LATENCY_TEST_ID, LatencyTestRepo(stringProvider, settingDataSource)),
         )
 
