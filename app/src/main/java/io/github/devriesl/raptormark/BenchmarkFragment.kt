@@ -26,6 +26,8 @@ class BenchmarkFragment : Fragment() {
     @Inject
     lateinit var stringProvider: StringProvider
 
+    private var shouldStop = false;
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -48,17 +50,28 @@ class BenchmarkFragment : Fragment() {
         adapter.submitList(testList)
 
         binding.startButton.setOnClickListener {
+            binding.startButton.visibility = View.GONE
+            binding.stopButton.visibility = View.VISIBLE
             NativeDataSource.postNativeThread {
                 testList.forEach {
                     try {
+                        if (shouldStop) return@forEach
+
                         it.testRepo.runTest()
                     } catch (ex: Exception) {
                         Log.e(it.id, "Error running test", ex)
                         return@forEach
                     }
                 }
+                activity?.runOnUiThread {
+                    binding.startButton.visibility = View.VISIBLE
+                    binding.stopButton.visibility = View.GONE
+                }
+                shouldStop = false
             }
         }
+
+        binding.stopButton.setOnClickListener { shouldStop = true }
 
         return binding.root
     }

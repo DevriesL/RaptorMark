@@ -7,7 +7,9 @@
 
     <!-- Benchmark resources -->
     <string name="start_button_label">START</string>
+    <string name="stop_button_label">STOP</string>
     <string name="start_button_desc">Start benchmark test</string>
+    <string name="stop_button_desc">Stop benchmark test</string>
     <string name="seq_rd_test_title">Sequential Read Throughput</string>
     <string name="seq_wr_test_title">Sequential Write Throughput</string>
     <string name="rand_rd_test_title">Random Read Throughput</string>
