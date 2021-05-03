@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+
         <variable
             name="clickListener"
             type="android.view.View.OnClickListener" />
@@ -13,13 +13,18 @@
             type="io.github.devriesl.raptormark.viewmodels.BenchmarkTestViewModel" />
     </data>
 
-    <com.google.android.material.card.MaterialCardView
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:divider="?android:dividerHorizontal"
+        android:orientation="vertical"
+        android:showDividers="end">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginHorizontal="8dp"
+            android:layout_marginVertical="4dp"
             android:orientation="horizontal">
 
             <TextView
@@ -31,18 +36,35 @@
                 tools:text="Benchmark Test" />
 
             <TextView
-                android:id="@+id/read_result"
+                android:id="@+id/result"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="2"
-                tools:text="Read Performance" />
+                tools:text="Benchmark Result" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="8dp"
+            android:layout_marginBottom="4dp"
+            android:orientation="horizontal"
+            android:visibility="@{viewModel.randLatVis}">
 
             <TextView
-                android:id="@+id/write_result"
+                android:id="@+id/rand_lat_name"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/rand_4n_lat_title"
+                tools:text="Random Test Latency" />
+
+            <TextView
+                android:id="@+id/rand_lat_result"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="2"
-                tools:text="Write Performance" />
+                tools:text="Latency Result" />
         </LinearLayout>
-    </com.google.android.material.card.MaterialCardView>
+    </LinearLayout>
 </layout>

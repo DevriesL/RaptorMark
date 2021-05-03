@@ -12,6 +12,7 @@
     <string name="seq_wr_test_title">Sequential Write Throughput</string>
     <string name="rand_rd_test_title">Random Read Throughput</string>
     <string name="rand_wr_test_title">Random Write Throughput</string>
+    <string name="rand_4n_lat_title">99.99% Latency</string>
     <string name="latency_test_title">Async Read/Write Latency</string>
 
     <!-- Setting resources -->
