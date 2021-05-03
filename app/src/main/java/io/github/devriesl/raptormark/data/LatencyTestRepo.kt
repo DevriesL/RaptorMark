@@ -16,4 +16,7 @@ class LatencyTestRepo(
 
     override fun runTest() {
     }
+
+    override fun onTestResult(vararg results: Int) {
+    }
 }

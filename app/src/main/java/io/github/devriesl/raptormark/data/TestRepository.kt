@@ -1,5 +1,6 @@
 package io.github.devriesl.raptormark.data
 
+import androidx.lifecycle.MutableLiveData
 import io.github.devriesl.raptormark.Constants.BLOCK_SIZE_OPT_NAME
 import io.github.devriesl.raptormark.Constants.DEFAULT_IO_DEPTH_VALUE
 import io.github.devriesl.raptormark.Constants.DEFAULT_IO_SIZE_VALUE
@@ -22,7 +23,7 @@ import io.github.devriesl.raptormark.Constants.NUM_THREADS_OPT_NAME
 import io.github.devriesl.raptormark.Constants.OUTPUT_FORMAT_OPT_NAME
 import io.github.devriesl.raptormark.Constants.RUNTIME_OPT_NAME
 import io.github.devriesl.raptormark.Constants.TEST_FILE_NAME_SUFFIX
-import io.github.devriesl.raptormark.data.NativeDataSource.native_FIOTest
+import io.github.devriesl.raptormark.R
 import io.github.devriesl.raptormark.di.StringProvider
 import org.json.JSONArray
 import org.json.JSONObject
@@ -34,23 +35,45 @@ abstract class TestRepository(
 ) {
     abstract val testFileName: String
     open var testTypeValue: String = String()
+    open var testResult: Int = 0
+    open var testResultMutableLiveData: MutableLiveData<String> = MutableLiveData<String>()
     open var isRandTest: Boolean = false
+    open var randLatResult: Int = 0
+    open var randLatResultMutableLiveData: MutableLiveData<String> = MutableLiveData<String>()
 
-    abstract fun getTestName(): String
-
-    open fun runTest() {
-        val options = testOptionsBuilder()
-        val ret = native_FIOTest(options)
-        if (ret != 0) {
-            throw IOException("$ret")
+    private val nativeListener = object : NativeListener {
+        override fun onTestResult(vararg results: Int) {
+            this@TestRepository.onTestResult(results = results)
         }
     }
 
-    fun getTestFilePath(): String {
+    abstract fun getTestName(): String
+
+    abstract fun onTestResult(vararg results: Int)
+
+    open fun runTest() {
+        NativeDataSource.registerListener(nativeListener)
+        val options = testOptionsBuilder()
+        val ret = NativeDataSource.native_FIOTest(options)
+        NativeDataSource.unregisterListener(nativeListener)
+
+        if (ret != 0) {
+            throw IOException("$ret")
+        } else {
+            updateTestResult()
+        }
+    }
+
+    open fun updateTestResult() {
+        testResultMutableLiveData.postValue(stringProvider.getString(R.string.sum_of_bw_test_result_format, testResult))
+        randLatResultMutableLiveData.postValue(stringProvider.getString(R.string.avg_of_4n_lat_result_format, randLatResult))
+    }
+
+    private fun getTestFilePath(): String {
         return settingDataSource.getAppStoragePath() + "/" + testFileName + TEST_FILE_NAME_SUFFIX
     }
 
-    fun testOptionsBuilder(): String {
+    private fun testOptionsBuilder(): String {
         val root = JSONObject()
         val options = JSONArray()
 
@@ -85,5 +108,10 @@ abstract class TestRepository(
         jsonOption.put("name", name)
         jsonOption.put("value", value)
         return jsonOption
+    }
+
+    companion object {
+        const val SUM_OF_BW_RESULT_INDEX = 0
+        const val AVG_OF_4N_LAT_RESULT_INDEX = 1
     }
 }

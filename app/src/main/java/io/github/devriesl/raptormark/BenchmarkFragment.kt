@@ -34,7 +34,7 @@ class BenchmarkFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         val binding = FragmentBenchmarkBinding.inflate(inflater, container, false)
-        val adapter = BenchmarkTestAdapter()
+        val adapter = BenchmarkTestAdapter(viewLifecycleOwner)
         val testList: List<TestItem> = listOf(
             TestItem(SEQ_RD_TEST_ID, SeqRdTestRepo(stringProvider, settingDataSource)),
             TestItem(SEQ_WR_TEST_ID, SeqWrTestRepo(stringProvider, settingDataSource)),

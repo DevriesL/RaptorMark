@@ -16,4 +16,9 @@ class RandRdTestRepo(
     override fun getTestName(): String {
         return stringProvider.getString(R.string.rand_rd_test_title)
     }
+
+    override fun onTestResult(vararg results: Int) {
+        testResult = results[SUM_OF_BW_RESULT_INDEX]
+        randLatResult = results[AVG_OF_4N_LAT_RESULT_INDEX]
+    }
 }

@@ -12,6 +12,8 @@ object NativeDataSource {
         HandlerThread(javaClass.simpleName, THREAD_PRIORITY_FOREGROUND)
     private val nativeHandler: Handler
 
+    private val listeners: HashSet<NativeListener> = hashSetOf()
+
     external fun native_FIOTest(jsonCommand: String): Int
     external fun native_LatencyTest(jsonCommand: String): Int
     external fun native_ListEngines(): String
@@ -26,6 +28,14 @@ object NativeDataSource {
 
     fun postNativeThread(block: () -> Unit) {
         nativeHandler.post { block() }
+    }
+
+    fun registerListener(listener: NativeListener) {
+        listeners.add(listener)
+    }
+
+    fun unregisterListener(listener: NativeListener) {
+        listeners.remove(listener)
     }
 
     @Keep
@@ -68,10 +78,12 @@ object NativeDataSource {
             sumOf4NClatNs += percentileObject.getLong("99.990000")
         }
 
-        val sumOfBw = sumOfBwBytes / 1000 / 1000
-        val avgOf4NClat = sumOf4NClatNs / jobsArray.length() / 1000
+        val sumOfBw = (sumOfBwBytes / 1000 / 1000).toInt()
+        val avgOf4NClat = (sumOf4NClatNs / jobsArray.length() / 1000).toInt()
 
         Log.i(TAG, jobsId + ": bw=" + sumOfBw + "MB/s, 99.99% Latency=" + avgOf4NClat + "µs")
+
+        listeners.forEach { it.onTestResult(sumOfBw, avgOf4NClat) }
     }
 
     private const val TAG = "Native_DataSrc"

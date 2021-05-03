@@ -15,4 +15,8 @@ class SeqRdTestRepo(
     override fun getTestName(): String {
         return stringProvider.getString(R.string.seq_rd_test_title)
     }
+
+    override fun onTestResult(vararg results: Int) {
+        testResult = results[SUM_OF_BW_RESULT_INDEX]
+    }
 }

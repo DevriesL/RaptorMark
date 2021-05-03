@@ -17,6 +17,10 @@
     <string name="rand_4n_lat_title">99.99% Latency</string>
     <string name="latency_test_title">Async Read/Write Latency</string>
 
+    <!-- Benchmark result formats -->
+    <string name="sum_of_bw_test_result_format">%1$d MB/s</string>
+    <string name="avg_of_4n_lat_result_format">%1$d μs</string>
+
     <!-- Setting resources -->
     <string name="engine_config_title">IO Engine</string>
     <string name="engine_config_desc">The engine to issue I/O operations.</string>

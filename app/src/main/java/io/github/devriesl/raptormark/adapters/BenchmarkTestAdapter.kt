@@ -2,6 +2,7 @@ package io.github.devriesl.raptormark.adapters
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.lifecycle.LifecycleOwner
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -9,7 +10,7 @@ import io.github.devriesl.raptormark.data.TestItem
 import io.github.devriesl.raptormark.databinding.ListItemBenchmarkTestBinding
 import io.github.devriesl.raptormark.viewmodels.BenchmarkTestViewModel
 
-class BenchmarkTestAdapter :
+class BenchmarkTestAdapter(private val viewLifecycleOwner: LifecycleOwner) :
     ListAdapter<TestItem, BenchmarkTestAdapter.ViewHolder>(TestDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -23,14 +24,15 @@ class BenchmarkTestAdapter :
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.bind(getItem(position))
+        holder.bind(getItem(position), viewLifecycleOwner)
     }
 
     class ViewHolder(
         private val binding: ListItemBenchmarkTestBinding
     ) : RecyclerView.ViewHolder(binding.root) {
-        fun bind(item: TestItem) {
+        fun bind(item: TestItem, viewLifecycleOwner: LifecycleOwner) {
             binding.apply {
+                lifecycleOwner = viewLifecycleOwner
                 viewModel = BenchmarkTestViewModel(item.testRepo)
                 executePendingBindings()
             }
