@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import dagger.hilt.android.AndroidEntryPoint
 import io.github.devriesl.raptormark.adapters.SettingInfoAdapter
+import io.github.devriesl.raptormark.data.AboutInfoRepo
 import io.github.devriesl.raptormark.data.InfoItem
 import io.github.devriesl.raptormark.data.EngineInfoRepo
 import io.github.devriesl.raptormark.data.SettingDataSource
@@ -31,6 +32,7 @@ class SettingFragment : Fragment() {
         val adapter = SettingInfoAdapter(childFragmentManager, viewLifecycleOwner)
         val infoList: List<InfoItem> = listOf(
             InfoItem(ENGINE_CONFIG_SETTING_ID, EngineInfoRepo(stringProvider, settingDataSource)),
+            InfoItem(ABOUT_SETTING_ID, AboutInfoRepo(stringProvider, settingDataSource)),
         )
 
         binding.settingList.adapter = adapter
@@ -41,5 +43,6 @@ class SettingFragment : Fragment() {
 
     companion object {
         const val ENGINE_CONFIG_SETTING_ID = "engine_config_setting"
+        const val ABOUT_SETTING_ID = "engine_config_setting"
     }
 }

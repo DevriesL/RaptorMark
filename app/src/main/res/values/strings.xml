@@ -24,5 +24,9 @@
     <!-- Setting resources -->
     <string name="engine_config_title">IO Engine</string>
     <string name="engine_config_desc">The engine to issue I/O operations.</string>
+    <string name="about_title">About</string>
+    <string name="about_desc">About this application.</string>
+    <string name="about_version_text">Version:</string>
+    <string name="about_content">Developed by Devries\ntherkduan@gmail.com\nWeibo:https://weibo.com/2213561393</string>
 
 </resources>
