@@ -2,15 +2,15 @@ package io.github.devriesl.raptormark.data
 
 import androidx.lifecycle.MutableLiveData
 import io.github.devriesl.raptormark.Constants.BLOCK_SIZE_OPT_NAME
+import io.github.devriesl.raptormark.Constants.CONSTANT_DIRECT_IO_VALUE
+import io.github.devriesl.raptormark.Constants.CONSTANT_ETA_PRINT_VALUE
+import io.github.devriesl.raptormark.Constants.CONSTANT_OUTPUT_FORMAT_VALUE
 import io.github.devriesl.raptormark.Constants.DEFAULT_IO_DEPTH_VALUE
 import io.github.devriesl.raptormark.Constants.DEFAULT_IO_SIZE_VALUE
 import io.github.devriesl.raptormark.Constants.DEFAULT_NUM_THREADS_VALUE
 import io.github.devriesl.raptormark.Constants.DEFAULT_RAND_BLOCK_SIZE_VALUE
 import io.github.devriesl.raptormark.Constants.DEFAULT_RUNTIME_LIMIT_VALUE
 import io.github.devriesl.raptormark.Constants.DEFAULT_SEQ_BLOCK_SIZE_VALUE
-import io.github.devriesl.raptormark.Constants.CONSTANT_DIRECT_IO_VALUE
-import io.github.devriesl.raptormark.Constants.CONSTANT_ETA_PRINT_VALUE
-import io.github.devriesl.raptormark.Constants.CONSTANT_OUTPUT_FORMAT_VALUE
 import io.github.devriesl.raptormark.Constants.DIRECT_IO_OPT_NAME
 import io.github.devriesl.raptormark.Constants.ETA_PRINT_OPT_NAME
 import io.github.devriesl.raptormark.Constants.FILE_PATH_OPT_NAME
@@ -27,6 +27,7 @@ import io.github.devriesl.raptormark.R
 import io.github.devriesl.raptormark.di.StringProvider
 import org.json.JSONArray
 import org.json.JSONObject
+import java.io.File
 import java.io.IOException
 
 abstract class TestRepository(
@@ -55,6 +56,8 @@ abstract class TestRepository(
         NativeDataSource.registerListener(nativeListener)
         val options = testOptionsBuilder()
         val ret = NativeDataSource.native_FIOTest(options)
+        val testFile = File(getTestFilePath())
+        if (testFile.exists()) testFile.delete()
         NativeDataSource.unregisterListener(nativeListener)
 
         if (ret != 0) {
@@ -65,8 +68,18 @@ abstract class TestRepository(
     }
 
     open fun updateTestResult() {
-        testResultMutableLiveData.postValue(stringProvider.getString(R.string.sum_of_bw_test_result_format, testResult))
-        randLatResultMutableLiveData.postValue(stringProvider.getString(R.string.avg_of_4n_lat_result_format, randLatResult))
+        testResultMutableLiveData.postValue(
+            stringProvider.getString(
+                R.string.sum_of_bw_test_result_format,
+                testResult
+            )
+        )
+        randLatResultMutableLiveData.postValue(
+            stringProvider.getString(
+                R.string.avg_of_4n_lat_result_format,
+                randLatResult
+            )
+        )
     }
 
     private fun getTestFilePath(): String {
