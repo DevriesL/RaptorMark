@@ -16,8 +16,8 @@ android {
         applicationId "io.github.devriesl.raptormark"
         minSdkVersion 28
         targetSdkVersion 30
-        versionCode 2
-        versionName "Pre-Alpha 0.1"
+        versionCode 3
+        versionName "Pre-Alpha 0.1.1"
         applicationVariants.all { variant ->
             variant.resValue "string", "app_version", variant.versionName
         }
