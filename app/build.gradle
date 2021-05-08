@@ -5,12 +5,24 @@ plugins {
     id 'dagger.hilt.android.plugin'
 }
 
+def keystorePropertiesFile = rootProject.file("keystore.properties")
+def keystoreProperties = new Properties()
+keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+
 android {
     compileSdkVersion 30
     buildToolsVersion "30.0.3"
     buildFeatures {
         dataBinding = true
         viewBinding = true
+    }
+    signingConfigs {
+        release {
+            keyAlias keystoreProperties['keyAlias']
+            keyPassword keystoreProperties['keyPassword']
+            storeFile file(keystoreProperties['storeFile'])
+            storePassword keystoreProperties['storePassword']
+        }
     }
     defaultConfig {
         applicationId "io.github.devriesl.raptormark"
@@ -22,12 +34,6 @@ android {
             variant.resValue "string", "app_version", variant.versionName
         }
 
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-        externalNativeBuild {
-            cmake {
-                cppFlags ""
-            }
-        }
         ndk {
             abiFilters "arm64-v8a"
         }
@@ -64,10 +70,5 @@ dependencies {
     implementation "androidx.constraintlayout:constraintlayout:2.0.4"
     implementation "com.google.dagger:hilt-android:$rootProject.hilt_version"
     implementation "androidx.room:room-runtime:2.3.0"
-    implementation "androidx.room:room-ktx:2.2.6"
-
-    // Testing dependencies
-    testImplementation "junit:junit:4.+"
-    androidTestImplementation "androidx.test.ext:junit:1.1.2"
-    androidTestImplementation "androidx.test.espresso:espresso-core:3.3.0"
+    implementation "androidx.room:room-ktx:2.3.0"
 }

@@ -7,4 +7,6 @@
 /captures
 .externalNativeBuild
 .cxx
+/app/release
 local.properties
+keystore.properties
