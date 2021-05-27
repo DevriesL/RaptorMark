@@ -52,6 +52,7 @@ enum opt_category_group {
 	__FIO_OPT_G_E4DEFRAG,
 	__FIO_OPT_G_NETIO,
 	__FIO_OPT_G_RDMA,
+	__FIO_OPT_G_LIBRPMA,
 	__FIO_OPT_G_LIBAIO,
 	__FIO_OPT_G_ACT,
 	__FIO_OPT_G_LATPROF,
@@ -68,6 +69,8 @@ enum opt_category_group {
 	__FIO_OPT_G_FILESTAT,
 	__FIO_OPT_G_NR,
 	__FIO_OPT_G_LIBCUFILE,
+	__FIO_OPT_G_DFS,
+	__FIO_OPT_G_NFS,
 
 	FIO_OPT_G_RATE		= (1ULL << __FIO_OPT_G_RATE),
 	FIO_OPT_G_ZONE		= (1ULL << __FIO_OPT_G_ZONE),
@@ -94,6 +97,7 @@ enum opt_category_group {
 	FIO_OPT_G_E4DEFRAG	= (1ULL << __FIO_OPT_G_E4DEFRAG),
 	FIO_OPT_G_NETIO		= (1ULL << __FIO_OPT_G_NETIO),
 	FIO_OPT_G_RDMA		= (1ULL << __FIO_OPT_G_RDMA),
+	FIO_OPT_G_LIBRPMA	= (1ULL << __FIO_OPT_G_LIBRPMA),
 	FIO_OPT_G_LIBAIO	= (1ULL << __FIO_OPT_G_LIBAIO),
 	FIO_OPT_G_ACT		= (1ULL << __FIO_OPT_G_ACT),
 	FIO_OPT_G_LATPROF	= (1ULL << __FIO_OPT_G_LATPROF),
@@ -107,9 +111,11 @@ enum opt_category_group {
 	FIO_OPT_G_INVALID	= (1ULL << __FIO_OPT_G_NR),
 	FIO_OPT_G_ISCSI         = (1ULL << __FIO_OPT_G_ISCSI),
 	FIO_OPT_G_NBD		= (1ULL << __FIO_OPT_G_NBD),
+	FIO_OPT_G_NFS		= (1ULL << __FIO_OPT_G_NFS),
 	FIO_OPT_G_IOURING	= (1ULL << __FIO_OPT_G_IOURING),
 	FIO_OPT_G_FILESTAT	= (1ULL << __FIO_OPT_G_FILESTAT),
 	FIO_OPT_G_LIBCUFILE	= (1ULL << __FIO_OPT_G_LIBCUFILE),
+	FIO_OPT_G_DFS		= (1ULL << __FIO_OPT_G_DFS),
 };
 
 extern const struct opt_group *opt_group_from_mask(uint64_t *mask);

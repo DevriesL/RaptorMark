@@ -234,7 +234,6 @@ void free_ioengine(struct thread_data *td)
 	if (td->io_ops->dlhandle) {
 		dprint(FD_IO, "dlclose ioengine %s\n", td->io_ops->name);
 		dlclose(td->io_ops->dlhandle);
-		td->io_ops->dlhandle = NULL;
 	}
 
 	td->io_ops = NULL;
@@ -414,7 +413,6 @@ enum fio_q_status td_io_queue(struct thread_data *td, struct io_u *io_u)
 	if (!td->io_ops->commit) {
 		io_u_mark_submit(td, 1);
 		io_u_mark_complete(td, 1);
-		zbd_put_io_u(td, io_u);
 	}
 
 	if (ret == FIO_Q_COMPLETED) {

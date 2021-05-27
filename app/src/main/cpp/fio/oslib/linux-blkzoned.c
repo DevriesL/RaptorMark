@@ -24,6 +24,37 @@
 #include <linux/blkzoned.h>
 
 /*
+ * If the uapi headers installed on the system lacks zone capacity support,
+ * use our local versions. If the installed headers are recent enough to
+ * support zone capacity, do not redefine any structs.
+ */
+#ifndef CONFIG_HAVE_REP_CAPACITY
+#define BLK_ZONE_REP_CAPACITY	(1 << 0)
+
+struct blk_zone_v2 {
+	__u64	start;          /* Zone start sector */
+	__u64	len;            /* Zone length in number of sectors */
+	__u64	wp;             /* Zone write pointer position */
+	__u8	type;           /* Zone type */
+	__u8	cond;           /* Zone condition */
+	__u8	non_seq;        /* Non-sequential write resources active */
+	__u8	reset;          /* Reset write pointer recommended */
+	__u8	resv[4];
+	__u64	capacity;       /* Zone capacity in number of sectors */
+	__u8	reserved[24];
+};
+#define blk_zone blk_zone_v2
+
+struct blk_zone_report_v2 {
+	__u64	sector;
+	__u32	nr_zones;
+	__u32	flags;
+struct blk_zone zones[0];
+};
+#define blk_zone_report blk_zone_report_v2
+#endif /* CONFIG_HAVE_REP_CAPACITY */
+
+/*
  * Read up to 255 characters from the first line of a file. Strip the trailing
  * newline.
  */
@@ -43,12 +74,16 @@ static char *read_file(const char *path)
 	return strdup(line);
 }
 
-int blkzoned_get_zoned_model(struct thread_data *td, struct fio_file *f,
-			     enum zbd_zoned_model *model)
+/*
+ * Get the value of a sysfs attribute for a block device.
+ *
+ * Returns NULL on failure.
+ * Returns a pointer to a string on success.
+ * The caller is responsible for freeing the memory.
+ */
+static char *blkzoned_get_sysfs_attr(const char *file_name, const char *attr)
 {
-	const char *file_name = f->file_name;
-	char *zoned_attr_path = NULL;
-	char *model_str = NULL;
+	char *attr_path = NULL;
 	struct stat statbuf;
 	char *sys_devno_path = NULL;
 	char *part_attr_path = NULL;
@@ -56,13 +91,7 @@ int blkzoned_get_zoned_model(struct thread_data *td, struct fio_file *f,
 	char sys_path[PATH_MAX];
 	ssize_t sz;
 	char *delim = NULL;
-
-	if (f->filetype != FIO_TYPE_BLOCK) {
-		*model = ZBD_IGNORE;
-		return 0;
-	}
-
-	*model = ZBD_NONE;
+	char *attr_str = NULL;
 
 	if (stat(file_name, &statbuf) < 0)
 		goto out;
@@ -92,34 +121,73 @@ int blkzoned_get_zoned_model(struct thread_data *td, struct fio_file *f,
 		*delim = '\0';
 	}
 
-	if (asprintf(&zoned_attr_path,
-		     "/sys/dev/block/%s/queue/zoned", sys_path) < 0)
+	if (asprintf(&attr_path,
+		     "/sys/dev/block/%s/%s", sys_path, attr) < 0)
 		goto out;
 
-	model_str = read_file(zoned_attr_path);
+	attr_str = read_file(attr_path);
+out:
+	free(attr_path);
+	free(part_str);
+	free(part_attr_path);
+	free(sys_devno_path);
+
+	return attr_str;
+}
+
+int blkzoned_get_zoned_model(struct thread_data *td, struct fio_file *f,
+			     enum zbd_zoned_model *model)
+{
+	char *model_str = NULL;
+
+	if (f->filetype != FIO_TYPE_BLOCK) {
+		*model = ZBD_IGNORE;
+		return 0;
+	}
+
+	*model = ZBD_NONE;
+
+	model_str = blkzoned_get_sysfs_attr(f->file_name, "queue/zoned");
 	if (!model_str)
-		goto out;
-	dprint(FD_ZBD, "%s: zbd model string: %s\n", file_name, model_str);
+		return 0;
+
+	dprint(FD_ZBD, "%s: zbd model string: %s\n", f->file_name, model_str);
 	if (strcmp(model_str, "host-aware") == 0)
 		*model = ZBD_HOST_AWARE;
 	else if (strcmp(model_str, "host-managed") == 0)
 		*model = ZBD_HOST_MANAGED;
-out:
+
 	free(model_str);
-	free(zoned_attr_path);
-	free(part_str);
-	free(part_attr_path);
-	free(sys_devno_path);
+
+	return 0;
+}
+
+int blkzoned_get_max_open_zones(struct thread_data *td, struct fio_file *f,
+				unsigned int *max_open_zones)
+{
+	char *max_open_str;
+
+	if (f->filetype != FIO_TYPE_BLOCK)
+		return -EIO;
+
+	max_open_str = blkzoned_get_sysfs_attr(f->file_name, "queue/max_open_zones");
+	if (!max_open_str)
+		return 0;
+
+	dprint(FD_ZBD, "%s: max open zones supported by device: %s\n",
+	       f->file_name, max_open_str);
+	*max_open_zones = atoll(max_open_str);
+
+	free(max_open_str);
+
 	return 0;
 }
 
 static uint64_t zone_capacity(struct blk_zone_report *hdr,
 			      struct blk_zone *blkz)
 {
-#ifdef CONFIG_HAVE_REP_CAPACITY
 	if (hdr->flags & BLK_ZONE_REP_CAPACITY)
 		return blkz->capacity << 9;
-#endif
 	return blkz->len << 9;
 }
 

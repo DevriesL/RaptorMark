@@ -1945,6 +1945,16 @@ struct fio_option fio_options[FIO_MAX_OPTS] = {
 			    .help = "RDMA IO engine",
 			  },
 #endif
+#ifdef CONFIG_LIBRPMA_APM
+			  { .ival = "librpma_apm",
+			    .help = "librpma IO engine in APM mode",
+			  },
+#endif
+#ifdef CONFIG_LIBRPMA_GPSPM
+			  { .ival = "librpma_gpspm",
+			    .help = "librpma IO engine in GPSPM mode",
+			  },
+#endif
 #ifdef CONFIG_LINUX_EXT4_MOVE_EXTENT
 			  { .ival = "e4defrag",
 			    .help = "ext4 defrag engine",
@@ -2011,6 +2021,16 @@ struct fio_option fio_options[FIO_MAX_OPTS] = {
 			  { .ival = "nbd",
 			    .help = "Network Block Device (NBD) IO engine"
 			  },
+#ifdef CONFIG_DFS
+			  { .ival = "dfs",
+			    .help = "DAOS File System (dfs) IO engine",
+			  },
+#endif
+#ifdef CONFIG_NFS
+			  { .ival = "nfs",
+			    .help = "NFS IO engine",
+			  },
+#endif
 		},
 	},
 	{
@@ -3756,8 +3776,10 @@ struct fio_option fio_options[FIO_MAX_OPTS] = {
 	{
 		.name	= "max_latency",
 		.lname	= "Max Latency (usec)",
-		.type	= FIO_OPT_STR_VAL_TIME,
-		.off1	= offsetof(struct thread_options, max_latency),
+		.type	= FIO_OPT_ULL,
+		.off1	= offsetof(struct thread_options, max_latency[DDIR_READ]),
+		.off2	= offsetof(struct thread_options, max_latency[DDIR_WRITE]),
+		.off3	= offsetof(struct thread_options, max_latency[DDIR_TRIM]),
 		.help	= "Maximum tolerated IO latency (usec)",
 		.is_time = 1,
 		.category = FIO_OPT_C_IO,
@@ -4616,12 +4638,39 @@ struct fio_option fio_options[FIO_MAX_OPTS] = {
 	{
 		.name	= "unified_rw_reporting",
 		.lname	= "Unified RW Reporting",
-		.type	= FIO_OPT_BOOL,
+		.type	= FIO_OPT_STR,
 		.off1	= offsetof(struct thread_options, unified_rw_rep),
 		.help	= "Unify reporting across data direction",
-		.def	= "0",
+		.def	= "none",
 		.category = FIO_OPT_C_GENERAL,
 		.group	= FIO_OPT_G_INVALID,
+		.posval	= {
+			  { .ival = "none",
+			    .oval = UNIFIED_SPLIT,
+			    .help = "Normal statistics reporting",
+			  },
+			  { .ival = "mixed",
+			    .oval = UNIFIED_MIXED,
+			    .help = "Statistics are summed per data direction and reported together",
+			  },
+			  { .ival = "both",
+			    .oval = UNIFIED_BOTH,
+			    .help = "Statistics are reported normally, followed by the mixed statistics"
+			  },
+			  /* Compatibility with former boolean values */
+			  { .ival = "0",
+			    .oval = UNIFIED_SPLIT,
+			    .help = "Alias for 'none'",
+			  },
+			  { .ival = "1",
+			    .oval = UNIFIED_MIXED,
+			    .help = "Alias for 'mixed'",
+			  },
+			  { .ival = "2",
+			    .oval = UNIFIED_BOTH,
+			    .help = "Alias for 'both'",
+			  },
+		},
 	},
 	{
 		.name	= "continue_on_error",
@@ -5451,6 +5500,19 @@ void fio_options_free(struct thread_data *td)
 		options_free(td->io_ops->options, td->eo);
 		free(td->eo);
 		td->eo = NULL;
+	}
+}
+
+void fio_dump_options_free(struct thread_data *td)
+{
+	while (!flist_empty(&td->opt_list)) {
+		struct print_option *p;
+
+		p = flist_first_entry(&td->opt_list, struct print_option, list);
+		flist_del_init(&p->list);
+		free(p->name);
+		free(p->value);
+		free(p);
 	}
 }
 

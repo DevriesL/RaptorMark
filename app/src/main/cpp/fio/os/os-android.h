@@ -58,6 +58,12 @@
 #define MAP_HUGETLB 0x40000 /* arch specific */
 #endif
 
+#ifdef CONFIG_PTHREAD_GETAFFINITY
+#define FIO_HAVE_GET_THREAD_AFFINITY
+#define fio_get_thread_affinity(mask)	\
+	pthread_getaffinity_np(pthread_self(), sizeof(mask), &(mask))
+#endif
+
 #ifndef CONFIG_NO_SHM
 /*
  * Bionic doesn't support SysV shared memeory, so implement it using ashmem
@@ -65,7 +71,12 @@
 #include <stdio.h>
 #include <linux/ashmem.h>
 #include <linux/shm.h>
+#include <android/api-level.h>
+#if __ANDROID_API__ >= __ANDROID_API_O__
 #include <android/sharedmem.h>
+#else
+#define ASHMEM_DEVICE	"/dev/ashmem"
+#endif
 #define shmid_ds shmid64_ds
 #define SHM_HUGETLB    04000
 
@@ -82,17 +93,42 @@ static inline int shmctl(int __shmid, int __cmd, struct shmid_ds *__buf)
 	return ret;
 }
 
+#if __ANDROID_API__ >= __ANDROID_API_O__
 static inline int shmget(key_t __key, size_t __size, int __shmflg)
 {
-	int fd;
 	char keybuf[11];
 
 	sprintf(keybuf, "%d", __key);
 
-	fd = ASharedMemory_create(keybuf, __size + sizeof(uint64_t));
+	return ASharedMemory_create(keybuf, __size + sizeof(uint64_t));
+}
+#else
+static inline int shmget(key_t __key, size_t __size, int __shmflg)
+{
+	int fd,ret;
+	char keybuf[11];
+
+	fd = open(ASHMEM_DEVICE, O_RDWR);
+	if (fd < 0)
+		return fd;
+
+	sprintf(keybuf,"%d",__key);
+	ret = ioctl(fd, ASHMEM_SET_NAME, keybuf);
+	if (ret < 0)
+		goto error;
+
+	/* Stores size in first 8 bytes, allocate extra space */
+	ret = ioctl(fd, ASHMEM_SET_SIZE, __size + sizeof(uint64_t));
+	if (ret < 0)
+		goto error;
 
 	return fd;
+
+error:
+	close(fd);
+	return ret;
 }
+#endif
 
 static inline void *shmat(int __shmid, const void *__shmaddr, int __shmflg)
 {

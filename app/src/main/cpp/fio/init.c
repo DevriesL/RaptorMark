@@ -450,19 +450,6 @@ static void dump_opt_list(struct thread_data *td)
 	}
 }
 
-static void fio_dump_options_free(struct thread_data *td)
-{
-	while (!flist_empty(&td->opt_list)) {
-		struct print_option *p;
-
-		p = flist_first_entry(&td->opt_list, struct print_option, list);
-		flist_del_init(&p->list);
-		free(p->name);
-		free(p->value);
-		free(p);
-	}
-}
-
 static void copy_opt_list(struct thread_data *dst, struct thread_data *src)
 {
 	struct flist_head *entry;
@@ -645,6 +632,11 @@ static int fixup_options(struct thread_data *td)
 
 	if (o->zone_mode == ZONE_MODE_NONE && o->zone_size) {
 		log_err("fio: --zonemode=none and --zonesize are not compatible.\n");
+		ret |= 1;
+	}
+
+	if (o->zone_mode == ZONE_MODE_ZBD && !o->create_serialize) {
+		log_err("fio: --zonemode=zbd and --create_serialize=0 are not compatible.\n");
 		ret |= 1;
 	}
 
@@ -963,7 +955,9 @@ static int fixup_options(struct thread_data *td)
 	/*
 	 * Fix these up to be nsec internally
 	 */
-	o->max_latency *= 1000ULL;
+	for_each_rw_ddir(ddir)
+		o->max_latency[ddir] *= 1000ULL;
+
 	o->latency_target *= 1000ULL;
 
 	return ret;
