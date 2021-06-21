@@ -26,6 +26,9 @@ class BenchmarkFragment : Fragment() {
     @Inject
     lateinit var stringProvider: StringProvider
 
+    @Inject
+    lateinit var historyDatabase: HistoryDatabase
+
     private var shouldStop = false;
 
     override fun onCreateView(
@@ -36,14 +39,14 @@ class BenchmarkFragment : Fragment() {
         val binding = FragmentBenchmarkBinding.inflate(inflater, container, false)
         val adapter = BenchmarkTestAdapter(viewLifecycleOwner)
         val testList: List<TestItem> = listOf(
-            TestItem(SEQ_RD_TEST_ID, SeqRdTestRepo(stringProvider, settingDataSource)),
-            TestItem(SEQ_WR_TEST_ID, SeqWrTestRepo(stringProvider, settingDataSource)),
-            TestItem(RAND_RD_TEST_ID, RandRdTestRepo(stringProvider, settingDataSource)),
-            TestItem(RAND_WR_TEST_ID, RandWrTestRepo(stringProvider, settingDataSource)),
+            TestItem(SEQ_RD_TEST_ID, SeqRdTestRepo(stringProvider, settingDataSource, historyDatabase)),
+            TestItem(SEQ_WR_TEST_ID, SeqWrTestRepo(stringProvider, settingDataSource, historyDatabase)),
+            TestItem(RAND_RD_TEST_ID, RandRdTestRepo(stringProvider, settingDataSource, historyDatabase)),
+            TestItem(RAND_WR_TEST_ID, RandWrTestRepo(stringProvider, settingDataSource, historyDatabase)),
         )
 
         val advTestList: List<TestItem> = listOf(
-            TestItem(LATENCY_TEST_ID, LatencyTestRepo(stringProvider, settingDataSource)),
+            TestItem(LATENCY_TEST_ID, LatencyTestRepo(stringProvider, settingDataSource, historyDatabase)),
         )
 
         binding.benchmarkList.adapter = adapter

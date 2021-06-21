@@ -30,9 +30,10 @@ import org.json.JSONObject
 import java.io.File
 import java.io.IOException
 
-abstract class TestRepository(
+abstract class TestRepository constructor(
     val stringProvider: StringProvider,
-    val settingDataSource: SettingDataSource
+    val settingDataSource: SettingDataSource,
+    val historyDatabase: HistoryDatabase
 ) {
     abstract val testFileName: String
     open var testTypeValue: String = String()

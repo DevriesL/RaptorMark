@@ -6,8 +6,9 @@ import io.github.devriesl.raptormark.di.StringProvider
 
 class LatencyTestRepo(
     stringProvider: StringProvider,
-    settingDataSource: SettingDataSource
-) : TestRepository(stringProvider, settingDataSource) {
+    settingDataSource: SettingDataSource,
+    historyDatabase: HistoryDatabase
+) : TestRepository(stringProvider, settingDataSource, historyDatabase) {
     override val testFileName = LATENCY_TEST_ID
 
     override fun getTestName(): String {

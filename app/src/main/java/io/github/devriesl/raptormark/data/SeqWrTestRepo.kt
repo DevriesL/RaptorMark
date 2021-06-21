@@ -7,8 +7,9 @@ import io.github.devriesl.raptormark.di.StringProvider
 
 class SeqWrTestRepo(
     stringProvider: StringProvider,
-    settingDataSource: SettingDataSource
-) : TestRepository(stringProvider, settingDataSource) {
+    settingDataSource: SettingDataSource,
+    historyDatabase: HistoryDatabase
+) : TestRepository(stringProvider, settingDataSource, historyDatabase) {
     override val testFileName = SEQ_WR_TEST_ID
     override var testTypeValue = IO_TYPE_SEQ_WR_VALUE
 

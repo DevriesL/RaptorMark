@@ -7,8 +7,9 @@ import io.github.devriesl.raptormark.di.StringProvider
 
 class RandRdTestRepo(
     stringProvider: StringProvider,
-    settingDataSource: SettingDataSource
-) : TestRepository(stringProvider, settingDataSource) {
+    settingDataSource: SettingDataSource,
+    historyDatabase: HistoryDatabase
+) : TestRepository(stringProvider, settingDataSource, historyDatabase) {
     override val testFileName = RAND_RD_TEST_ID
     override var testTypeValue = IO_TYPE_RAND_RD_VALUE
     override var isRandTest = true
