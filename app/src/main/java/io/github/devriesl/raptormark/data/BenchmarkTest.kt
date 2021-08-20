@@ -1,6 +1,5 @@
 package io.github.devriesl.raptormark.data
 
-import androidx.lifecycle.MutableLiveData
 import io.github.devriesl.raptormark.Constants.BLOCK_SIZE_OPT_NAME
 import io.github.devriesl.raptormark.Constants.CONSTANT_DIRECT_IO_VALUE
 import io.github.devriesl.raptormark.Constants.CONSTANT_ETA_PRINT_VALUE
@@ -23,37 +22,36 @@ import io.github.devriesl.raptormark.Constants.NUM_THREADS_OPT_NAME
 import io.github.devriesl.raptormark.Constants.OUTPUT_FORMAT_OPT_NAME
 import io.github.devriesl.raptormark.Constants.RUNTIME_OPT_NAME
 import io.github.devriesl.raptormark.Constants.TEST_FILE_NAME_SUFFIX
-import io.github.devriesl.raptormark.R
-import io.github.devriesl.raptormark.di.StringProvider
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import org.json.JSONArray
 import org.json.JSONObject
 import java.io.File
 import java.io.IOException
 
-abstract class TestRepository constructor(
-    val stringProvider: StringProvider,
-    val settingDataSource: SettingDataSource,
-    val historyDatabase: HistoryDatabase
+class BenchmarkTest constructor(
+    val testCases: TestCases,
+    private val settingDataSource: SettingDataSource
 ) {
-    abstract val testFileName: String
-    open var testTypeValue: String = String()
-    open var testResult: Int = 0
-    open var testResultMutableLiveData: MutableLiveData<String> = MutableLiveData<String>()
-    open var isRandTest: Boolean = false
-    open var randLatResult: Int = 0
-    open var randLatResultMutableLiveData: MutableLiveData<String> = MutableLiveData<String>()
+    private val mutableTestResult = MutableStateFlow(TestResult())
+
+    val testResult: StateFlow<TestResult>
+        get() = mutableTestResult
+
+    private fun updateTestResult(vararg results: Int) {
+        mutableTestResult.value = TestResult(
+            bandwidth = results[SUM_OF_BW_RESULT_INDEX],
+            latency = if (testCases.isRand) results[AVG_OF_4N_LAT_RESULT_INDEX] else null
+        )
+    }
 
     private val nativeListener = object : NativeListener {
         override fun onTestResult(vararg results: Int) {
-            this@TestRepository.onTestResult(results = results)
+            this@BenchmarkTest.updateTestResult(results = results)
         }
     }
 
-    abstract fun getTestName(): String
-
-    abstract fun onTestResult(vararg results: Int)
-
-    open fun runTest() {
+    fun runTest() {
         NativeDataSource.registerListener(nativeListener)
         val options = testOptionsBuilder()
         val ret = NativeDataSource.native_FIOTest(options)
@@ -68,23 +66,8 @@ abstract class TestRepository constructor(
         }
     }
 
-    open fun updateTestResult() {
-        testResultMutableLiveData.postValue(
-            stringProvider.getString(
-                R.string.sum_of_bw_test_result_format,
-                testResult
-            )
-        )
-        randLatResultMutableLiveData.postValue(
-            stringProvider.getString(
-                R.string.avg_of_4n_lat_result_format,
-                randLatResult
-            )
-        )
-    }
-
     private fun getTestFilePath(): String {
-        return settingDataSource.getAppStoragePath() + "/" + testFileName + TEST_FILE_NAME_SUFFIX
+        return settingDataSource.getAppStoragePath() + "/" + testCases.name + TEST_FILE_NAME_SUFFIX
     }
 
     private fun testOptionsBuilder(): String {
@@ -93,15 +76,15 @@ abstract class TestRepository constructor(
 
         root.put("shortopts", false)
 
-        options.put(createOption(NEW_JOB_OPT_NAME, testFileName))
+        options.put(createOption(NEW_JOB_OPT_NAME, testCases.name))
         options.put(createOption(FILE_PATH_OPT_NAME, getTestFilePath()))
-        options.put(createOption(IO_TYPE_OPT_NAME, testTypeValue))
+        options.put(createOption(IO_TYPE_OPT_NAME, testCases.type))
         options.put(createOption(IO_DEPTH_OPT_NAME, DEFAULT_IO_DEPTH_VALUE))
         options.put(createOption(RUNTIME_OPT_NAME, DEFAULT_RUNTIME_LIMIT_VALUE))
         options.put(
             createOption(
                 BLOCK_SIZE_OPT_NAME,
-                if (isRandTest) DEFAULT_RAND_BLOCK_SIZE_VALUE else DEFAULT_SEQ_BLOCK_SIZE_VALUE
+                if (testCases.isRand) DEFAULT_RAND_BLOCK_SIZE_VALUE else DEFAULT_SEQ_BLOCK_SIZE_VALUE
             )
         )
         options.put(createOption(IO_SIZE_OPT_NAME, DEFAULT_IO_SIZE_VALUE))
@@ -129,3 +112,8 @@ abstract class TestRepository constructor(
         const val AVG_OF_4N_LAT_RESULT_INDEX = 1
     }
 }
+
+data class TestResult(
+    val bandwidth: Int? = null,
+    val latency: Int? = null,
+)

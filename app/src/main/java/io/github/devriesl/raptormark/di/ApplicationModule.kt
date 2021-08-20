@@ -1,7 +1,6 @@
 package io.github.devriesl.raptormark.di
 
 import android.content.Context
-import android.content.res.Resources
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -14,10 +13,6 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object ApplicationModule {
-
-    @Singleton
-    @Provides
-    fun provideResources(@ApplicationContext context: Context): Resources = context.resources
 
     @Singleton
     @Provides

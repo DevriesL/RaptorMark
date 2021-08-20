@@ -19,10 +19,17 @@ import io.github.devriesl.raptormark.ui.benchmark.BenchmarkContent
 import io.github.devriesl.raptormark.ui.history.HistoryContent
 import io.github.devriesl.raptormark.ui.setting.SettingContent
 import io.github.devriesl.raptormark.ui.theme.RaptorMarkTheme
+import io.github.devriesl.raptormark.viewmodels.BenchmarkViewModel
+import io.github.devriesl.raptormark.viewmodels.HistoryViewModel
+import io.github.devriesl.raptormark.viewmodels.SettingViewModel
 import kotlinx.coroutines.launch
 
 @Composable
-fun RaptorApp() {
+fun RaptorApp(
+    benchmarkViewModel: BenchmarkViewModel,
+    historyViewModel: HistoryViewModel,
+    settingViewModel: SettingViewModel
+) {
     ProvideWindowInsets {
         RaptorMarkTheme {
             val (selectedSection, setSelectedSection) = remember { mutableStateOf(AppSections.BENCHMARK) }
@@ -61,9 +68,9 @@ fun RaptorApp() {
                 },
                 content = {
                     when (selectedSection) {
-                        AppSections.BENCHMARK -> BenchmarkContent()
-                        AppSections.HISTORY -> HistoryContent()
-                        AppSections.SETTING -> SettingContent()
+                        AppSections.BENCHMARK -> BenchmarkContent(benchmarkViewModel)
+                        AppSections.HISTORY -> HistoryContent(historyViewModel)
+                        AppSections.SETTING -> SettingContent(settingViewModel)
                     }
                 }
             )
