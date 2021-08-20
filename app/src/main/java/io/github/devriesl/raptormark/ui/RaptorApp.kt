@@ -46,18 +46,6 @@ fun RaptorApp(
                         openDrawer = { coroutineScope.launch { scaffoldState.drawerState.open() } }
                     )
                 },
-                floatingActionButton = {
-                    ExtendedFloatingActionButton(
-                        text = { Text(stringResource(R.string.start_button_label)) },
-                        icon = {
-                            Image(
-                                painter = painterResource(R.drawable.ic_start_button),
-                                contentDescription = null,
-                            )
-                        },
-                        onClick = { }
-                    )
-                },
                 drawerContent = {
                     AppDrawer(
                         selectedSectionIndex = selectedSectionIndex,

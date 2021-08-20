@@ -61,8 +61,6 @@ class BenchmarkTest constructor(
 
         if (ret != 0) {
             throw IOException("$ret")
-        } else {
-            updateTestResult()
         }
     }
 

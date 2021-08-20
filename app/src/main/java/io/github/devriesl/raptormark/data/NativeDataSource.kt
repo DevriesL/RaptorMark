@@ -59,10 +59,10 @@ object NativeDataSource {
             if (jobsId.isNullOrEmpty()) {
                 jobsId = jobObject.getString("jobname")
                 when {
-                    jobsId.contains("rd") -> {
+                    jobsId.contains("RD") -> {
                         jobsRw = "read"
                     }
-                    jobsId.contains("wr") -> {
+                    jobsId.contains("WR") -> {
                         jobsRw = "write"
                     }
                     else -> {
