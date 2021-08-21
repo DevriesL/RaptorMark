@@ -21,7 +21,6 @@ import io.github.devriesl.raptormark.Constants.NEW_JOB_OPT_NAME
 import io.github.devriesl.raptormark.Constants.NUM_THREADS_OPT_NAME
 import io.github.devriesl.raptormark.Constants.OUTPUT_FORMAT_OPT_NAME
 import io.github.devriesl.raptormark.Constants.RUNTIME_OPT_NAME
-import io.github.devriesl.raptormark.Constants.TEST_FILE_NAME_SUFFIX
 import io.github.devriesl.raptormark.data.SettingOptions.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -112,6 +111,8 @@ class BenchmarkTest constructor(
     }
 
     companion object {
+        const val TEST_FILE_NAME_SUFFIX = ".tmp"
+
         const val SUM_OF_BW_RESULT_INDEX = 0
         const val AVG_OF_4N_LAT_RESULT_INDEX = 1
     }

@@ -1,13 +1,6 @@
 package io.github.devriesl.raptormark
 
 object Constants {
-    const val TEST_FILE_NAME_SUFFIX = ".tmp"
-    const val SEQ_RD_TEST_ID = "seq_rd_test"
-    const val SEQ_WR_TEST_ID = "seq_wr_test"
-    const val RAND_RD_TEST_ID = "rand_rd_test"
-    const val RAND_WR_TEST_ID = "rand_wr_test"
-    const val LATENCY_TEST_ID = "latency_test"
-
     const val NEW_JOB_OPT_NAME = "name"
     const val FILE_PATH_OPT_NAME = "filename"
     const val IO_DEPTH_OPT_NAME = "iodepth"
