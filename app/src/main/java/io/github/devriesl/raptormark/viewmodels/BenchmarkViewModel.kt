@@ -10,14 +10,14 @@ import javax.inject.Inject
 
 @HiltViewModel
 class BenchmarkViewModel @Inject constructor(
-    private val settingDataSource: SettingDataSource
+    private val settingSharedPrefs: SettingSharedPrefs
 ) : ViewModel() {
     @Volatile
     private var forceStop = false;
     private val mutableBenchmarkState = MutableStateFlow(BenchmarkState())
 
     val testItems: List<BenchmarkTest> =
-        TestCases.values().map { BenchmarkTest(it, settingDataSource) }
+        TestCases.values().map { BenchmarkTest(it, settingSharedPrefs) }
 
     val benchmarkState: StateFlow<BenchmarkState>
         get() = mutableBenchmarkState

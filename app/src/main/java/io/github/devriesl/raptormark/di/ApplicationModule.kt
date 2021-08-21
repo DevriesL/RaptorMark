@@ -7,7 +7,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import io.github.devriesl.raptormark.data.HistoryDatabase
-import io.github.devriesl.raptormark.data.SettingDataSource
+import io.github.devriesl.raptormark.data.SettingSharedPrefs
 import javax.inject.Singleton
 
 @Module
@@ -16,8 +16,8 @@ object ApplicationModule {
 
     @Singleton
     @Provides
-    fun bindSettingDataSource(@ApplicationContext context: Context): SettingDataSource {
-        return SettingDataSource.getInstance(context)
+    fun bindSettingSharedPrefs(@ApplicationContext context: Context): SettingSharedPrefs {
+        return SettingSharedPrefs.getInstance(context)
     }
 
     @Singleton

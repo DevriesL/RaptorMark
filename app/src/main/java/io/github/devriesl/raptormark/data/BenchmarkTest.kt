@@ -22,6 +22,7 @@ import io.github.devriesl.raptormark.Constants.NUM_THREADS_OPT_NAME
 import io.github.devriesl.raptormark.Constants.OUTPUT_FORMAT_OPT_NAME
 import io.github.devriesl.raptormark.Constants.RUNTIME_OPT_NAME
 import io.github.devriesl.raptormark.Constants.TEST_FILE_NAME_SUFFIX
+import io.github.devriesl.raptormark.data.SettingOptions.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import org.json.JSONArray
@@ -31,7 +32,7 @@ import java.io.IOException
 
 class BenchmarkTest constructor(
     val testCases: TestCases,
-    private val settingDataSource: SettingDataSource
+    private val settingSharedPrefs: SettingSharedPrefs
 ) {
     private val mutableTestResult = MutableStateFlow(TestResult())
 
@@ -65,7 +66,7 @@ class BenchmarkTest constructor(
     }
 
     private fun getTestFilePath(): String {
-        return settingDataSource.getAppStoragePath() + "/" + testCases.name + TEST_FILE_NAME_SUFFIX
+        return settingSharedPrefs.getAppStoragePath() + "/" + testCases.name + TEST_FILE_NAME_SUFFIX
     }
 
     private fun testOptionsBuilder(): String {
@@ -87,7 +88,12 @@ class BenchmarkTest constructor(
         )
         options.put(createOption(IO_SIZE_OPT_NAME, DEFAULT_IO_SIZE_VALUE))
         options.put(createOption(DIRECT_IO_OPT_NAME, CONSTANT_DIRECT_IO_VALUE))
-        options.put(createOption(IO_ENGINE_OPT_NAME, settingDataSource.getEngineConfig()))
+        options.put(
+            createOption(
+                IO_ENGINE_OPT_NAME,
+                ENGINE_CONFIG.settingData.getSettingData(settingSharedPrefs)
+            )
+        )
         options.put(createOption(NUM_THREADS_OPT_NAME, DEFAULT_NUM_THREADS_VALUE))
 
         options.put(createOption(ETA_PRINT_OPT_NAME, CONSTANT_ETA_PRINT_VALUE))
