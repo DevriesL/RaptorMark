@@ -15,17 +15,23 @@ fun SettingContent(
     settingViewModel: SettingViewModel
 ) {
     Box(modifier = Modifier.fillMaxSize()) {
+        val dialogItemIndex by settingViewModel.mutableDialogItemIndex.collectAsState()
+
         LazyColumn {
             items(settingViewModel.settingItems) { settingItem ->
-                val itemData by settingItem.itemData.collectAsState()
+                val data by settingItem.data.collectAsState()
 
                 SettingItem(
                     title = settingItem.settingOptions.title,
                     desc = settingItem.settingOptions.desc,
-                    data = itemData,
-                    openDialog = { settingViewModel.openDialog(settingItem.settingOptions) }
+                    data = data,
+                    openDialog = { settingViewModel.openDialog(settingItem) }
                 )
             }
+        }
+
+        if (dialogItemIndex != null) {
+            settingViewModel.getDialogContent()?.invoke()
         }
     }
 }
