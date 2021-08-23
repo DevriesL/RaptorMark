@@ -17,7 +17,10 @@ enum class SettingOptions(
             return settingSharedPrefs.getConfig(ENGINE_CONFIG.name, DEFAULT_IO_ENGINE_VALUE)
         }
 
-        override fun onDialogContent(closeDialog: (SettingOptions, String?) -> Unit): @Composable () -> Unit {
+        override fun onDialogContent(
+            itemIndex: Int,
+            closeDialog: (Int, String?) -> Unit
+        ): @Composable () -> Unit {
             val engineList: ArrayList<String> = ArrayList()
             val jsonObject = JSONObject(NativeDataSource.native_ListEngines())
             val jsonArray = jsonObject.getJSONArray("engines")
@@ -32,8 +35,9 @@ enum class SettingOptions(
 
             return {
                 SingleChoiceDialog(
-                    option = ENGINE_CONFIG,
+                    title = ENGINE_CONFIG.title,
                     choiceList = engineList,
+                    itemIndex = itemIndex,
                     closeDialog = closeDialog
                 )
             }

@@ -12,7 +12,7 @@ import javax.inject.Inject
 class SettingViewModel @Inject constructor(
     private val settingSharedPrefs: SettingSharedPrefs
 ) : ViewModel() {
-    val mutableDialogItemIndex = MutableStateFlow<Int?>(null)
+    val dialogContent = MutableStateFlow<@Composable (() -> Unit)?>(null)
     val settingItems: List<SettingItemData> = SettingOptions.values().map {
         SettingItemData(it).also { settingItemData ->
             settingItemData.data.value = it.settingData.getSettingData(settingSharedPrefs)
@@ -20,30 +20,25 @@ class SettingViewModel @Inject constructor(
     }
 
     fun openDialog(settingItemData: SettingItemData) {
-        if (mutableDialogItemIndex.value == null) {
-            mutableDialogItemIndex.value = settingItems.indexOf(settingItemData)
+        val itemIndex = settingItems.indexOf(settingItemData)
+        if (dialogContent.value == null) {
+            dialogContent.value = settingItemData.settingOptions.settingData.onDialogContent(
+                itemIndex,
+                this::closeDialog
+            )
         }
     }
 
-    fun getDialogContent(): @Composable (() -> Unit)? {
-        val itemIndex = mutableDialogItemIndex.value
-        return if (itemIndex != null) {
-            settingItems[itemIndex].settingOptions.settingData.onDialogContent(this::closeDialog)
-        } else {
-            null
-        }
-    }
-
-    private fun closeDialog(option: SettingOptions, result: String?) {
-        val itemIndex = mutableDialogItemIndex.value
+    private fun closeDialog(itemIndex: Int, result: String?) {
         if (result != null) {
-            option.settingData.setDialogResult(settingSharedPrefs, result)
+            settingItems[itemIndex].settingOptions.settingData.setDialogResult(
+                settingSharedPrefs,
+                result
+            )
         }
-        if (itemIndex != null) {
-            settingItems[itemIndex].data.value =
-                settingItems[itemIndex].settingOptions.settingData.getSettingData(settingSharedPrefs)
-        }
-        mutableDialogItemIndex.value = null
+        settingItems[itemIndex].data.value =
+            settingItems[itemIndex].settingOptions.settingData.getSettingData(settingSharedPrefs)
+        dialogContent.value = null
     }
 }
 

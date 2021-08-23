@@ -1,5 +1,6 @@
 package io.github.devriesl.raptormark.ui.setting
 
+import androidx.annotation.StringRes
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -13,23 +14,23 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
-import io.github.devriesl.raptormark.data.SettingOptions
 
 @Composable
 fun SingleChoiceDialog(
-    option: SettingOptions,
+    @StringRes title: Int,
     choiceList: ArrayList<String>,
-    closeDialog: (SettingOptions, String?) -> Unit,
+    itemIndex: Int,
+    closeDialog: (Int, String?) -> Unit,
 ) {
-    Dialog(onDismissRequest = { closeDialog(option, null) }) {
+    Dialog(onDismissRequest = { closeDialog(itemIndex, null) }) {
         Column {
-            Text(text = stringResource(option.title))
+            Text(text = stringResource(title))
 
             Spacer(modifier = Modifier.height(16.dp))
 
             LazyColumn(modifier = Modifier.fillMaxSize()) {
                 items(choiceList) { choice ->
-                    Text(text = choice, Modifier.clickable { closeDialog(option, choice) })
+                    Text(text = choice, Modifier.clickable { closeDialog(itemIndex, choice) })
                 }
             }
         }
