@@ -1,13 +1,13 @@
 package io.github.devriesl.raptormark.ui.benchmark
 
 import androidx.annotation.StringRes
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
 import io.github.devriesl.raptormark.R
 
 @Composable
@@ -17,7 +17,11 @@ fun TestItem(
     showLatency: Boolean,
     latency: Int?
 ) {
-    Column {
+    Column(
+        modifier = Modifier
+            .padding(horizontal = 16.dp, vertical = 4.dp)
+            .fillMaxWidth()
+    ) {
         val bandwidthText = if (bandwidth != null) {
             stringResource(R.string.sum_of_bw_test_result_format, bandwidth)
         } else {
@@ -40,6 +44,8 @@ fun TestItem(
             } else {
                 String()
             }
+
+            Spacer(Modifier.height(4.dp))
             Row {
                 Text(
                     text = stringResource(id = R.string.rand_4n_lat_title),
