@@ -13,8 +13,11 @@ import io.github.devriesl.raptormark.Constants.DEFAULT_RUNTIME_LIMIT_VALUE
 import io.github.devriesl.raptormark.Constants.DEFAULT_SEQ_BLOCK_SIZE_VALUE
 import io.github.devriesl.raptormark.R
 import io.github.devriesl.raptormark.ui.setting.SingleChoiceDialog
+import io.github.devriesl.raptormark.ui.setting.TargetPathDialog
 import io.github.devriesl.raptormark.ui.setting.TextInputDialog
 import org.json.JSONObject
+import java.io.File
+import java.net.URI
 
 enum class SettingOptions(
     @StringRes val title: Int,
@@ -23,7 +26,13 @@ enum class SettingOptions(
 ) {
     TARGET_PATH(R.string.target_path_title, R.string.target_path_desc, object : ISettingData {
         override fun getSettingData(settingSharedPrefs: SettingSharedPrefs): String {
-            return settingSharedPrefs.getTestDirPath()
+            val uri = URI(settingSharedPrefs.getTestDirPath())
+            val path: String = uri.path
+            return try {
+                uri.path.substring(path.indexOf('/', 0), path.indexOf('/', 1))
+            } catch (ex: Exception) {
+                path
+            }
         }
 
         override fun onDialogContent(
@@ -33,12 +42,15 @@ enum class SettingOptions(
         ): @Composable () -> Unit {
             val defaultValue = settingSharedPrefs.getDefaultDirPath()
             val currentValue = settingSharedPrefs.getTestDirPath()
+            val customValue = if (defaultValue == currentValue) {
+                String()
+            } else {
+                currentValue
+            }
             return {
-                TextInputDialog(
+                TargetPathDialog(
                     title = TARGET_PATH.title,
-                    defaultValue = defaultValue,
-                    currentValue = currentValue,
-                    keyboardType = KeyboardType.Text,
+                    customValue = customValue,
                     itemIndex = itemIndex,
                     closeDialog = closeDialog
                 )
@@ -46,7 +58,11 @@ enum class SettingOptions(
         }
 
         override fun setDialogResult(settingSharedPrefs: SettingSharedPrefs, result: String) {
-            settingSharedPrefs.setTestDirPath(result)
+            if (File(result).isDirectory) {
+                settingSharedPrefs.setTestDirPath(result)
+            } else {
+                settingSharedPrefs.setTestDirPath(String())
+            }
         }
     }),
     IO_DEPTH(R.string.io_depth_title, R.string.io_depth_desc, object : ISettingData {

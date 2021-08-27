@@ -23,7 +23,12 @@ class SettingSharedPrefs private constructor(context: Context) {
     }
 
     fun getTestDirPath(): String {
-        return appFilesDir.absolutePath
+        val value = sharedPrefs.getString(TEST_DIR_PATH_KEY, getDefaultDirPath())
+        return if (value.isNullOrEmpty()) {
+            appFilesDir.absolutePath
+        } else {
+            value
+        }
     }
 
     fun setTestDirPath(path: String) {

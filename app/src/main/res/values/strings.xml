@@ -26,6 +26,8 @@
     <string name="apply_button_content">Apply</string>
     <string name="target_path_title">Target Path</string>
     <string name="target_path_desc">File directory path for benchmarking.</string>
+    <string name="target_path_default">Application Default</string>
+    <string name="target_path_custom">Custom Path</string>
     <string name="io_depth_title">IO Depth</string>
     <string name="io_depth_desc">Asynchronous I/O queue depth.</string>
     <string name="runtime_limit_title">Runtime Limit</string>
