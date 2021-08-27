@@ -23,6 +23,7 @@ class SettingViewModel @Inject constructor(
         val itemIndex = settingItems.indexOf(settingItemData)
         if (dialogContent.value == null) {
             dialogContent.value = settingItemData.settingOptions.settingData.onDialogContent(
+                settingSharedPrefs,
                 itemIndex,
                 this::closeDialog
             )

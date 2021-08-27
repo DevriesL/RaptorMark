@@ -1,7 +1,6 @@
 package io.github.devriesl.raptormark.data
 
 import android.content.Context
-import org.json.JSONObject
 
 class SettingSharedPrefs private constructor(context: Context) {
     private val sharedPrefs = context.getSharedPreferences(SHARED_PREFS_NAME, Context.MODE_PRIVATE)
@@ -19,27 +18,24 @@ class SettingSharedPrefs private constructor(context: Context) {
         }
     }
 
-    fun getEngineList(): ArrayList<String> {
-        val engineList: ArrayList<String> = ArrayList()
-        val jsonObject = JSONObject(NativeDataSource.native_ListEngines())
-        val jsonArray = jsonObject.getJSONArray("engines")
-        for (i in 0 until jsonArray.length()) {
-            val engineObject: JSONObject = jsonArray.getJSONObject(i)
-            val engineItem = engineObject.getString("name")
-            val engineAvailable = engineObject.getBoolean("available")
-            if (engineAvailable) {
-                engineList.add(engineItem)
-            }
-        }
-        return engineList
+    fun getDefaultDirPath(): String {
+        return appFilesDir.absolutePath
     }
 
-    fun getAppStoragePath(): String {
+    fun getTestDirPath(): String {
         return appFilesDir.absolutePath
+    }
+
+    fun setTestDirPath(path: String) {
+        with(sharedPrefs.edit()) {
+            putString(TEST_DIR_PATH_KEY, path)
+            commit()
+        }
     }
 
     companion object {
         const val SHARED_PREFS_NAME = "raptor_mark_settings"
+        const val TEST_DIR_PATH_KEY = "test_dir_path"
 
         @Volatile
         private var INSTANCE: SettingSharedPrefs? = null

@@ -22,8 +22,24 @@
     <string name="avg_of_4n_lat_result_format">%1$d μs</string>
 
     <!-- Setting resources -->
+    <string name="dismiss_button_content">Dismiss</string>
+    <string name="apply_button_content">Apply</string>
+    <string name="target_path_title">Target Path</string>
+    <string name="target_path_desc">File directory path for benchmarking.</string>
+    <string name="io_depth_title">IO Depth</string>
+    <string name="io_depth_desc">Asynchronous I/O queue depth.</string>
+    <string name="runtime_limit_title">Runtime Limit</string>
+    <string name="runtime_limit_desc">The specified time period for terminating benchmark.</string>
+    <string name="seq_block_size_title">Sequential Block Size</string>
+    <string name="seq_block_size_desc">The block size in bytes used for sequential I/O units.</string>
+    <string name="rand_block_size_title">Random Block Size</string>
+    <string name="rand_block_size_desc">The block size in bytes used for random I/O units.</string>
+    <string name="io_size_title">Size</string>
+    <string name="io_size_desc">The total size of file I/O for each thread.</string>
     <string name="engine_config_title">IO Engine</string>
     <string name="engine_config_desc">The engine to issue I/O operations.</string>
+    <string name="num_threads_title">Threads</string>
+    <string name="num_threads_desc">Number of threads for I/O operations.</string>
     <string name="about_title">About</string>
     <string name="about_desc">About this application.</string>
     <string name="about_version_text">Version:</string>

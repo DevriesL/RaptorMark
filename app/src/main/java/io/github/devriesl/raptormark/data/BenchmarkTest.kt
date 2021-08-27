@@ -65,7 +65,7 @@ class BenchmarkTest constructor(
     }
 
     private fun getTestFilePath(): String {
-        return settingSharedPrefs.getAppStoragePath() + "/" + testCases.name + TEST_FILE_NAME_SUFFIX
+        return settingSharedPrefs.getTestDirPath() + "/" + testCases.name + TEST_FILE_NAME_SUFFIX
     }
 
     private fun testOptionsBuilder(): String {
