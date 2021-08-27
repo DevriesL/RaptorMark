@@ -4,12 +4,6 @@ import io.github.devriesl.raptormark.Constants.BLOCK_SIZE_OPT_NAME
 import io.github.devriesl.raptormark.Constants.CONSTANT_DIRECT_IO_VALUE
 import io.github.devriesl.raptormark.Constants.CONSTANT_ETA_PRINT_VALUE
 import io.github.devriesl.raptormark.Constants.CONSTANT_OUTPUT_FORMAT_VALUE
-import io.github.devriesl.raptormark.Constants.DEFAULT_IO_DEPTH_VALUE
-import io.github.devriesl.raptormark.Constants.DEFAULT_IO_SIZE_VALUE
-import io.github.devriesl.raptormark.Constants.DEFAULT_NUM_THREADS_VALUE
-import io.github.devriesl.raptormark.Constants.DEFAULT_RAND_BLOCK_SIZE_VALUE
-import io.github.devriesl.raptormark.Constants.DEFAULT_RUNTIME_LIMIT_VALUE
-import io.github.devriesl.raptormark.Constants.DEFAULT_SEQ_BLOCK_SIZE_VALUE
 import io.github.devriesl.raptormark.Constants.DIRECT_IO_OPT_NAME
 import io.github.devriesl.raptormark.Constants.ETA_PRINT_OPT_NAME
 import io.github.devriesl.raptormark.Constants.FILE_PATH_OPT_NAME
@@ -77,23 +71,47 @@ class BenchmarkTest constructor(
         options.put(createOption(NEW_JOB_OPT_NAME, testCases.name))
         options.put(createOption(FILE_PATH_OPT_NAME, getTestFilePath()))
         options.put(createOption(IO_TYPE_OPT_NAME, testCases.type))
-        options.put(createOption(IO_DEPTH_OPT_NAME, DEFAULT_IO_DEPTH_VALUE))
-        options.put(createOption(RUNTIME_OPT_NAME, DEFAULT_RUNTIME_LIMIT_VALUE))
+        options.put(
+            createOption(
+                IO_DEPTH_OPT_NAME,
+                IO_DEPTH.settingData.getSettingData(settingSharedPrefs)
+            )
+        )
+        options.put(
+            createOption(
+                RUNTIME_OPT_NAME,
+                RUNTIME_LIMIT.settingData.getSettingData(settingSharedPrefs)
+            )
+        )
         options.put(
             createOption(
                 BLOCK_SIZE_OPT_NAME,
-                if (testCases.isRand) DEFAULT_RAND_BLOCK_SIZE_VALUE else DEFAULT_SEQ_BLOCK_SIZE_VALUE
+                if (testCases.isRand) {
+                    RAND_BLOCK_SIZE.settingData.getSettingData(settingSharedPrefs)
+                } else {
+                    SEQ_BLOCK_SIZE.settingData.getSettingData(settingSharedPrefs)
+                }
             )
         )
-        options.put(createOption(IO_SIZE_OPT_NAME, DEFAULT_IO_SIZE_VALUE))
+        options.put(
+            createOption(
+                IO_SIZE_OPT_NAME,
+                IO_SIZE.settingData.getSettingData(settingSharedPrefs)
+            )
+        )
         options.put(createOption(DIRECT_IO_OPT_NAME, CONSTANT_DIRECT_IO_VALUE))
         options.put(
             createOption(
                 IO_ENGINE_OPT_NAME,
-                ENGINE_CONFIG.settingData.getSettingData(settingSharedPrefs)
+                IO_ENGINE.settingData.getSettingData(settingSharedPrefs)
             )
         )
-        options.put(createOption(NUM_THREADS_OPT_NAME, DEFAULT_NUM_THREADS_VALUE))
+        options.put(
+            createOption(
+                NUM_THREADS_OPT_NAME,
+                NUM_THREADS.settingData.getSettingData(settingSharedPrefs)
+            )
+        )
 
         options.put(createOption(ETA_PRINT_OPT_NAME, CONSTANT_ETA_PRINT_VALUE))
         options.put(createOption(OUTPUT_FORMAT_OPT_NAME, CONSTANT_OUTPUT_FORMAT_VALUE))

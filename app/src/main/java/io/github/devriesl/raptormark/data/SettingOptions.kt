@@ -217,9 +217,9 @@ enum class SettingOptions(
             settingSharedPrefs.setConfig(IO_SIZE.name, result)
         }
     }),
-    ENGINE_CONFIG(R.string.engine_config_title, R.string.engine_config_desc, object : ISettingData {
+    IO_ENGINE(R.string.engine_config_title, R.string.engine_config_desc, object : ISettingData {
         override fun getSettingData(settingSharedPrefs: SettingSharedPrefs): String {
-            return settingSharedPrefs.getConfig(ENGINE_CONFIG.name, DEFAULT_IO_ENGINE_VALUE)
+            return settingSharedPrefs.getConfig(IO_ENGINE.name, DEFAULT_IO_ENGINE_VALUE)
         }
 
         override fun onDialogContent(
@@ -241,7 +241,7 @@ enum class SettingOptions(
 
             return {
                 SingleChoiceDialog(
-                    title = ENGINE_CONFIG.title,
+                    title = IO_ENGINE.title,
                     choiceList = engineList,
                     itemIndex = itemIndex,
                     closeDialog = closeDialog
@@ -250,7 +250,7 @@ enum class SettingOptions(
         }
 
         override fun setDialogResult(settingSharedPrefs: SettingSharedPrefs, result: String) {
-            settingSharedPrefs.setConfig(ENGINE_CONFIG.name, result)
+            settingSharedPrefs.setConfig(IO_ENGINE.name, result)
         }
     }),
     NUM_THREADS(R.string.num_threads_title, R.string.num_threads_desc, object : ISettingData {
