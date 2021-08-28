@@ -47,9 +47,10 @@ class BenchmarkTest constructor(
 
     fun runTest() {
         NativeDataSource.registerListener(nativeListener)
-        val options = testOptionsBuilder()
+        val filePath = getRandomFilePath()
+        val options = testOptionsBuilder(filePath)
         val ret = NativeDataSource.native_FIOTest(options)
-        val testFile = File(getTestFilePath())
+        val testFile = File(filePath)
         if (testFile.exists()) testFile.delete()
         NativeDataSource.unregisterListener(nativeListener)
 
@@ -58,18 +59,22 @@ class BenchmarkTest constructor(
         }
     }
 
-    private fun getTestFilePath(): String {
-        return settingSharedPrefs.getTestDirPath() + "/" + testCase.name + TEST_FILE_NAME_SUFFIX
+    private fun getRandomFilePath(): String {
+        val randomSuffix = List(FILE_SUFFIX_LENGTH) {
+            (('a'..'z') + ('A'..'Z') + ('0'..'9')).random()
+        }.joinToString("")
+
+        return settingSharedPrefs.getTestDirPath() + "/" + testCase.name + randomSuffix
     }
 
-    private fun testOptionsBuilder(): String {
+    private fun testOptionsBuilder(filePath: String): String {
         val root = JSONObject()
         val options = JSONArray()
 
         root.put("shortopts", false)
 
         options.put(createOption(NEW_JOB_OPT_NAME, testCase.name))
-        options.put(createOption(FILE_PATH_OPT_NAME, getTestFilePath()))
+        options.put(createOption(FILE_PATH_OPT_NAME, filePath))
         options.put(createOption(IO_TYPE_OPT_NAME, testCase.type))
         options.put(
             createOption(
@@ -129,7 +134,7 @@ class BenchmarkTest constructor(
     }
 
     companion object {
-        const val TEST_FILE_NAME_SUFFIX = ".tmp"
+        const val FILE_SUFFIX_LENGTH = 8
 
         const val SUM_OF_BW_RESULT_INDEX = 0
         const val AVG_OF_4N_LAT_RESULT_INDEX = 1
