@@ -44,7 +44,13 @@
     <string name="num_threads_desc">Number of threads for I/O operations.</string>
     <string name="about_title">About</string>
     <string name="about_desc">About this application.</string>
+
+    <!-- About resources -->
     <string name="about_version_text">Version:</string>
-    <string name="about_content">Developed by Devries\ntherkduan@gmail.com\nWeibo:https://weibo.com/2213561393</string>
+    <string name="about_author_text">Developed by</string>
+    <string name="about_author_name">Devries</string>
+    <string name="about_author_email">therkduan@gmail.com</string>
+    <string name="about_author_weibo">https://weibo.com/2213561393</string>
+    <string name="about_author_weibo_uid">2213561393</string>
 
 </resources>

@@ -1,5 +1,9 @@
 package io.github.devriesl.raptormark.data
 
+import android.content.ComponentName
+import android.content.Context
+import android.content.Intent
+import android.net.Uri
 import androidx.annotation.StringRes
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.text.input.KeyboardType
@@ -12,6 +16,7 @@ import io.github.devriesl.raptormark.Constants.DEFAULT_RAND_BLOCK_SIZE_VALUE
 import io.github.devriesl.raptormark.Constants.DEFAULT_RUNTIME_LIMIT_VALUE
 import io.github.devriesl.raptormark.Constants.DEFAULT_SEQ_BLOCK_SIZE_VALUE
 import io.github.devriesl.raptormark.R
+import io.github.devriesl.raptormark.ui.setting.AboutInfoDialog
 import io.github.devriesl.raptormark.ui.setting.SingleChoiceDialog
 import io.github.devriesl.raptormark.ui.setting.TargetPathDialog
 import io.github.devriesl.raptormark.ui.setting.TextInputDialog
@@ -291,10 +296,36 @@ enum class SettingOptions(
             itemIndex: Int,
             closeDialog: (Int, String?) -> Unit
         ): @Composable () -> Unit {
-            return { }
+            return {
+                AboutInfoDialog(
+                    title = ABOUT_INFO.title,
+                    openEmail = this::openEmail,
+                    openWeiboUser = this::openWeiboUser,
+                    itemIndex = itemIndex,
+                    closeDialog = closeDialog
+                )
+            }
         }
 
         override fun setDialogResult(settingSharedPrefs: SettingSharedPrefs, result: String) {
+        }
+
+        private fun openEmail(context: Context, address: String) {
+            val intent = Intent(Intent.ACTION_VIEW)
+            val data: Uri = Uri.parse("mailto:${address}")
+            intent.data = data
+            context.startActivity(intent)
+        }
+
+        private fun openWeiboUser(context: Context, uidValue: String) {
+            val intent = Intent()
+            val componentName =
+                ComponentName("com.sina.weibo", "com.sina.weibo.page.ProfileInfoActivity")
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+            intent.component = componentName
+            intent.putExtra("uid", uidValue)
+            context.startActivity(intent)
         }
     })
 }
