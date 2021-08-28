@@ -31,7 +31,7 @@ class BenchmarkViewModel @Inject constructor(
 
                     it.runTest()
                 } catch (ex: Exception) {
-                    Log.e(it.testCases.name, "Error running test", ex)
+                    Log.e(it.testCase.name, "Error running test", ex)
                     return@forEach
                 }
             }

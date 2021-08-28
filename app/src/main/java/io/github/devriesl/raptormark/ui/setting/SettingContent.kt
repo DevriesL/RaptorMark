@@ -23,8 +23,8 @@ fun SettingContent(
                 val data by settingItem.data.collectAsState()
 
                 SettingItem(
-                    title = settingItem.settingOptions.title,
-                    desc = settingItem.settingOptions.desc,
+                    title = settingItem.option.title,
+                    desc = settingItem.option.desc,
                     data = data,
                     openDialog = { settingViewModel.openDialog(settingItem) }
                 )

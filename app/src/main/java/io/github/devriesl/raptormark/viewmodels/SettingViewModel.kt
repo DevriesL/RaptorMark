@@ -15,14 +15,14 @@ class SettingViewModel @Inject constructor(
     val dialogContent = MutableStateFlow<@Composable (() -> Unit)?>(null)
     val settingItems: List<SettingItemData> = SettingOptions.values().map {
         SettingItemData(it).also { settingItemData ->
-            settingItemData.data.value = it.settingData.getSettingData(settingSharedPrefs)
+            settingItemData.data.value = it.dataImpl.getValue(settingSharedPrefs)
         }
     }
 
     fun openDialog(settingItemData: SettingItemData) {
         val itemIndex = settingItems.indexOf(settingItemData)
         if (dialogContent.value == null) {
-            dialogContent.value = settingItemData.settingOptions.settingData.onDialogContent(
+            dialogContent.value = settingItemData.option.dataImpl.onDialogContent(
                 settingSharedPrefs,
                 itemIndex,
                 this::closeDialog
@@ -32,17 +32,17 @@ class SettingViewModel @Inject constructor(
 
     private fun closeDialog(itemIndex: Int, result: String?) {
         if (result != null) {
-            settingItems[itemIndex].settingOptions.settingData.setDialogResult(
+            settingItems[itemIndex].option.dataImpl.setDialogResult(
                 settingSharedPrefs,
                 result
             )
         }
         settingItems[itemIndex].data.value =
-            settingItems[itemIndex].settingOptions.settingData.getSettingData(settingSharedPrefs)
+            settingItems[itemIndex].option.dataImpl.getValue(settingSharedPrefs)
         dialogContent.value = null
     }
 }
 
-data class SettingItemData(val settingOptions: SettingOptions) {
+data class SettingItemData(val option: SettingOptions) {
     val data = MutableStateFlow(String())
 }

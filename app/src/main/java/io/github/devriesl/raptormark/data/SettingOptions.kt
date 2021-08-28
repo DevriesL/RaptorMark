@@ -22,10 +22,10 @@ import java.net.URI
 enum class SettingOptions(
     @StringRes val title: Int,
     @StringRes val desc: Int,
-    val settingData: ISettingData
+    val dataImpl: ISettingData
 ) {
     TARGET_PATH(R.string.target_path_title, R.string.target_path_desc, object : ISettingData {
-        override fun getSettingData(settingSharedPrefs: SettingSharedPrefs): String {
+        override fun getValue(settingSharedPrefs: SettingSharedPrefs): String {
             val uri = URI(settingSharedPrefs.getTestDirPath())
             val path: String = uri.path
             return try {
@@ -66,7 +66,7 @@ enum class SettingOptions(
         }
     }),
     IO_DEPTH(R.string.io_depth_title, R.string.io_depth_desc, object : ISettingData {
-        override fun getSettingData(settingSharedPrefs: SettingSharedPrefs): String {
+        override fun getValue(settingSharedPrefs: SettingSharedPrefs): String {
             return settingSharedPrefs.getConfig(IO_DEPTH.name, DEFAULT_IO_DEPTH_VALUE)
         }
 
@@ -93,7 +93,7 @@ enum class SettingOptions(
         }
     }),
     RUNTIME_LIMIT(R.string.runtime_limit_title, R.string.runtime_limit_desc, object : ISettingData {
-        override fun getSettingData(settingSharedPrefs: SettingSharedPrefs): String {
+        override fun getValue(settingSharedPrefs: SettingSharedPrefs): String {
             return settingSharedPrefs.getConfig(RUNTIME_LIMIT.name, DEFAULT_RUNTIME_LIMIT_VALUE)
         }
 
@@ -124,7 +124,7 @@ enum class SettingOptions(
         R.string.seq_block_size_title,
         R.string.seq_block_size_desc,
         object : ISettingData {
-            override fun getSettingData(settingSharedPrefs: SettingSharedPrefs): String {
+            override fun getValue(settingSharedPrefs: SettingSharedPrefs): String {
                 return settingSharedPrefs.getConfig(
                     SEQ_BLOCK_SIZE.name,
                     DEFAULT_SEQ_BLOCK_SIZE_VALUE
@@ -158,7 +158,7 @@ enum class SettingOptions(
         R.string.rand_block_size_title,
         R.string.rand_block_size_desc,
         object : ISettingData {
-            override fun getSettingData(settingSharedPrefs: SettingSharedPrefs): String {
+            override fun getValue(settingSharedPrefs: SettingSharedPrefs): String {
                 return settingSharedPrefs.getConfig(
                     RAND_BLOCK_SIZE.name,
                     DEFAULT_RAND_BLOCK_SIZE_VALUE
@@ -191,7 +191,7 @@ enum class SettingOptions(
             }
         }),
     IO_SIZE(R.string.io_size_title, R.string.io_size_desc, object : ISettingData {
-        override fun getSettingData(settingSharedPrefs: SettingSharedPrefs): String {
+        override fun getValue(settingSharedPrefs: SettingSharedPrefs): String {
             return settingSharedPrefs.getConfig(IO_SIZE.name, DEFAULT_IO_SIZE_VALUE)
         }
 
@@ -218,7 +218,7 @@ enum class SettingOptions(
         }
     }),
     IO_ENGINE(R.string.engine_config_title, R.string.engine_config_desc, object : ISettingData {
-        override fun getSettingData(settingSharedPrefs: SettingSharedPrefs): String {
+        override fun getValue(settingSharedPrefs: SettingSharedPrefs): String {
             return settingSharedPrefs.getConfig(IO_ENGINE.name, DEFAULT_IO_ENGINE_VALUE)
         }
 
@@ -254,7 +254,7 @@ enum class SettingOptions(
         }
     }),
     NUM_THREADS(R.string.num_threads_title, R.string.num_threads_desc, object : ISettingData {
-        override fun getSettingData(settingSharedPrefs: SettingSharedPrefs): String {
+        override fun getValue(settingSharedPrefs: SettingSharedPrefs): String {
             return settingSharedPrefs.getConfig(NUM_THREADS.name, DEFAULT_NUM_THREADS_VALUE)
         }
 
@@ -282,7 +282,7 @@ enum class SettingOptions(
         }
     }),
     ABOUT_INFO(R.string.about_title, R.string.about_desc, object : ISettingData {
-        override fun getSettingData(settingSharedPrefs: SettingSharedPrefs): String {
+        override fun getValue(settingSharedPrefs: SettingSharedPrefs): String {
             return BuildConfig.VERSION_NAME
         }
 

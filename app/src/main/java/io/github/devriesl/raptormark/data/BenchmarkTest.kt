@@ -24,7 +24,7 @@ import java.io.File
 import java.io.IOException
 
 class BenchmarkTest constructor(
-    val testCases: TestCases,
+    val testCase: TestCases,
     private val settingSharedPrefs: SettingSharedPrefs
 ) {
     private val mutableTestResult = MutableStateFlow(TestResult())
@@ -35,7 +35,7 @@ class BenchmarkTest constructor(
     private fun updateTestResult(vararg results: Int) {
         mutableTestResult.value = TestResult(
             bandwidth = results[SUM_OF_BW_RESULT_INDEX],
-            latency = if (testCases.isRand) results[AVG_OF_4N_LAT_RESULT_INDEX] else null
+            latency = if (testCase.isRand) results[AVG_OF_4N_LAT_RESULT_INDEX] else null
         )
     }
 
@@ -59,7 +59,7 @@ class BenchmarkTest constructor(
     }
 
     private fun getTestFilePath(): String {
-        return settingSharedPrefs.getTestDirPath() + "/" + testCases.name + TEST_FILE_NAME_SUFFIX
+        return settingSharedPrefs.getTestDirPath() + "/" + testCase.name + TEST_FILE_NAME_SUFFIX
     }
 
     private fun testOptionsBuilder(): String {
@@ -68,48 +68,48 @@ class BenchmarkTest constructor(
 
         root.put("shortopts", false)
 
-        options.put(createOption(NEW_JOB_OPT_NAME, testCases.name))
+        options.put(createOption(NEW_JOB_OPT_NAME, testCase.name))
         options.put(createOption(FILE_PATH_OPT_NAME, getTestFilePath()))
-        options.put(createOption(IO_TYPE_OPT_NAME, testCases.type))
+        options.put(createOption(IO_TYPE_OPT_NAME, testCase.type))
         options.put(
             createOption(
                 IO_DEPTH_OPT_NAME,
-                IO_DEPTH.settingData.getSettingData(settingSharedPrefs)
+                IO_DEPTH.dataImpl.getValue(settingSharedPrefs)
             )
         )
         options.put(
             createOption(
                 RUNTIME_OPT_NAME,
-                RUNTIME_LIMIT.settingData.getSettingData(settingSharedPrefs)
+                RUNTIME_LIMIT.dataImpl.getValue(settingSharedPrefs)
             )
         )
         options.put(
             createOption(
                 BLOCK_SIZE_OPT_NAME,
-                if (testCases.isRand) {
-                    RAND_BLOCK_SIZE.settingData.getSettingData(settingSharedPrefs)
+                if (testCase.isRand) {
+                    RAND_BLOCK_SIZE.dataImpl.getValue(settingSharedPrefs)
                 } else {
-                    SEQ_BLOCK_SIZE.settingData.getSettingData(settingSharedPrefs)
+                    SEQ_BLOCK_SIZE.dataImpl.getValue(settingSharedPrefs)
                 }
             )
         )
         options.put(
             createOption(
                 IO_SIZE_OPT_NAME,
-                IO_SIZE.settingData.getSettingData(settingSharedPrefs)
+                IO_SIZE.dataImpl.getValue(settingSharedPrefs)
             )
         )
         options.put(createOption(DIRECT_IO_OPT_NAME, CONSTANT_DIRECT_IO_VALUE))
         options.put(
             createOption(
                 IO_ENGINE_OPT_NAME,
-                IO_ENGINE.settingData.getSettingData(settingSharedPrefs)
+                IO_ENGINE.dataImpl.getValue(settingSharedPrefs)
             )
         )
         options.put(
             createOption(
                 NUM_THREADS_OPT_NAME,
-                NUM_THREADS.settingData.getSettingData(settingSharedPrefs)
+                NUM_THREADS.dataImpl.getValue(settingSharedPrefs)
             )
         )
 

@@ -32,9 +32,9 @@ fun BenchmarkContent(
                 val testResult by testItem.testResult.collectAsState()
 
                 TestItem(
-                    title = testItem.testCases.title,
+                    title = testItem.testCase.title,
                     bandwidth = testResult.bandwidth,
-                    showLatency = testItem.testCases.isRand,
+                    showLatency = testItem.testCase.isRand,
                     latency = testResult.latency
                 )
                 Divider()
