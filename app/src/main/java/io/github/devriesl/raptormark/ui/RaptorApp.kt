@@ -2,17 +2,12 @@ package io.github.devriesl.raptormark.ui
 
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
-import androidx.compose.foundation.Image
-import androidx.compose.material.ExtendedFloatingActionButton
 import androidx.compose.material.Scaffold
-import androidx.compose.material.Text
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import com.google.accompanist.insets.ProvideWindowInsets
 import io.github.devriesl.raptormark.R
 import io.github.devriesl.raptormark.ui.benchmark.BenchmarkContent

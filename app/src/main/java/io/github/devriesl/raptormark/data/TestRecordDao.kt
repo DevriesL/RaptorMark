@@ -5,7 +5,7 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface TestRecordDao {
-    @Query("SELECT * FROM test_records ORDER BY test_date")
+    @Query("SELECT * FROM test_records ORDER BY test_date DESC")
     fun getTestRecords(): Flow<List<TestRecord>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)

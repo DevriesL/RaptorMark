@@ -6,8 +6,8 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
-import io.github.devriesl.raptormark.data.HistoryDatabase
 import io.github.devriesl.raptormark.data.SettingSharedPrefs
+import io.github.devriesl.raptormark.data.TestRecordDatabase
 import javax.inject.Singleton
 
 @Module
@@ -22,7 +22,11 @@ object ApplicationModule {
 
     @Singleton
     @Provides
-    fun provideHistoryDatabase(@ApplicationContext context: Context): HistoryDatabase {
-        return HistoryDatabase.getInstance(context)
+    fun provideTestRecordDatabase(@ApplicationContext context: Context): TestRecordDatabase {
+        return TestRecordDatabase.getInstance(context)
     }
+
+    @Provides
+    fun provideTestRecordDao(testRecordDatabase: TestRecordDatabase) =
+        testRecordDatabase.testRecordDao()
 }

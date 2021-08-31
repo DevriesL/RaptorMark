@@ -233,7 +233,7 @@ enum class SettingOptions(
             closeDialog: (Int, String?) -> Unit
         ): @Composable () -> Unit {
             val engineList: ArrayList<String> = ArrayList()
-            val jsonObject = JSONObject(NativeDataSource.native_ListEngines())
+            val jsonObject = JSONObject(NativeHandler.native_ListEngines())
             val jsonArray = jsonObject.getJSONArray("engines")
             for (i in 0 until jsonArray.length()) {
                 val engineObject: JSONObject = jsonArray.getJSONObject(i)

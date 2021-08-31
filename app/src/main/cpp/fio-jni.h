@@ -1,7 +1,7 @@
 #ifndef FIO_JNI_H
 #define FIO_JNI_H
 
-#define CLASS_NAME_NATIVE_DATA_SRC "io/github/devriesl/raptormark/data/NativeDataSource"
+#define CLASS_NAME_NATIVE_DATA_SRC "io/github/devriesl/raptormark/data/NativeHandler"
 #define METHOD_NAME_UPDATE_STATUS  "updateStatus"
 
 #define MAX_ENGINE_NUM 32

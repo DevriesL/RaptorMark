@@ -28,35 +28,34 @@ class BenchmarkTest constructor(
     private val settingSharedPrefs: SettingSharedPrefs
 ) {
     private val mutableTestResult = MutableStateFlow(TestResult())
+    private var nativeResult: String? = null
 
     val testResult: StateFlow<TestResult>
         get() = mutableTestResult
 
-    private fun updateTestResult(vararg results: Int) {
-        mutableTestResult.value = TestResult(
-            bandwidth = results[SUM_OF_BW_RESULT_INDEX],
-            latency = if (testCase.isRand) results[AVG_OF_4N_LAT_RESULT_INDEX] else null
-        )
-    }
-
     private val nativeListener = object : NativeListener {
-        override fun onTestResult(vararg results: Int) {
-            this@BenchmarkTest.updateTestResult(results = results)
+        override fun onTestResult(result: String) {
+            nativeResult = result
+            mutableTestResult.value = parseTestResult(result)
         }
     }
 
-    fun runTest() {
-        NativeDataSource.registerListener(nativeListener)
+    fun runTest(): String? {
+        nativeResult = null
+
+        NativeHandler.registerListener(nativeListener)
         val filePath = getRandomFilePath()
         val options = testOptionsBuilder(filePath)
-        val ret = NativeDataSource.native_FIOTest(options)
+        val ret = NativeHandler.native_FIOTest(options)
         val testFile = File(filePath)
         if (testFile.exists()) testFile.delete()
-        NativeDataSource.unregisterListener(nativeListener)
+        NativeHandler.unregisterListener(nativeListener)
 
         if (ret != 0) {
             throw IOException("$ret")
         }
+
+        return nativeResult
     }
 
     private fun getRandomFilePath(): String {
@@ -135,13 +134,5 @@ class BenchmarkTest constructor(
 
     companion object {
         const val FILE_SUFFIX_LENGTH = 8
-
-        const val SUM_OF_BW_RESULT_INDEX = 0
-        const val AVG_OF_4N_LAT_RESULT_INDEX = 1
     }
 }
-
-data class TestResult(
-    val bandwidth: Int? = null,
-    val latency: Int? = null,
-)
