@@ -32,8 +32,8 @@ android {
         applicationId "io.github.devriesl.raptormark"
         minSdkVersion 28
         targetSdkVersion 30
-        versionCode 3
-        versionName "Pre-Alpha 0.1.1"
+        versionCode 4
+        versionName "0.2.0-beta"
 
         ndk {
             abiFilters "arm64-v8a"
