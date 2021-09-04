@@ -83,7 +83,7 @@ void json2Options(const char *jsonStr, int *argc, char ***argv) {
         (*argv)[i] = (char *) calloc(ARGV_OPTION_MAX_LENGTH, sizeof(char));
         sprintf((*argv)[i], isShortOpts ? "-%s" : "--%s", name->valuestring);
         if (cJSON_IsString(value))
-            sprintf((*argv)[i] + strlen((*argv)[i]), "=%s", value->valuestring);
+            sprintf((*argv)[i] + strlen((*argv)[i]), isShortOpts ? "%s" : "=%s", value->valuestring);
 
         i++;
     }
@@ -101,10 +101,6 @@ void freeOptions(int *argc, char ***argv) {
 
 int LibFIO::fio(int argc, char *argv[]) {
     return libFunc.fio(argc, argv, nullptr, callbackPtr);
-}
-
-int LibFIO::read_to_pipe_async(int argc, char *argv[]) {
-    return libFunc.read_to_pipe_async(argc, argv);
 }
 
 int LibFIO::fio_list_ioengines(char **list_buf) {

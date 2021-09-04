@@ -45,8 +45,6 @@ class LibFIO {
 public:
     int fio(int argc, char *argv[]);
 
-    int read_to_pipe_async(int argc, char *argv[]);
-
     int fio_list_ioengines(char **list_buf);
 
     LibFIO(const char *func, void *callback);
@@ -61,8 +59,6 @@ private:
         void *funcPtr = nullptr;
 
         int (*fio)(int argc, char *argv[], char *envp[], void *callback_ptr);
-
-        int (*read_to_pipe_async)(int argc, char *argv[]);
 
         int (*fio_list_ioengines)(char **list_buf);
     } libFunc;

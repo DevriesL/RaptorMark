@@ -48,19 +48,6 @@ JNIEXPORT jint JNICALL native_FIOTest(JNIEnv *env, jobject instance, jstring jso
     return ret;
 }
 
-JNIEXPORT jint JNICALL native_LatencyTest(JNIEnv *env, jobject instance, jstring jsonCommand) {
-    const char *jsonStr = env->GetStringUTFChars(jsonCommand, NULL);
-    int ret, argc;
-    char **argv;
-    LibFIO libFio("read_to_pipe_async", (void *)updateStatusCallback);
-
-    json2Options(jsonStr, &argc, &argv);
-    ret = libFio.read_to_pipe_async(argc, argv);
-    freeOptions(&argc, &argv);
-
-    return ret;
-}
-
 JNIEXPORT jstring JNICALL native_ListEngines(JNIEnv *env, jobject instance) {
     char *engineList[MAX_ENGINE_NUM];
     int index, engineNum;
