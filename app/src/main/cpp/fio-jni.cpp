@@ -82,7 +82,6 @@ JNIEXPORT jstring JNICALL native_ListEngines(JNIEnv *env, jobject instance) {
 
 static const JNINativeMethod FIOMethods[] = {
         {"native_FIOTest",       "(Ljava/lang/String;)I", (void *) native_FIOTest},
-        {"native_LatencyTest",   "(Ljava/lang/String;)I", (void *) native_LatencyTest},
         {"native_ListEngines",   "()Ljava/lang/String;",  (void *) native_ListEngines}
 };
 
