@@ -1595,7 +1595,7 @@ again:
 		assert(io_u->flags & IO_U_F_FREE);
 		io_u_clear(td, io_u, IO_U_F_FREE | IO_U_F_NO_FILE_PUT |
 				 IO_U_F_TRIMMED | IO_U_F_BARRIER |
-				 IO_U_F_VER_LIST | IO_U_F_PRIORITY);
+				 IO_U_F_VER_LIST | IO_U_F_HIGH_PRIO);
 
 		io_u->error = 0;
 		io_u->acct_ddir = -1;
@@ -1799,6 +1799,10 @@ struct io_u *get_io_u(struct thread_data *td)
 	io_u->xfer_buf = io_u->buf;
 	io_u->xfer_buflen = io_u->buflen;
 
+	/*
+	 * Remember the issuing context priority. The IO engine may change this.
+	 */
+	io_u->ioprio = td->ioprio;
 out:
 	assert(io_u->file);
 	if (!td_io_prep(td, io_u)) {
@@ -1884,7 +1888,8 @@ static void account_io_completion(struct thread_data *td, struct io_u *io_u,
 		unsigned long long tnsec;
 
 		tnsec = ntime_since(&io_u->start_time, &icd->time);
-		add_lat_sample(td, idx, tnsec, bytes, io_u->offset, io_u_is_prio(io_u));
+		add_lat_sample(td, idx, tnsec, bytes, io_u->offset,
+			       io_u->ioprio, io_u_is_high_prio(io_u));
 
 		if (td->flags & TD_F_PROFILE_OPS) {
 			struct prof_io_ops *ops = &td->prof_io_ops;
@@ -1905,7 +1910,8 @@ static void account_io_completion(struct thread_data *td, struct io_u *io_u,
 
 	if (ddir_rw(idx)) {
 		if (!td->o.disable_clat) {
-			add_clat_sample(td, idx, llnsec, bytes, io_u->offset, io_u_is_prio(io_u));
+			add_clat_sample(td, idx, llnsec, bytes, io_u->offset,
+					io_u->ioprio, io_u_is_high_prio(io_u));
 			io_u_mark_latency(td, llnsec);
 		}
 
@@ -1998,7 +2004,7 @@ static void io_completed(struct thread_data *td, struct io_u **io_u_ptr,
 		 * Make sure we notice short IO from here, and requeue them
 		 * appropriately!
 		 */
-		if (io_u->resid) {
+		if (bytes && io_u->resid) {
 			io_u->xfer_buflen = io_u->resid;
 			io_u->xfer_buf += bytes;
 			io_u->offset += bytes;
@@ -2162,7 +2168,7 @@ void io_u_queued(struct thread_data *td, struct io_u *io_u)
 			td = td->parent;
 
 		add_slat_sample(td, io_u->ddir, slat_time, io_u->xfer_buflen,
-				io_u->offset, io_u_is_prio(io_u));
+				io_u->offset, io_u->ioprio);
 	}
 }
 
@@ -2172,6 +2178,7 @@ void io_u_queued(struct thread_data *td, struct io_u *io_u)
 static struct frand_state *get_buf_state(struct thread_data *td)
 {
 	unsigned int v;
+	unsigned long long i;
 
 	if (!td->o.dedupe_percentage)
 		return &td->buf_state;
@@ -2183,7 +2190,24 @@ static struct frand_state *get_buf_state(struct thread_data *td)
 	v = rand_between(&td->dedupe_state, 1, 100);
 
 	if (v <= td->o.dedupe_percentage)
-		return &td->buf_state_prev;
+		switch (td->o.dedupe_mode) {
+		case DEDUPE_MODE_REPEAT:
+			/*
+			* The caller advances the returned frand_state.
+			* A copy of prev should be returned instead since
+			* a subsequent intention to generate a deduped buffer
+			* might result in generating a unique one
+			*/
+			frand_copy(&td->buf_state_ret, &td->buf_state_prev);
+			return &td->buf_state_ret;
+		case DEDUPE_MODE_WORKING_SET:
+			i = rand_between(&td->dedupe_working_set_index_state, 0, td->num_unique_pages - 1);
+			frand_copy(&td->buf_state_ret, &td->dedupe_working_set_states[i]);
+			return &td->buf_state_ret;
+		default:
+			log_err("unexpected dedupe mode %u\n", td->o.dedupe_mode);
+			assert(0);
+		}
 
 	return &td->buf_state;
 }
@@ -2206,27 +2230,30 @@ void fill_io_buffer(struct thread_data *td, void *buf, unsigned long long min_wr
 
 	if (o->compress_percentage || o->dedupe_percentage) {
 		unsigned int perc = td->o.compress_percentage;
-		struct frand_state *rs;
+		struct frand_state *rs = NULL;
 		unsigned long long left = max_bs;
 		unsigned long long this_write;
 
 		do {
-			rs = get_buf_state(td);
+			/*
+			 * Buffers are either entirely dedupe-able or not.
+			 * If we choose to dedup, the buffer should undergo
+			 * the same manipulation as the original write. Which
+			 * means we should retrack the steps we took for compression
+			 * as well.
+			 */
+			if (!rs)
+				rs = get_buf_state(td);
 
 			min_write = min(min_write, left);
 
-			if (perc) {
-				this_write = min_not_zero(min_write,
-							(unsigned long long) td->o.compress_chunk);
+			this_write = min_not_zero(min_write,
+						(unsigned long long) td->o.compress_chunk);
 
-				fill_random_buf_percentage(rs, buf, perc,
-					this_write, this_write,
-					o->buffer_pattern,
-					o->buffer_pattern_bytes);
-			} else {
-				fill_random_buf(rs, buf, min_write);
-				this_write = min_write;
-			}
+			fill_random_buf_percentage(rs, buf, perc,
+				this_write, this_write,
+				o->buffer_pattern,
+				o->buffer_pattern_bytes);
 
 			buf += this_write;
 			left -= this_write;
@@ -2299,10 +2326,19 @@ int do_io_u_trim(const struct thread_data *td, struct io_u *io_u)
 	struct fio_file *f = io_u->file;
 	int ret;
 
+	if (td->o.zone_mode == ZONE_MODE_ZBD) {
+		ret = zbd_do_io_u_trim(td, io_u);
+		if (ret == io_u_completed)
+			return io_u->xfer_buflen;
+		if (ret)
+			goto err;
+	}
+
 	ret = os_trim(f, io_u->offset, io_u->xfer_buflen);
 	if (!ret)
 		return io_u->xfer_buflen;
 
+err:
 	io_u->error = ret;
 	return 0;
 #endif

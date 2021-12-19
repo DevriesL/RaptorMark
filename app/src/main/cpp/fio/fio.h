@@ -47,6 +47,7 @@
 #include "workqueue.h"
 #include "steadystate.h"
 #include "lib/nowarn_snprintf.h"
+#include "dedupe.h"
 
 #ifdef CONFIG_SOLARISAIO
 #include <sys/asynch.h>
@@ -140,6 +141,7 @@ enum {
 	FIO_RAND_POISSON2_OFF,
 	FIO_RAND_POISSON3_OFF,
 	FIO_RAND_PRIO_CMDS,
+	FIO_RAND_DEDUPE_WORKING_SET_IX,
 	FIO_RAND_NR_OFFS,
 };
 
@@ -259,9 +261,14 @@ struct thread_data {
 
 	struct frand_state buf_state;
 	struct frand_state buf_state_prev;
+	struct frand_state buf_state_ret;
 	struct frand_state dedupe_state;
 	struct frand_state zone_state;
 	struct frand_state prio_state;
+	struct frand_state dedupe_working_set_index_state;
+	struct frand_state *dedupe_working_set_states;
+
+	unsigned long long num_unique_pages;
 
 	struct zone_split_index **zone_state_index;
 	unsigned int num_open_zones;
@@ -272,6 +279,11 @@ struct thread_data {
 	struct thread_io_list *vstate;
 
 	int shm_id;
+
+	/*
+	 * Job default IO priority set with prioclass and prio options.
+	 */
+	unsigned int ioprio;
 
 	/*
 	 * IO engine hooks, contains everything needed to submit an io_u
@@ -358,6 +370,8 @@ struct thread_data {
 	uint64_t bytes_done[DDIR_RWDIR_CNT];
 
 	uint64_t *thinktime_blocks_counter;
+	struct timespec last_thinktime;
+	uint64_t last_thinktime_blocks;
 
 	/*
 	 * State for random io, a bitmap of blocks done vs not done
@@ -413,6 +427,7 @@ struct thread_data {
 	 */
 	struct flist_head io_log_list;
 	FILE *io_log_rfile;
+	unsigned int io_log_blktrace;
 	unsigned int io_log_current;
 	unsigned int io_log_checkmark;
 	unsigned int io_log_highmark;

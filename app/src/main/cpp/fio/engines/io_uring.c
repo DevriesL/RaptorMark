@@ -23,6 +23,7 @@
 
 #include "../lib/types.h"
 #include "../os/linux/io_uring.h"
+#include "cmdprio.h"
 
 struct io_sq_ring {
 	unsigned *head;
@@ -64,17 +65,17 @@ struct ioring_data {
 	int queued;
 	int cq_ring_off;
 	unsigned iodepth;
-	bool ioprio_class_set;
-	bool ioprio_set;
 	int prepped;
 
 	struct ioring_mmap mmap[3];
+
+	struct cmdprio cmdprio;
 };
 
 struct ioring_options {
-	void *pad;
+	struct thread_data *td;
 	unsigned int hipri;
-	unsigned int cmdprio_percentage;
+	struct cmdprio_options cmdprio_options;
 	unsigned int fixedbufs;
 	unsigned int registerfiles;
 	unsigned int sqpoll_thread;
@@ -120,10 +121,53 @@ static struct fio_option options[] = {
 		.name	= "cmdprio_percentage",
 		.lname	= "high priority percentage",
 		.type	= FIO_OPT_INT,
-		.off1	= offsetof(struct ioring_options, cmdprio_percentage),
-		.minval	= 1,
+		.off1	= offsetof(struct ioring_options,
+				   cmdprio_options.percentage[DDIR_READ]),
+		.off2	= offsetof(struct ioring_options,
+				   cmdprio_options.percentage[DDIR_WRITE]),
+		.minval	= 0,
 		.maxval	= 100,
 		.help	= "Send high priority I/O this percentage of the time",
+		.category = FIO_OPT_C_ENGINE,
+		.group	= FIO_OPT_G_IOURING,
+	},
+	{
+		.name	= "cmdprio_class",
+		.lname	= "Asynchronous I/O priority class",
+		.type	= FIO_OPT_INT,
+		.off1	= offsetof(struct ioring_options,
+				   cmdprio_options.class[DDIR_READ]),
+		.off2	= offsetof(struct ioring_options,
+				   cmdprio_options.class[DDIR_WRITE]),
+		.help	= "Set asynchronous IO priority class",
+		.minval	= IOPRIO_MIN_PRIO_CLASS + 1,
+		.maxval	= IOPRIO_MAX_PRIO_CLASS,
+		.interval = 1,
+		.category = FIO_OPT_C_ENGINE,
+		.group	= FIO_OPT_G_IOURING,
+	},
+	{
+		.name	= "cmdprio",
+		.lname	= "Asynchronous I/O priority level",
+		.type	= FIO_OPT_INT,
+		.off1	= offsetof(struct ioring_options,
+				   cmdprio_options.level[DDIR_READ]),
+		.off2	= offsetof(struct ioring_options,
+				   cmdprio_options.level[DDIR_WRITE]),
+		.help	= "Set asynchronous IO priority level",
+		.minval	= IOPRIO_MIN_PRIO,
+		.maxval	= IOPRIO_MAX_PRIO,
+		.interval = 1,
+		.category = FIO_OPT_C_ENGINE,
+		.group	= FIO_OPT_G_IOURING,
+	},
+	{
+		.name   = "cmdprio_bssplit",
+		.lname  = "Priority percentage block size split",
+		.type   = FIO_OPT_STR_STORE,
+		.off1   = offsetof(struct ioring_options,
+				   cmdprio_options.bssplit_str),
+		.help   = "Set priority percentages for different block sizes",
 		.category = FIO_OPT_C_ENGINE,
 		.group	= FIO_OPT_G_IOURING,
 	},
@@ -131,6 +175,24 @@ static struct fio_option options[] = {
 	{
 		.name	= "cmdprio_percentage",
 		.lname	= "high priority percentage",
+		.type	= FIO_OPT_UNSUPPORTED,
+		.help	= "Your platform does not support I/O priority classes",
+	},
+	{
+		.name	= "cmdprio_class",
+		.lname	= "Asynchronous I/O priority class",
+		.type	= FIO_OPT_UNSUPPORTED,
+		.help	= "Your platform does not support I/O priority classes",
+	},
+	{
+		.name	= "cmdprio",
+		.lname	= "Asynchronous I/O priority level",
+		.type	= FIO_OPT_UNSUPPORTED,
+		.help	= "Your platform does not support I/O priority classes",
+	},
+	{
+		.name   = "cmdprio_bssplit",
+		.lname  = "Priority percentage block size split",
 		.type	= FIO_OPT_UNSUPPORTED,
 		.help	= "Your platform does not support I/O priority classes",
 	},
@@ -234,6 +296,7 @@ static int fio_ioring_prep(struct thread_data *td, struct io_u *io_u)
 		sqe->flags = IOSQE_FIXED_FILE;
 	} else {
 		sqe->fd = f->fd;
+		sqe->flags = 0;
 	}
 
 	if (io_u->ddir == DDIR_READ || io_u->ddir == DDIR_WRITE) {
@@ -261,18 +324,24 @@ static int fio_ioring_prep(struct thread_data *td, struct io_u *io_u)
 				sqe->len = 1;
 			}
 		}
-#ifdef CONFIG_PWRITEV2
+		sqe->rw_flags = 0;
 		if (!td->o.odirect && o->uncached)
-			sqe->rw_flags = RWF_UNCACHED;
-#endif
+			sqe->rw_flags |= RWF_UNCACHED;
 		if (o->nowait)
 			sqe->rw_flags |= RWF_NOWAIT;
-		if (ld->ioprio_class_set)
-			sqe->ioprio = td->o.ioprio_class << 13;
-		if (ld->ioprio_set)
-			sqe->ioprio |= td->o.ioprio;
+
+		/*
+		 * Since io_uring can have a submission context (sqthread_poll)
+		 * that is different from the process context, we cannot rely on
+		 * the IO priority set by ioprio_set() (option prio/prioclass)
+		 * to be inherited.
+		 * td->ioprio will have the value of the "default prio", so set
+		 * this unconditionally. This value might get overridden by
+		 * fio_ioring_cmdprio_prep() if the option cmdprio_percentage or
+		 * cmdprio_bssplit is used.
+		 */
+		sqe->ioprio = td->ioprio;
 		sqe->off = io_u->offset;
-		sqe->rw_flags = 0;
 	} else if (ddir_sync(io_u->ddir)) {
 		sqe->ioprio = 0;
 		if (io_u->ddir == DDIR_SYNC_FILE_RANGE) {
@@ -378,15 +447,14 @@ static int fio_ioring_getevents(struct thread_data *td, unsigned int min,
 	return r < 0 ? r : events;
 }
 
-static void fio_ioring_prio_prep(struct thread_data *td, struct io_u *io_u)
+static inline void fio_ioring_cmdprio_prep(struct thread_data *td,
+					   struct io_u *io_u)
 {
-	struct ioring_options *o = td->eo;
 	struct ioring_data *ld = td->io_ops_data;
-	if (rand_between(&td->prio_state, 0, 99) < o->cmdprio_percentage) {
-		ld->sqes[io_u->index].ioprio = IOPRIO_CLASS_RT << IOPRIO_CLASS_SHIFT;
-		io_u->flags |= IO_U_F_PRIORITY;
-	}
-	return;
+	struct cmdprio *cmdprio = &ld->cmdprio;
+
+	if (fio_cmdprio_set_ioprio(td, cmdprio, io_u))
+		ld->sqes[io_u->index].ioprio = io_u->ioprio;
 }
 
 static enum fio_q_status fio_ioring_queue(struct thread_data *td,
@@ -394,7 +462,6 @@ static enum fio_q_status fio_ioring_queue(struct thread_data *td,
 {
 	struct ioring_data *ld = td->io_ops_data;
 	struct io_sq_ring *ring = &ld->sq_ring;
-	struct ioring_options *o = td->eo;
 	unsigned tail, next_tail;
 
 	fio_ro_check(td, io_u);
@@ -417,8 +484,9 @@ static enum fio_q_status fio_ioring_queue(struct thread_data *td,
 	if (next_tail == atomic_load_acquire(ring->head))
 		return FIO_Q_BUSY;
 
-	if (o->cmdprio_percentage)
-		fio_ioring_prio_prep(td, io_u);
+	if (ld->cmdprio.mode != CMDPRIO_MODE_NONE)
+		fio_ioring_cmdprio_prep(td, io_u);
+
 	ring->array[tail & ld->sq_ring_mask] = io_u->index;
 	atomic_store_release(ring->tail, next_tail);
 
@@ -522,6 +590,7 @@ static void fio_ioring_cleanup(struct thread_data *td)
 		if (!(td->flags & TD_F_CHILD))
 			fio_ioring_unmap(ld);
 
+		fio_cmdprio_cleanup(&ld->cmdprio);
 		free(ld->io_u_index);
 		free(ld->iovecs);
 		free(ld->fds);
@@ -622,6 +691,13 @@ static int fio_ioring_queue_init(struct thread_data *td)
 			p.sq_thread_cpu = o->sqpoll_cpu;
 		}
 	}
+
+	/*
+	 * Clamp CQ ring size at our SQ ring size, we don't need more entries
+	 * than that.
+	 */
+	p.flags |= IORING_SETUP_CQSIZE;
+	p.cq_entries = depth;
 
 	ret = syscall(__NR_io_uring_setup, depth, &p);
 	if (ret < 0)
@@ -728,13 +804,7 @@ static int fio_ioring_init(struct thread_data *td)
 {
 	struct ioring_options *o = td->eo;
 	struct ioring_data *ld;
-	struct thread_options *to = &td->o;
-
-	if (to->io_submit_mode == IO_MODE_OFFLOAD) {
-		log_err("fio: io_submit_mode=offload is not compatible (or "
-			"useful) with io_uring\n");
-		return 1;
-	}
+	int ret;
 
 	/* sqthread submission requires registered files */
 	if (o->sqpoll_thread)
@@ -758,21 +828,11 @@ static int fio_ioring_init(struct thread_data *td)
 
 	td->io_ops_data = ld;
 
-	/*
-	 * Check for option conflicts
-	 */
-	if ((fio_option_is_set(to, ioprio) || fio_option_is_set(to, ioprio_class)) &&
-			o->cmdprio_percentage != 0) {
-		log_err("%s: cmdprio_percentage option and mutually exclusive "
-				"prio or prioclass option is set, exiting\n", to->name);
-		td_verror(td, EINVAL, "fio_io_uring_init");
+	ret = fio_cmdprio_init(td, &ld->cmdprio, &o->cmdprio_options);
+	if (ret) {
+		td_verror(td, EINVAL, "fio_ioring_init");
 		return 1;
 	}
-
-	if (fio_option_is_set(&td->o, ioprio_class))
-		ld->ioprio_class_set = true;
-	if (fio_option_is_set(&td->o, ioprio))
-		ld->ioprio_set = true;
 
 	return 0;
 }

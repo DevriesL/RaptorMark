@@ -960,6 +960,28 @@ static int fixup_options(struct thread_data *td)
 
 	o->latency_target *= 1000ULL;
 
+	/*
+	 * Dedupe working set verifications
+	 */
+	if (o->dedupe_percentage && o->dedupe_mode == DEDUPE_MODE_WORKING_SET) {
+		if (!fio_option_is_set(o, size)) {
+			log_err("fio: pregenerated dedupe working set "
+					"requires size to be set\n");
+			ret |= 1;
+		} else if (o->nr_files != 1) {
+			log_err("fio: dedupe working set mode supported with "
+					"single file per job, but %d files "
+					"provided\n", o->nr_files);
+			ret |= 1;
+		} else if (o->dedupe_working_set_percentage + o->dedupe_percentage > 100) {
+			log_err("fio: impossible to reach expected dedupe percentage %u "
+					"since %u percentage of size is reserved to dedupe working set "
+					"(those are unique pages)\n",
+					o->dedupe_percentage, o->dedupe_working_set_percentage);
+			ret |= 1;
+		}
+	}
+
 	return ret;
 }
 
@@ -1033,6 +1055,7 @@ static void td_fill_rand_seeds_internal(struct thread_data *td, bool use64)
 	init_rand_seed(&td->dedupe_state, td->rand_seeds[FIO_DEDUPE_OFF], false);
 	init_rand_seed(&td->zone_state, td->rand_seeds[FIO_RAND_ZONE_OFF], false);
 	init_rand_seed(&td->prio_state, td->rand_seeds[FIO_RAND_PRIO_CMDS], false);
+	init_rand_seed(&td->dedupe_working_set_index_state, td->rand_seeds[FIO_RAND_DEDUPE_WORKING_SET_IX], use64);
 
 	if (!td_random(td))
 		return;
@@ -1493,6 +1516,9 @@ static int add_job(struct thread_data *td, const char *jobname, int job_add_num,
 	if (fixup_options(td))
 		goto err;
 
+	if (init_dedupe_working_set_seeds(td))
+		goto err;
+
 	/*
 	 * Belongs to fixup_options, but o->name is not necessarily set as yet
 	 */
@@ -1524,16 +1550,7 @@ static int add_job(struct thread_data *td, const char *jobname, int job_add_num,
 	memcpy(td->ts.percentile_list, o->percentile_list, sizeof(o->percentile_list));
 	td->ts.sig_figs = o->sig_figs;
 
-	for (i = 0; i < DDIR_RWDIR_CNT; i++) {
-		td->ts.clat_stat[i].min_val = ULONG_MAX;
-		td->ts.slat_stat[i].min_val = ULONG_MAX;
-		td->ts.lat_stat[i].min_val = ULONG_MAX;
-		td->ts.bw_stat[i].min_val = ULONG_MAX;
-		td->ts.iops_stat[i].min_val = ULONG_MAX;
-		td->ts.clat_high_prio_stat[i].min_val = ULONG_MAX;
-		td->ts.clat_low_prio_stat[i].min_val = ULONG_MAX;
-	}
-	td->ts.sync_stat.min_val = ULONG_MAX;
+	init_thread_stat_min_vals(&td->ts);
 	td->ddir_seq_nr = o->ddir_seq_nr;
 
 	if ((o->stonewall || o->new_group) && prev_group_jobs) {
@@ -1559,6 +1576,7 @@ static int add_job(struct thread_data *td, const char *jobname, int job_add_num,
 			.hist_coarseness = o->log_hist_coarseness,
 			.log_type = IO_LOG_TYPE_LAT,
 			.log_offset = o->log_offset,
+			.log_prio = o->log_prio,
 			.log_gz = o->log_gz,
 			.log_gz_store = o->log_gz_store,
 		};
@@ -1592,6 +1610,7 @@ static int add_job(struct thread_data *td, const char *jobname, int job_add_num,
 			.hist_coarseness = o->log_hist_coarseness,
 			.log_type = IO_LOG_TYPE_HIST,
 			.log_offset = o->log_offset,
+			.log_prio = o->log_prio,
 			.log_gz = o->log_gz,
 			.log_gz_store = o->log_gz_store,
 		};
@@ -1623,6 +1642,7 @@ static int add_job(struct thread_data *td, const char *jobname, int job_add_num,
 			.hist_coarseness = o->log_hist_coarseness,
 			.log_type = IO_LOG_TYPE_BW,
 			.log_offset = o->log_offset,
+			.log_prio = o->log_prio,
 			.log_gz = o->log_gz,
 			.log_gz_store = o->log_gz_store,
 		};
@@ -1654,6 +1674,7 @@ static int add_job(struct thread_data *td, const char *jobname, int job_add_num,
 			.hist_coarseness = o->log_hist_coarseness,
 			.log_type = IO_LOG_TYPE_IOPS,
 			.log_offset = o->log_offset,
+			.log_prio = o->log_prio,
 			.log_gz = o->log_gz,
 			.log_gz_store = o->log_gz_store,
 		};

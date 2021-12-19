@@ -187,11 +187,13 @@ void convert_thread_options_to_cpu(struct thread_options *o,
 	o->rand_repeatable = le32_to_cpu(top->rand_repeatable);
 	o->allrand_repeatable = le32_to_cpu(top->allrand_repeatable);
 	o->rand_seed = le64_to_cpu(top->rand_seed);
+	o->log_entries = le32_to_cpu(top->log_entries);
 	o->log_avg_msec = le32_to_cpu(top->log_avg_msec);
 	o->log_hist_msec = le32_to_cpu(top->log_hist_msec);
 	o->log_hist_coarseness = le32_to_cpu(top->log_hist_coarseness);
 	o->log_max = le32_to_cpu(top->log_max);
 	o->log_offset = le32_to_cpu(top->log_offset);
+	o->log_prio = le32_to_cpu(top->log_prio);
 	o->log_gz = le32_to_cpu(top->log_gz);
 	o->log_gz_store = le32_to_cpu(top->log_gz_store);
 	o->log_unix_epoch = le32_to_cpu(top->log_unix_epoch);
@@ -213,6 +215,7 @@ void convert_thread_options_to_cpu(struct thread_options *o,
 	o->thinktime_spin = le32_to_cpu(top->thinktime_spin);
 	o->thinktime_blocks = le32_to_cpu(top->thinktime_blocks);
 	o->thinktime_blocks_type = le32_to_cpu(top->thinktime_blocks_type);
+	o->thinktime_iotime = le32_to_cpu(top->thinktime_iotime);
 	o->fsync_blocks = le32_to_cpu(top->fsync_blocks);
 	o->fdatasync_blocks = le32_to_cpu(top->fdatasync_blocks);
 	o->barrier_blocks = le32_to_cpu(top->barrier_blocks);
@@ -231,6 +234,8 @@ void convert_thread_options_to_cpu(struct thread_options *o,
 	o->zone_capacity = le64_to_cpu(top->zone_capacity);
 	o->zone_skip = le64_to_cpu(top->zone_skip);
 	o->zone_mode = le32_to_cpu(top->zone_mode);
+	o->max_open_zones = __le32_to_cpu(top->max_open_zones);
+	o->ignore_zone_limits = le32_to_cpu(top->ignore_zone_limits);
 	o->lockmem = le64_to_cpu(top->lockmem);
 	o->offset_increment_percent = le32_to_cpu(top->offset_increment_percent);
 	o->offset_increment = le64_to_cpu(top->offset_increment);
@@ -296,6 +301,8 @@ void convert_thread_options_to_cpu(struct thread_options *o,
 	o->compress_percentage = le32_to_cpu(top->compress_percentage);
 	o->compress_chunk = le32_to_cpu(top->compress_chunk);
 	o->dedupe_percentage = le32_to_cpu(top->dedupe_percentage);
+	o->dedupe_mode = le32_to_cpu(top->dedupe_mode);
+	o->dedupe_working_set_percentage = le32_to_cpu(top->dedupe_working_set_percentage);
 	o->block_error_hist = le32_to_cpu(top->block_error_hist);
 	o->replay_align = le32_to_cpu(top->replay_align);
 	o->replay_scale = le32_to_cpu(top->replay_scale);
@@ -410,9 +417,11 @@ void convert_thread_options_to_net(struct thread_options_pack *top,
 	top->rand_repeatable = cpu_to_le32(o->rand_repeatable);
 	top->allrand_repeatable = cpu_to_le32(o->allrand_repeatable);
 	top->rand_seed = __cpu_to_le64(o->rand_seed);
+	top->log_entries = cpu_to_le32(o->log_entries);
 	top->log_avg_msec = cpu_to_le32(o->log_avg_msec);
 	top->log_max = cpu_to_le32(o->log_max);
 	top->log_offset = cpu_to_le32(o->log_offset);
+	top->log_prio = cpu_to_le32(o->log_prio);
 	top->log_gz = cpu_to_le32(o->log_gz);
 	top->log_gz_store = cpu_to_le32(o->log_gz_store);
 	top->log_unix_epoch = cpu_to_le32(o->log_unix_epoch);
@@ -434,6 +443,7 @@ void convert_thread_options_to_net(struct thread_options_pack *top,
 	top->thinktime_spin = cpu_to_le32(o->thinktime_spin);
 	top->thinktime_blocks = cpu_to_le32(o->thinktime_blocks);
 	top->thinktime_blocks_type = __cpu_to_le32(o->thinktime_blocks_type);
+	top->thinktime_iotime = __cpu_to_le32(o->thinktime_iotime);
 	top->fsync_blocks = cpu_to_le32(o->fsync_blocks);
 	top->fdatasync_blocks = cpu_to_le32(o->fdatasync_blocks);
 	top->barrier_blocks = cpu_to_le32(o->barrier_blocks);
@@ -497,6 +507,8 @@ void convert_thread_options_to_net(struct thread_options_pack *top,
 	top->compress_percentage = cpu_to_le32(o->compress_percentage);
 	top->compress_chunk = cpu_to_le32(o->compress_chunk);
 	top->dedupe_percentage = cpu_to_le32(o->dedupe_percentage);
+	top->dedupe_mode = cpu_to_le32(o->dedupe_mode);
+	top->dedupe_working_set_percentage = cpu_to_le32(o->dedupe_working_set_percentage);
 	top->block_error_hist = cpu_to_le32(o->block_error_hist);
 	top->replay_align = cpu_to_le32(o->replay_align);
 	top->replay_scale = cpu_to_le32(o->replay_scale);
@@ -573,6 +585,8 @@ void convert_thread_options_to_net(struct thread_options_pack *top,
 	top->zone_capacity = __cpu_to_le64(o->zone_capacity);
 	top->zone_skip = __cpu_to_le64(o->zone_skip);
 	top->zone_mode = __cpu_to_le32(o->zone_mode);
+	top->max_open_zones = __cpu_to_le32(o->max_open_zones);
+	top->ignore_zone_limits = cpu_to_le32(o->ignore_zone_limits);
 	top->lockmem = __cpu_to_le64(o->lockmem);
 	top->ddir_seq_add = __cpu_to_le64(o->ddir_seq_add);
 	top->file_size_low = __cpu_to_le64(o->file_size_low);

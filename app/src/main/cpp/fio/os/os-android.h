@@ -173,16 +173,26 @@ enum {
 #define IOPRIO_MIN_PRIO_CLASS	0
 #define IOPRIO_MAX_PRIO_CLASS	3
 
-static inline int ioprio_set(int which, int who, int ioprio_class, int ioprio)
+static inline int ioprio_value(int ioprio_class, int ioprio)
 {
 	/*
 	 * If no class is set, assume BE
 	 */
-	if (!ioprio_class)
-		ioprio_class = IOPRIO_CLASS_BE;
+        if (!ioprio_class)
+                ioprio_class = IOPRIO_CLASS_BE;
 
-	ioprio |= ioprio_class << IOPRIO_CLASS_SHIFT;
-	return syscall(__NR_ioprio_set, which, who, ioprio);
+	return (ioprio_class << IOPRIO_CLASS_SHIFT) | ioprio;
+}
+
+static inline bool ioprio_value_is_class_rt(unsigned int priority)
+{
+	return (priority >> IOPRIO_CLASS_SHIFT) == IOPRIO_CLASS_RT;
+}
+
+static inline int ioprio_set(int which, int who, int ioprio_class, int ioprio)
+{
+	return syscall(__NR_ioprio_set, which, who,
+		       ioprio_value(ioprio_class, ioprio));
 }
 
 #ifndef BLKGETSIZE64
@@ -297,6 +307,10 @@ static inline int fio_set_sched_idle(void)
         struct sched_param p = { .sched_priority = 0, };
         return sched_setscheduler(gettid(), SCHED_IDLE, &p);
 }
+#endif
+
+#ifndef RWF_UNCACHED
+#define RWF_UNCACHED	0x00000040
 #endif
 
 #endif

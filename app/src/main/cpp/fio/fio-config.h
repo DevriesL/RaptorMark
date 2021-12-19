@@ -1,4 +1,4 @@
-#define FIO_VERSION "fio-3.27"
+#define FIO_VERSION "fio-3.29"
 #define CONFIG_64BIT
 #define CONFIG_LITTLE_ENDIAN
 #define CONFIG_LIBAIO

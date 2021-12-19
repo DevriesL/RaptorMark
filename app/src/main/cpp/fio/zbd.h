@@ -17,6 +17,7 @@ struct fio_file;
 enum io_u_action {
 	io_u_accept	= 0,
 	io_u_eof	= 1,
+	io_u_completed  = 2,
 };
 
 /**
@@ -50,7 +51,8 @@ struct fio_zone_info {
  * zoned_block_device_info - zoned block device characteristics
  * @model: Device model.
  * @max_open_zones: global limit on the number of simultaneously opened
- *	sequential write zones.
+ *	sequential write zones. A zero value means unlimited open zones,
+ *	and that open zones will not be tracked in the open_zones array.
  * @mutex: Protects the modifiable members in this structure (refcount and
  *		num_open_zones).
  * @zone_size: size of a single zone in bytes.
@@ -98,6 +100,7 @@ enum fio_ddir zbd_adjust_ddir(struct thread_data *td, struct io_u *io_u,
 			      enum fio_ddir ddir);
 enum io_u_action zbd_adjust_block(struct thread_data *td, struct io_u *io_u);
 char *zbd_write_status(const struct thread_stat *ts);
+int zbd_do_io_u_trim(const struct thread_data *td, struct io_u *io_u);
 
 static inline void zbd_close_file(struct fio_file *f)
 {
