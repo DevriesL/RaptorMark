@@ -11,6 +11,7 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveableStateHolder
 import androidx.compose.ui.Modifier
 import io.github.devriesl.raptormark.R
 import io.github.devriesl.raptormark.ui.benchmark.BenchmarkContent
@@ -33,6 +34,7 @@ fun RaptorApp(
         val selectedIndex by remember(selectedSection) {
             derivedStateOf { sections.indexOf(selectedSection) }
         }
+        val saveableStateHolder = rememberSaveableStateHolder()
         Scaffold(
             topBar = {
                 Column {
@@ -46,10 +48,12 @@ fun RaptorApp(
             },
             content = { scaffoldPadding ->
                 Box(modifier = Modifier.padding(scaffoldPadding)) {
-                    when (selectedSection) {
-                        AppSections.BENCHMARK -> BenchmarkContent(benchmarkViewModel)
-                        AppSections.HISTORY -> HistoryContent(historyViewModel)
-                        AppSections.SETTING -> SettingContent(settingViewModel)
+                    saveableStateHolder.SaveableStateProvider(selectedSection) {
+                        when (selectedSection) {
+                            AppSections.BENCHMARK -> BenchmarkContent(benchmarkViewModel)
+                            AppSections.HISTORY -> HistoryContent(historyViewModel)
+                            AppSections.SETTING -> SettingContent(settingViewModel)
+                        }
                     }
                 }
             }
