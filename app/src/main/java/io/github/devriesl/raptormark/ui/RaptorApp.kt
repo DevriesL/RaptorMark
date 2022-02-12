@@ -2,13 +2,16 @@ package io.github.devriesl.raptormark.ui
 
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
-import androidx.compose.material.Scaffold
-import androidx.compose.material.rememberScaffoldState
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import com.google.accompanist.insets.ProvideWindowInsets
+import androidx.compose.ui.Modifier
 import io.github.devriesl.raptormark.R
 import io.github.devriesl.raptormark.ui.benchmark.BenchmarkContent
 import io.github.devriesl.raptormark.ui.history.HistoryContent
@@ -17,7 +20,6 @@ import io.github.devriesl.raptormark.ui.theme.RaptorMarkTheme
 import io.github.devriesl.raptormark.viewmodels.BenchmarkViewModel
 import io.github.devriesl.raptormark.viewmodels.HistoryViewModel
 import io.github.devriesl.raptormark.viewmodels.SettingViewModel
-import kotlinx.coroutines.launch
 
 @Composable
 fun RaptorApp(
@@ -25,39 +27,33 @@ fun RaptorApp(
     historyViewModel: HistoryViewModel,
     settingViewModel: SettingViewModel
 ) {
-    ProvideWindowInsets {
-        RaptorMarkTheme {
-            val (selectedSection, setSelectedSection) = remember { mutableStateOf(AppSections.BENCHMARK) }
-            val sections = AppSections.values()
-            val selectedSectionIndex = sections.indexOfFirst { it == selectedSection }
-
-            val coroutineScope = rememberCoroutineScope()
-            val scaffoldState = rememberScaffoldState()
-
-            Scaffold(
-                scaffoldState = scaffoldState,
-                topBar = {
-                    AppTopBar(
-                        openDrawer = { coroutineScope.launch { scaffoldState.drawerState.open() } }
-                    )
-                },
-                drawerContent = {
-                    AppDrawer(
-                        selectedSectionIndex = selectedSectionIndex,
+    RaptorMarkTheme {
+        val (selectedSection, setSelectedSection) = remember { mutableStateOf(AppSections.BENCHMARK) }
+        val sections = AppSections.values()
+        val selectedIndex by remember(selectedSection) {
+            derivedStateOf { sections.indexOf(selectedSection) }
+        }
+        Scaffold(
+            topBar = {
+                Column {
+                    AppTopBar()
+                    AppTopTab(
+                        selectedIndex = selectedIndex,
                         sections = sections,
-                        setSelectedSection = setSelectedSection,
-                        closeDrawer = { coroutineScope.launch { scaffoldState.drawerState.close() } }
+                        setSelectedSection = setSelectedSection
                     )
-                },
-                content = {
+                }
+            },
+            content = { scaffoldPadding ->
+                Box(modifier = Modifier.padding(scaffoldPadding)) {
                     when (selectedSection) {
                         AppSections.BENCHMARK -> BenchmarkContent(benchmarkViewModel)
                         AppSections.HISTORY -> HistoryContent(historyViewModel)
                         AppSections.SETTING -> SettingContent(settingViewModel)
                     }
                 }
-            )
-        }
+            }
+        )
     }
 }
 
