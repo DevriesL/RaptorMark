@@ -25,7 +25,7 @@ fun TextInputDialog(
     Dialog(onDismissRequest = { closeDialog(itemIndex, null) }) {
         var textFieldValue by remember { mutableStateOf(TextFieldValue(currentValue)) }
 
-        Surface(
+        DialogContent(
             modifier = Modifier
                 .fillMaxWidth()
                 .wrapContentHeight()

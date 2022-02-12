@@ -23,7 +23,7 @@ fun TargetPathDialog(
         var textFieldValue by remember { mutableStateOf(TextFieldValue(customValue)) }
         val selectCustomPath = mutableStateOf(customValue.isNotEmpty())
 
-        Surface(
+        DialogContent(
             modifier = Modifier
                 .fillMaxWidth()
                 .wrapContentHeight()

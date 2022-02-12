@@ -5,7 +5,6 @@ import androidx.annotation.StringRes
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Divider
-import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -33,7 +32,7 @@ fun AboutInfoDialog(
     val emailAddress = stringResource(R.string.about_author_email)
 
     Dialog(onDismissRequest = { closeDialog(itemIndex, null) }) {
-        Surface(
+        DialogContent(
             modifier = Modifier
                 .fillMaxWidth()
                 .wrapContentHeight()
