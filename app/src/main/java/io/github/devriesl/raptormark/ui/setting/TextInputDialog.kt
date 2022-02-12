@@ -5,13 +5,19 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.platform.LocalTextInputService
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import io.github.devriesl.raptormark.R
+import kotlinx.coroutines.delay
 
 @Composable
 fun TextInputDialog(
@@ -23,36 +29,67 @@ fun TextInputDialog(
     closeDialog: (Int, String?) -> Unit,
 ) {
     Dialog(onDismissRequest = { closeDialog(itemIndex, null) }) {
-        var textFieldValue by remember { mutableStateOf(TextFieldValue(currentValue)) }
+        var textFieldValue by remember {
+            mutableStateOf(
+                TextFieldValue(
+                    text = currentValue,
+                    selection = TextRange(0, currentValue.length),
+                    composition = TextRange(0, currentValue.length)
+                )
+            )
+        }
+
+        val focusRequester = remember { FocusRequester() }
+        val inputService = LocalTextInputService.current
+        LaunchedEffect(Unit) {
+            //Wait a little time to make sure the input service wakes up the keyboard
+            delay(300)
+            inputService?.showSoftwareKeyboard()
+            focusRequester.requestFocus()
+        }
 
         DialogContent(
             modifier = Modifier
                 .fillMaxWidth()
                 .wrapContentHeight()
         ) {
-            Column(modifier = Modifier.padding(16.dp)) {
-                Text(text = stringResource(title))
-                Divider(Modifier.padding(vertical = 8.dp))
+            Column {
+                Text(
+                    text = stringResource(title),
+                    style = MaterialTheme.typography.h6,
+                    modifier = Modifier
+                        .padding(horizontal = 16.dp)
+                        .padding(bottom = 16.dp)
+                        .defaultMinSize(minHeight = 40.dp)
+                        .wrapContentHeight(Alignment.Bottom)
+                )
                 OutlinedTextField(
                     value = textFieldValue,
-                    modifier = Modifier
-                        .padding(8.dp)
-                        .fillMaxWidth(),
                     placeholder = { Text(text = defaultValue) },
                     onValueChange = { textFieldValue = it },
-                    keyboardOptions = KeyboardOptions(keyboardType = keyboardType)
+                    keyboardOptions = KeyboardOptions(keyboardType = keyboardType),
+                    modifier = Modifier
+                        .padding(
+                            horizontal = 16.dp
+                        )
+                        .fillMaxWidth()
+                        .focusRequester(focusRequester),
                 )
-                Divider(Modifier.padding(vertical = 8.dp))
-                Row {
-                    Button(
+                Spacer(modifier = Modifier.height(8.dp))
+                Row(
+                    horizontalArrangement = Arrangement.End,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 8.dp)
+                ) {
+                    TextButton(
                         onClick = { closeDialog(itemIndex, null) },
                         modifier = Modifier
-                            .weight(1f)
                             .padding(horizontal = 8.dp)
                     ) {
                         Text(stringResource(R.string.dismiss_button_content))
                     }
-                    Button(
+                    TextButton(
                         onClick = {
                             if (textFieldValue.text.isEmpty()) {
                                 closeDialog(itemIndex, defaultValue)
@@ -61,7 +98,6 @@ fun TextInputDialog(
                             }
                         },
                         modifier = Modifier
-                            .weight(1f)
                             .padding(horizontal = 8.dp)
                     ) {
                         Text(stringResource(R.string.apply_button_content))
