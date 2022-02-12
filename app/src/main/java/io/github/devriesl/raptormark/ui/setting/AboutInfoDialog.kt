@@ -4,9 +4,10 @@ import android.content.Context
 import androidx.annotation.StringRes
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.Divider
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -37,11 +38,25 @@ fun AboutInfoDialog(
                 .fillMaxWidth()
                 .wrapContentHeight()
         ) {
-            Column(modifier = Modifier.padding(16.dp)) {
-                Text(text = stringResource(title))
-                Divider(Modifier.padding(vertical = 8.dp))
+            Column {
+
                 Text(
-                    buildAnnotatedString {
+                    text = stringResource(title),
+                    style = MaterialTheme.typography.h6,
+                    modifier = Modifier
+                        .padding(horizontal = 16.dp)
+                        .padding(bottom = 16.dp)
+                        .defaultMinSize(minHeight = 40.dp)
+                        .wrapContentHeight(Alignment.Bottom)
+                )
+                fun Modifier.normalTextModifier(): Modifier {
+                    return Modifier
+                        .padding(horizontal = 16.dp)
+                        .then(this)
+                }
+
+                Text(
+                    text = buildAnnotatedString {
                         append(stringResource(R.string.app_name))
                         append(" ")
                         append(stringResource(R.string.about_version_text))
@@ -51,11 +66,12 @@ fun AboutInfoDialog(
                         ) {
                             append(BuildConfig.VERSION_NAME)
                         }
-                    }
+                    },
+                    modifier = Modifier.normalTextModifier()
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
-                    buildAnnotatedString {
+                    text = buildAnnotatedString {
                         append(stringResource(R.string.about_author_text))
                         append(" ")
                         withStyle(
@@ -63,18 +79,35 @@ fun AboutInfoDialog(
                         ) {
                             append(stringResource(R.string.about_author_name))
                         }
-                    }
+                    },
+                    modifier = Modifier.normalTextModifier()
                 )
-                Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(4.dp))
+
+                fun Modifier.clickableModifier(
+                    onClick: () -> Unit
+                ): Modifier {
+                    return Modifier
+                        .fillMaxWidth()
+                        .clickable(onClick = onClick)
+                        .padding(
+                            vertical = 4.dp,
+                            horizontal = 16.dp
+                        )
+                        .then(this)
+                }
+
                 Text(
                     text = emailAddress,
-                    modifier = Modifier.clickable { openEmail(context, emailAddress) }
+                    modifier = Modifier
+                        .clickableModifier { openEmail(context, emailAddress) }
                 )
-                Spacer(modifier = Modifier.height(8.dp))
                 Text(
                     text = stringResource(R.string.about_author_weibo),
-                    modifier = Modifier.clickable { openWeiboUser(context, uidValue) }
+                    modifier = Modifier
+                        .clickableModifier { openWeiboUser(context, uidValue) }
                 )
+                Spacer(modifier = Modifier.height(12.dp))
             }
         }
     }
