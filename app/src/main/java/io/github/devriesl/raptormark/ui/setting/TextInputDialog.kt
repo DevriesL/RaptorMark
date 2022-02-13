@@ -19,6 +19,8 @@ import androidx.compose.ui.window.Dialog
 import io.github.devriesl.raptormark.R
 import kotlinx.coroutines.delay
 
+internal const val showSoftKeyboardDelayTime = 300L
+
 @Composable
 fun TextInputDialog(
     @StringRes title: Int,
@@ -43,7 +45,7 @@ fun TextInputDialog(
         val inputService = LocalTextInputService.current
         LaunchedEffect(Unit) {
             //Wait a little time to make sure the input service wakes up the keyboard
-            delay(300)
+            delay(showSoftKeyboardDelayTime)
             inputService?.showSoftwareKeyboard()
             focusRequester.requestFocus()
         }

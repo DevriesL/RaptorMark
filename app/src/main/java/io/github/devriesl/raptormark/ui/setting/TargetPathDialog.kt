@@ -31,7 +31,7 @@ fun TargetPathDialog(
         val inputService = LocalTextInputService.current
         LaunchedEffect(key1 = selectCustomPath.value) {
             if (selectCustomPath.value) {
-                delay(300)
+                delay(showSoftKeyboardDelayTime)
                 inputService?.showSoftwareKeyboard()
                 focusRequester.requestFocus()
             }else {
