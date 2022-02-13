@@ -11,6 +11,8 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.Saver
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.saveable.rememberSaveableStateHolder
 import androidx.compose.ui.Modifier
 import io.github.devriesl.raptormark.R
@@ -29,7 +31,11 @@ fun RaptorApp(
     settingViewModel: SettingViewModel
 ) {
     RaptorMarkTheme {
-        val (selectedSection, setSelectedSection) = remember { mutableStateOf(AppSections.BENCHMARK) }
+        val (selectedSection, setSelectedSection) = rememberSaveable(stateSaver = enumSaver()) {
+            mutableStateOf(
+                AppSections.BENCHMARK
+            )
+        }
         val sections = AppSections.values()
         val selectedIndex by remember(selectedSection) {
             derivedStateOf { sections.indexOf(selectedSection) }
@@ -69,3 +75,8 @@ enum class AppSections(
     HISTORY(R.string.history_page_title, R.drawable.ic_history_tab),
     SETTING(R.string.setting_page_title, R.drawable.ic_setting_tab)
 }
+
+inline fun <reified Type : Enum<Type>> enumSaver() = Saver<Type, String>(
+    save = { it.name },
+    restore = { enumValueOf<Type>(it) }
+)
