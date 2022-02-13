@@ -1,26 +1,18 @@
 package io.github.devriesl.raptormark.ui.history
 
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.material.Card
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.Text
+import androidx.compose.foundation.layout.*
+import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Info
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.material.icons.outlined.KeyboardArrowDown
+import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import androidx.compose.ui.window.Popup
 import io.github.devriesl.raptormark.R
 import io.github.devriesl.raptormark.data.TestRecord
 import io.github.devriesl.raptormark.data.parseTestResult
@@ -33,58 +25,55 @@ import java.util.*
 fun RecordItem(
     testRecord: TestRecord
 ) {
-    val expandState = remember { mutableStateOf(false) }
+    var expandState by rememberSaveable { mutableStateOf(false) }
     val date = SimpleDateFormat(
         stringResource(R.string.test_record_date_format),
         Locale.getDefault()
     ).format(Date(Timestamp(testRecord.timestamp).time))
 
-    Box(
-        modifier = Modifier
-            .padding(horizontal = 16.dp, vertical = 4.dp)
-            .fillMaxWidth()
-            .clickable { expandState.value = true }
-    ) {
-        Text(
-            modifier = Modifier.align(Alignment.CenterStart),
-            text = date,
-            fontSize = 20.sp
-        )
-        IconButton(modifier = Modifier.align(Alignment.CenterEnd),
-            onClick = {}) {
+    Column {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+                .clickable { expandState = !expandState }
+                .height(48.dp)
+                .padding(horizontal = 16.dp)
+                .fillMaxWidth()
+        ) {
+            Text(
+                text = date,
+                color = if (expandState) MaterialTheme.colors.primary else LocalContentColor.current,
+                style = MaterialTheme.typography.subtitle1,
+                modifier = Modifier.weight(1f)
+            )
+            val rotate by animateFloatAsState(targetValue = if (expandState) 180f else 0f)
             Icon(
-                imageVector = Icons.Outlined.Info,
-                contentDescription = null
+                imageVector = Icons.Outlined.KeyboardArrowDown,
+                tint = LocalContentColor.current.copy(ContentAlpha.medium),
+                contentDescription = null,
+                modifier = Modifier.graphicsLayer {
+                    rotationZ = rotate
+                }
             )
         }
-        if (expandState.value) {
-            Popup(
-                alignment = Alignment.TopStart,
-                onDismissRequest = { expandState.value = false }
-            ) {
-                Card(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp),
-                    elevation = 4.dp
-                ) {
-                    LazyColumn {
-                        items(testRecord.getResults().toList()) {
-                            val testCase = it.first
-                            val result = it.second
-                            if (result != null) {
-                                val testResult = parseTestResult(result)
-                                TestItem(
-                                    title = testCase.title,
-                                    bandwidth = testResult.bandwidth,
-                                    showLatency = testCase.isRand,
-                                    latency = testResult.latency
-                                )
-                            }
-                        }
+
+        if (expandState) {
+            Column {
+                testRecord.getResults().toList().forEach {
+                    val testCase = it.first
+                    val result = it.second
+                    if (result != null) {
+                        val testResult = parseTestResult(result)
+                        TestItem(
+                            title = testCase.title,
+                            bandwidth = testResult.bandwidth,
+                            showLatency = testCase.isRand,
+                            latency = testResult.latency
+                        )
                     }
                 }
             }
+
         }
     }
 }
