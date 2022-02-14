@@ -100,7 +100,7 @@ fun TextInputDialog(
                             }
                         },
                         modifier = Modifier
-                            .padding(horizontal = 8.dp)
+                            .padding(end = 8.dp)
                     ) {
                         Text(stringResource(R.string.apply_button_content))
                     }
