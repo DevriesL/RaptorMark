@@ -34,7 +34,7 @@ fun TargetPathDialog(
                 delay(TextInputDialogDefault.SHOW_SOFT_KEYBOARD_DELAY_TIME)
                 inputService?.showSoftwareKeyboard()
                 focusRequester.requestFocus()
-            }else {
+            } else {
                 inputService?.hideSoftwareKeyboard()
             }
         }
