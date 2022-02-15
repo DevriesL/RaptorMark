@@ -247,6 +247,7 @@ enum class SettingOptions(
             return {
                 SingleChoiceDialog(
                     title = IO_ENGINE.title,
+                    defaultChoice = settingSharedPrefs.getConfig(IO_ENGINE.name, DEFAULT_IO_ENGINE_VALUE),
                     choiceList = engineList,
                     itemIndex = itemIndex,
                     closeDialog = closeDialog
