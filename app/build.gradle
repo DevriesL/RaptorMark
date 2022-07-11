@@ -10,7 +10,7 @@ kapt {
 }
 
 android {
-    compileSdkVersion 31
+    compileSdkVersion 32
     buildToolsVersion "30.0.3"
 
     def keystorePropertiesFile = rootProject.file("keystore.properties")
@@ -31,7 +31,7 @@ android {
     defaultConfig {
         applicationId "io.github.devriesl.raptormark"
         minSdkVersion 28
-        targetSdkVersion 31
+        targetSdkVersion 32
         versionCode 5
         versionName "0.3.0-beta"
 
@@ -74,9 +74,9 @@ android {
 }
 
 dependencies {
-    implementation "androidx.core:core-ktx:1.7.0"
-    implementation "androidx.appcompat:appcompat:1.4.0"
-    implementation "com.google.android.material:material:1.4.0"
+    implementation "androidx.core:core-ktx:1.8.0"
+    implementation "androidx.appcompat:appcompat:1.4.2"
+    implementation "com.google.android.material:material:1.6.1"
 
     // Dagger Hilt
     implementation "com.google.dagger:hilt-android:$hilt_version"
@@ -92,11 +92,11 @@ dependencies {
     implementation "androidx.compose.ui:ui-tooling:$compose_version"
     implementation "androidx.compose.material:material:$compose_version"
     // Compose integration with activities
-    implementation "androidx.activity:activity-compose:1.4.0"
+    implementation "androidx.activity:activity-compose:1.5.0"
     // Accompanist utils for Compose
-    implementation "com.google.accompanist:accompanist-insets:0.20.0"
+    implementation "com.google.accompanist:accompanist-insets:0.23.1"
     // Integration with ViewModels
-    implementation "androidx.lifecycle:lifecycle-viewmodel-compose:2.4.0"
+    implementation "androidx.lifecycle:lifecycle-viewmodel-compose:2.5.0"
     // ConstraintLayout with Compose
-    implementation "androidx.constraintlayout:constraintlayout-compose:1.0.0-rc02"
+    implementation "androidx.constraintlayout:constraintlayout-compose:1.0.1"
 }
