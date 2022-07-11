@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="io.github.devriesl.raptormark">
 
+    <uses-permission android:name="android.permission.INTERNET" />
+
     <application
         android:name=".RaptorApplication"
         android:allowBackup="true"

@@ -30,4 +30,6 @@ object Constants {
     const val IO_TYPE_SEQ_WR_VALUE = "write"
     const val IO_TYPE_RAND_RD_VALUE = "randread"
     const val IO_TYPE_RAND_WR_VALUE = "randwrite"
+
+    const val GITHUB_URL = "https://api.github.com/"
 }
