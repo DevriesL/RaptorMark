@@ -1,4 +1,4 @@
-package io.github.devriesl.raptormark.ui.setting
+package io.github.devriesl.raptormark.ui.widget
 
 import androidx.compose.material.Card
 import androidx.compose.material.MaterialTheme

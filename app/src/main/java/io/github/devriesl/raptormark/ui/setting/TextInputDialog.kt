@@ -17,6 +17,7 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import io.github.devriesl.raptormark.R
+import io.github.devriesl.raptormark.ui.widget.DialogContent
 import kotlinx.coroutines.delay
 
 internal object TextInputDialogDefault {

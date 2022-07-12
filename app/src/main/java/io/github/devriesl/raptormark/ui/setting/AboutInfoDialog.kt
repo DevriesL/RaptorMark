@@ -19,6 +19,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import io.github.devriesl.raptormark.BuildConfig
 import io.github.devriesl.raptormark.R
+import io.github.devriesl.raptormark.ui.widget.DialogContent
 
 @Composable
 fun AboutInfoDialog(

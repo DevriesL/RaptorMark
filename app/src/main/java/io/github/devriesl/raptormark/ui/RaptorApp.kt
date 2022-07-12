@@ -22,10 +22,12 @@ import io.github.devriesl.raptormark.ui.setting.SettingContent
 import io.github.devriesl.raptormark.ui.theme.RaptorMarkTheme
 import io.github.devriesl.raptormark.viewmodels.BenchmarkViewModel
 import io.github.devriesl.raptormark.viewmodels.HistoryViewModel
+import io.github.devriesl.raptormark.viewmodels.MainViewModel
 import io.github.devriesl.raptormark.viewmodels.SettingViewModel
 
 @Composable
 fun RaptorApp(
+    mainViewModel: MainViewModel,
     benchmarkViewModel: BenchmarkViewModel,
     historyViewModel: HistoryViewModel,
     settingViewModel: SettingViewModel
@@ -44,7 +46,7 @@ fun RaptorApp(
         Scaffold(
             topBar = {
                 Column {
-                    AppTopBar()
+                    AppTopBar(mainViewModel)
                     AppTopTab(
                         selectedIndex = selectedIndex,
                         sections = sections,

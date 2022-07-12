@@ -6,7 +6,7 @@ import java.io.Serializable
 data class Contributor(
     @SerializedName("login") val userName: String,
     val id: Int,
-    val avatarUrl: String,
+    @SerializedName("avatar_url") val avatarUrl: String,
     @SerializedName("html_url") val userUrl: String,
     val type: String,
     val contributions: Int

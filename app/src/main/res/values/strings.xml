@@ -4,6 +4,7 @@
     <string name="benchmark_page_title">BENCHMARK</string>
     <string name="history_page_title">HISTORY</string>
     <string name="setting_page_title">SETTING</string>
+    <string name="contributors_dialog_title">Contributors</string>
 
     <!-- Benchmark resources -->
     <string name="start_button_label">START</string>

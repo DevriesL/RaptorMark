@@ -8,10 +8,12 @@ import dagger.hilt.android.AndroidEntryPoint
 import io.github.devriesl.raptormark.ui.RaptorApp
 import io.github.devriesl.raptormark.viewmodels.BenchmarkViewModel
 import io.github.devriesl.raptormark.viewmodels.HistoryViewModel
+import io.github.devriesl.raptormark.viewmodels.MainViewModel
 import io.github.devriesl.raptormark.viewmodels.SettingViewModel
 
 @AndroidEntryPoint
 class RaptorActivity : ComponentActivity() {
+    private val mainViewModel: MainViewModel by viewModels()
     private val benchmarkViewModel: BenchmarkViewModel by viewModels()
     private val historyViewModel: HistoryViewModel by viewModels()
     private val settingViewModel: SettingViewModel by viewModels()
@@ -21,6 +23,7 @@ class RaptorActivity : ComponentActivity() {
 
         setContent {
             RaptorApp(
+                mainViewModel = mainViewModel,
                 benchmarkViewModel = benchmarkViewModel,
                 historyViewModel = historyViewModel,
                 settingViewModel = settingViewModel
