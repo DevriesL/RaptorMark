@@ -92,16 +92,11 @@ dependencies {
 
     // Compose
     implementation "androidx.compose.ui:ui:$compose_version"
-    implementation "androidx.compose.ui:ui-tooling:$compose_version"
     implementation "androidx.compose.material:material:$compose_version"
     // Compose integration with activities
     implementation "androidx.activity:activity-compose:1.5.0"
-    // Accompanist utils for Compose
-    implementation "com.google.accompanist:accompanist-insets:0.23.1"
     // Integration with ViewModels
     implementation "androidx.lifecycle:lifecycle-viewmodel-compose:2.5.0"
-    // ConstraintLayout with Compose
-    implementation "androidx.constraintlayout:constraintlayout-compose:1.0.1"
 
     // Coil
     implementation 'io.coil-kt:coil-compose:2.1.0'
