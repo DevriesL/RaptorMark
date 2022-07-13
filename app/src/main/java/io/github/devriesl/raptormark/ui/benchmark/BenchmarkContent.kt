@@ -1,6 +1,5 @@
 package io.github.devriesl.raptormark.ui.benchmark
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -8,6 +7,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Divider
 import androidx.compose.material.ExtendedFloatingActionButton
+import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -50,7 +50,7 @@ fun BenchmarkContent(
                 ExtendedFloatingActionButton(
                     text = { Text(stringResource(R.string.stop_button_label)) },
                     icon = {
-                        Image(
+                        Icon(
                             painter = painterResource(R.drawable.ic_stop_button),
                             contentDescription = stringResource(R.string.stop_button_desc)
                         )
@@ -61,7 +61,7 @@ fun BenchmarkContent(
                 ExtendedFloatingActionButton(
                     text = { Text(stringResource(R.string.start_button_label)) },
                     icon = {
-                        Image(
+                        Icon(
                             painter = painterResource(R.drawable.ic_start_button),
                             contentDescription = stringResource(R.string.start_button_desc)
                         )
