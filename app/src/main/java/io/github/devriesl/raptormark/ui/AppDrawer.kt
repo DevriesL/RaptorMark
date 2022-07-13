@@ -6,7 +6,7 @@ import androidx.compose.foundation.*
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -23,17 +23,16 @@ fun AppDrawer(
     selectedSectionIndex: Int,
     sections: Array<AppSections>,
     setSelectedSection: (AppSections) -> Unit,
-    closeDrawer: () -> Unit
+    modifier: Modifier = Modifier
 ) {
-    LazyColumn(modifier = Modifier.fillMaxSize()) {
-        items(sections) { section ->
+    LazyColumn(modifier = Modifier.then(modifier)) {
+        itemsIndexed(sections) { index, section ->
             DrawerButton(
                 icon = section.icon,
                 title = section.title,
-                isSelected = selectedSectionIndex == sections.indexOf(section),
+                isSelected = selectedSectionIndex == index,
                 action = {
                     setSelectedSection(section)
-                    closeDrawer()
                 }
             )
         }

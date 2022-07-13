@@ -2,9 +2,7 @@ package io.github.devriesl.raptormark.ui
 
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
@@ -15,6 +13,7 @@ import androidx.compose.runtime.saveable.Saver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.saveable.rememberSaveableStateHolder
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import io.github.devriesl.raptormark.R
 import io.github.devriesl.raptormark.ui.benchmark.BenchmarkContent
 import io.github.devriesl.raptormark.ui.history.HistoryContent
@@ -43,29 +42,57 @@ fun RaptorApp(
             derivedStateOf { sections.indexOf(selectedSection) }
         }
         val saveableStateHolder = rememberSaveableStateHolder()
-        Scaffold(
-            topBar = {
-                Column {
-                    AppTopBar(mainViewModel)
-                    AppTopTab(
-                        selectedIndex = selectedIndex,
-                        sections = sections,
-                        setSelectedSection = setSelectedSection
-                    )
-                }
-            },
-            content = { scaffoldPadding ->
-                Box(modifier = Modifier.padding(scaffoldPadding)) {
-                    saveableStateHolder.SaveableStateProvider(selectedSection) {
-                        when (selectedSection) {
-                            AppSections.BENCHMARK -> BenchmarkContent(benchmarkViewModel)
-                            AppSections.HISTORY -> HistoryContent(historyViewModel)
-                            AppSections.SETTING -> SettingContent(settingViewModel)
+        BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
+            val widthClass = rememberSizeClass(size = maxWidth)
+            Scaffold(
+                topBar = {
+                    Column {
+                        AppTopBar(mainViewModel)
+                        if (widthClass == SizeClass.Compact) {
+                            AppTopTab(
+                                selectedIndex = selectedIndex,
+                                sections = sections,
+                                setSelectedSection = setSelectedSection
+                            )
+                        }
+                    }
+                },
+                content = { scaffoldPadding ->
+                    Row(modifier = Modifier.padding(scaffoldPadding)) {
+                        if (widthClass != SizeClass.Compact) {
+                            NavigationRail(
+                                backgroundColor = MaterialTheme.colors.surface
+                            ) {
+                                if (widthClass == SizeClass.Expanded) {
+                                    AppDrawer(
+                                        selectedSectionIndex = selectedIndex,
+                                        sections = sections,
+                                        setSelectedSection = setSelectedSection,
+                                        modifier = Modifier
+                                            .width(280.dp)
+                                    )
+                                } else {
+                                    AppNavigationRail(
+                                        selectedSectionIndex = selectedIndex,
+                                        sections = sections,
+                                        setSelectedSection = setSelectedSection,
+                                    )
+                                }
+                            }
+                        }
+                        Box {
+                            saveableStateHolder.SaveableStateProvider(selectedSection) {
+                                when (selectedSection) {
+                                    AppSections.BENCHMARK -> BenchmarkContent(benchmarkViewModel)
+                                    AppSections.HISTORY -> HistoryContent(historyViewModel)
+                                    AppSections.SETTING -> SettingContent(settingViewModel)
+                                }
+                            }
                         }
                     }
                 }
-            }
-        )
+            )
+        }
     }
 }
 
