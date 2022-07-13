@@ -75,7 +75,7 @@ fun TargetPathDialog(
                     RadioButton(
                         selected = selectCustomPath.value,
                         onClick = { selectCustomPath.value = true },
-                        modifier = Modifier.padding(horizontal = 16.dp)
+                        modifier = Modifier.padding(horizontal = 4.dp)
                     )
                     OutlinedTextField(
                         value = textFieldValue,
