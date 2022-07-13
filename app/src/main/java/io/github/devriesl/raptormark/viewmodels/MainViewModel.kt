@@ -8,6 +8,8 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.github.devriesl.raptormark.data.network.Contributor
 import io.github.devriesl.raptormark.data.network.GitHubService
+import io.github.devriesl.raptormark.data.network.LoadState
+import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -16,12 +18,22 @@ class MainViewModel @Inject constructor(
     private val gitHubService: GitHubService
 ) : ViewModel() {
     var contributorList by mutableStateOf(emptyList<Contributor>())
+        private set
+
+    var loadState by mutableStateOf(LoadState.NotLoad)
+        private set
 
     fun updateContributors() {
-        viewModelScope.launch {
+        viewModelScope.launch(
+            context = CoroutineExceptionHandler { _, _ ->
+                loadState = LoadState.Failed
+            }
+        ) {
+            loadState = LoadState.Loading
             contributorList = gitHubService.getContributors().sortedBy {
                 it.contributions
             }
+            loadState = LoadState.NotLoad
         }
     }
 }

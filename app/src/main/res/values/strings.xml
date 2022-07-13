@@ -56,5 +56,7 @@
     <string name="about_author_email">therkduan@gmail.com</string>
     <string name="about_author_weibo">https://weibo.com/2213561393</string>
     <string name="about_author_weibo_uid">2213561393</string>
+    <string name="state_loading_description">loading</string>
+    <string name="state_loading_failed_click_retry_description">loading failed, click to retry</string>
 
 </resources>
