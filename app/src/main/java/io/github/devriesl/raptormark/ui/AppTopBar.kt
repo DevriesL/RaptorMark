@@ -4,9 +4,8 @@ import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AutoGraph
 import androidx.compose.runtime.*
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import io.github.devriesl.raptormark.R
 import io.github.devriesl.raptormark.ui.widget.ContributorsDialog
@@ -26,8 +25,8 @@ fun AppTopBar(
                 openDialog = true
             }) {
                 Icon(
-                    imageVector = Icons.Filled.AutoGraph,
-                    contentDescription = Icons.Filled.AutoGraph.name
+                    painter = painterResource(id = R.drawable.ic_auto_graph_24),
+                    contentDescription = stringResource(id = R.string.contributors_dialog_title)
                 )
             }
         }
