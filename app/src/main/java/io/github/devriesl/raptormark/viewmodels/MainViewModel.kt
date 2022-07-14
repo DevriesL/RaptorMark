@@ -30,7 +30,7 @@ class MainViewModel @Inject constructor(
             }
         ) {
             loadState = LoadState.Loading
-            contributorList = gitHubService.getContributors().sortedBy {
+            contributorList = gitHubService.getContributors().sortedByDescending {
                 it.contributions
             }
             loadState = LoadState.NotLoad
