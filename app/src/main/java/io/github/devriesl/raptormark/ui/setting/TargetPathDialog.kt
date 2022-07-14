@@ -16,6 +16,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import io.github.devriesl.raptormark.R
 import io.github.devriesl.raptormark.ui.widget.DialogContent
+import io.github.devriesl.raptormark.ui.widget.DialogHeader
+import io.github.devriesl.raptormark.ui.widget.DialogHeaderDefaults
 import kotlinx.coroutines.delay
 
 @Composable
@@ -45,14 +47,9 @@ fun TargetPathDialog(
                 .wrapContentHeight()
         ) {
             Column {
-                Text(
+                DialogHeader(
                     text = stringResource(title),
-                    style = MaterialTheme.typography.h6,
-                    modifier = Modifier
-                        .padding(horizontal = 16.dp)
-                        .padding(bottom = 8.dp)
-                        .defaultMinSize(minHeight = 40.dp)
-                        .wrapContentHeight(Alignment.Bottom)
+                    modifier = Modifier.padding(horizontal = DialogHeaderDefaults.HEADER_HORIZONTAL_PADDING)
                 )
                 Row(
                     verticalAlignment = Alignment.CenterVertically,

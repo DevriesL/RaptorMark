@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
@@ -18,6 +17,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import io.github.devriesl.raptormark.R
 import io.github.devriesl.raptormark.ui.widget.DialogContent
+import io.github.devriesl.raptormark.ui.widget.DialogHeader
+import io.github.devriesl.raptormark.ui.widget.DialogHeaderDefaults
 import kotlinx.coroutines.delay
 
 internal object TextInputDialogDefault {
@@ -59,14 +60,9 @@ fun TextInputDialog(
                 .wrapContentHeight()
         ) {
             Column {
-                Text(
+                DialogHeader(
                     text = stringResource(title),
-                    style = MaterialTheme.typography.h6,
-                    modifier = Modifier
-                        .padding(horizontal = 16.dp)
-                        .padding(bottom = 16.dp)
-                        .defaultMinSize(minHeight = 40.dp)
-                        .wrapContentHeight(Alignment.Bottom)
+                    modifier = Modifier.padding(horizontal = DialogHeaderDefaults.HEADER_HORIZONTAL_PADDING)
                 )
                 OutlinedTextField(
                     value = textFieldValue,

@@ -5,7 +5,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.MaterialTheme
 import androidx.compose.material.RadioButton
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -15,6 +14,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import io.github.devriesl.raptormark.ui.widget.DialogContent
+import io.github.devriesl.raptormark.ui.widget.DialogHeader
+import io.github.devriesl.raptormark.ui.widget.DialogHeaderDefaults
 
 @Composable
 fun SingleChoiceDialog(
@@ -31,14 +32,9 @@ fun SingleChoiceDialog(
                 .wrapContentHeight()
         ) {
             Column {
-                Text(
+                DialogHeader(
                     text = stringResource(title),
-                    style = MaterialTheme.typography.h6,
-                    modifier = Modifier
-                        .padding(horizontal = 16.dp)
-                        .padding(bottom = 8.dp)
-                        .defaultMinSize(minHeight = 40.dp)
-                        .wrapContentHeight(Alignment.Bottom)
+                    modifier = Modifier.padding(horizontal = DialogHeaderDefaults.HEADER_HORIZONTAL_PADDING)
                 )
                 LazyColumn(modifier = Modifier.wrapContentHeight()) {
                     items(choiceList) { choice ->

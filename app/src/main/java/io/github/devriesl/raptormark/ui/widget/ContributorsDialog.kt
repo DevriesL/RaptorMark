@@ -41,15 +41,9 @@ fun ContributorsDialog(
                 modifier = Modifier.height(480.dp)
             ) {
                 Box {
-                    Text(
+                    DialogHeader(
                         text = stringResource(id = R.string.contributors_dialog_title),
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                        style = MaterialTheme.typography.h6,
-                        modifier = Modifier
-                            .height(64.dp)
-                            .paddingFromBaseline(40.dp)
-                            .padding(horizontal = 16.dp)
+                        modifier = Modifier.padding(horizontal = DialogHeaderDefaults.HEADER_HORIZONTAL_PADDING)
                     )
                     val targetThickness by animateDpAsState(
                         targetValue = if (isListOnTop) {
