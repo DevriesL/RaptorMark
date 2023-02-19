@@ -41,6 +41,25 @@ void freeOptions(int *argc, char ***argv);
 }
 #endif
 
+class LibMBW {
+public:
+    int mbw(int argc, char *argv[]);
+
+    LibMBW(const char *func, void *callback);
+
+    ~LibMBW();
+
+private:
+    void *libHandler;
+    void *callbackPtr;
+
+    union {
+        void *funcPtr = nullptr;
+
+        int (*mbw)(int argc, char *argv[], void *callback_ptr);
+    } libFunc;
+};
+
 class LibFIO {
 public:
     int fio(int argc, char *argv[]);

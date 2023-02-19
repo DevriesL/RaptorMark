@@ -21,7 +21,12 @@ class BenchmarkViewModel @Inject constructor(
     private val mutableBenchmarkState = MutableStateFlow(BenchmarkState())
 
     val testItems: List<BenchmarkTest> =
-        TestCases.values().map { BenchmarkTest(it, settingSharedPrefs) }
+        TestCases.values().map {
+            when (it) {
+                TestCases.MBW -> MBWTest(it, settingSharedPrefs)
+                else -> FIOTest(it, settingSharedPrefs)
+            }
+        }
 
     val benchmarkState: StateFlow<BenchmarkState>
         get() = mutableBenchmarkState

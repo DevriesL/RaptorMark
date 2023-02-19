@@ -99,6 +99,20 @@ void freeOptions(int *argc, char ***argv) {
 #ifdef __cplusplus
 }
 
+int LibMBW::mbw(int argc, char *argv[]) {
+    return libFunc.mbw(argc, argv, callbackPtr);
+}
+
+LibMBW::LibMBW(const char *func, void *callback) {
+    callbackPtr = callback;
+    libHandler = dlopen("libmbw.so", RTLD_NOW);
+    libFunc.funcPtr = dlsym(libHandler, func);
+}
+
+LibMBW::~LibMBW() {
+    dlclose(libHandler);
+}
+
 int LibFIO::fio(int argc, char *argv[]) {
     return libFunc.fio(argc, argv, nullptr, callbackPtr);
 }

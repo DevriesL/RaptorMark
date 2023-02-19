@@ -9,6 +9,9 @@ data class TestRecord(
     @PrimaryKey(autoGenerate = true) @ColumnInfo(name = "id") val id: Long,
     @ColumnInfo(name = "test_date") val timestamp: Long
 ) {
+    @ColumnInfo(name = "mbw_result")
+    var mbwResult: String? = null
+
     @ColumnInfo(name = "seq_rd_result")
     var seqRdResult: String? = null
 
@@ -22,6 +25,7 @@ data class TestRecord(
     var randWrResult: String? = null
 
     fun getResults(): LinkedHashMap<TestCases, String?> = linkedMapOf(
+        Pair(TestCases.MBW, mbwResult),
         Pair(TestCases.SEQ_RD, seqRdResult),
         Pair(TestCases.SEQ_WR, seqWrResult),
         Pair(TestCases.RAND_RD, randRdResult),
@@ -30,6 +34,9 @@ data class TestRecord(
 
     fun setResult(testCase: TestCases, result: String?) {
         when (testCase) {
+            TestCases.MBW -> {
+                mbwResult = result
+            }
             TestCases.SEQ_RD -> {
                 seqRdResult = result
             }

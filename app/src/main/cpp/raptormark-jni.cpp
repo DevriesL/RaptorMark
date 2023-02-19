@@ -4,7 +4,7 @@
 #include "cJSON.h"
 #include "common.h"
 #include "helper.h"
-#include "fio-jni.h"
+#include "raptormark-jni.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -31,6 +31,19 @@ int updateStatusCallback(const char *msg) {
     int ret = env->CallStaticIntMethod(globalCtx.nativeDataSrcClz, updateStatusMethod, javaMsg);
 
     env->DeleteLocalRef(javaMsg);
+
+    return ret;
+}
+
+JNIEXPORT jint JNICALL native_MBWTest(JNIEnv *env, jobject instance, jstring jsonCommand) {
+    const char *jsonStr = env->GetStringUTFChars(jsonCommand, NULL);
+    int ret, argc;
+    char **argv;
+    LibMBW libMbw("mbw", (void *)updateStatusCallback);
+
+    json2Options(jsonStr, &argc, &argv);
+    ret = libMbw.mbw(argc, argv);
+    freeOptions(&argc, &argv);
 
     return ret;
 }
@@ -81,6 +94,7 @@ JNIEXPORT jstring JNICALL native_ListEngines(JNIEnv *env, jobject instance) {
 #endif
 
 static const JNINativeMethod FIOMethods[] = {
+        {"native_MBWTest",       "(Ljava/lang/String;)I", (void *) native_MBWTest},
         {"native_FIOTest",       "(Ljava/lang/String;)I", (void *) native_FIOTest},
         {"native_ListEngines",   "()Ljava/lang/String;",  (void *) native_ListEngines}
 };

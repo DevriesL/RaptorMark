@@ -328,7 +328,7 @@ usage ()
 // Name:	main
 //----------------------------------------------------------------------------
 int
-main (int argc, char **argv)
+mbw (int argc, char *argv[], void *callback_ptr)
 {
 	// NOTE: There's no need to initialize classes, as this is done lazily in the "new" calls.
    	bool use_sse2 = true;

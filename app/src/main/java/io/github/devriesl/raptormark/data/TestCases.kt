@@ -12,6 +12,7 @@ enum class TestCases(
     val type: String,
     val isRand: Boolean
 ) {
+    MBW(R.string.mbw_test_title, "", false),
     SEQ_RD(R.string.seq_rd_test_title, IO_TYPE_SEQ_RD_VALUE, false),
     SEQ_WR(R.string.seq_wr_test_title, IO_TYPE_SEQ_WR_VALUE, false),
     RAND_RD(R.string.rand_rd_test_title, IO_TYPE_RAND_RD_VALUE, true),
