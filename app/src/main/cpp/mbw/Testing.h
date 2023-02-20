@@ -31,22 +31,10 @@
 typedef enum {
         NO_SSE2,
 
-        // x86
-        SSE2,
-        SSE2_BYPASS,
-        AVX,
-        AVX512,
-        AVX_BYPASS,
-
         // ARM
         NEON_64BIT,
         NEON_128BIT,
 } TestingMode;
-
-#define DECLARE_TESTING_INSTANCE_VARS(TYPE_POINTER) \
-	bool use_sse2; \
-	bool use_sse4; \
-	bool use_avx; 
 
 #define DECLARE_TESTING_METHODS(TYPE_POINTER) \
 	long (*read) (TYPE_POINTER, unsigned long size, TestingMode mode, bool random); \
@@ -86,7 +74,6 @@ extern TestingClass *_TestingClass;
 typedef struct testing {
         TestingClass *is_a;
 	DECLARE_OBJECT_INSTANCE_VARS(struct testing*)
-	DECLARE_TESTING_INSTANCE_VARS(struct testing*)
 } Testing;
 
 extern Testing *Testing_new ();
