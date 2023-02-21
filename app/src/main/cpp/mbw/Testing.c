@@ -23,13 +23,7 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include <time.h>
-
-#include "defs.h"
-#include "ObjectOriented.h"
-#include "Object.h"
-#include "OOC/DateTime.h"
 #include "Testing.h"
-#include "routines.h"
 
 #define REGISTER_TRANSFERS_COUNT 9997
 #define VREGISTER_TRANSFERS_COUNT 9977
@@ -38,38 +32,23 @@
 #define N_INC_INNER_LOOPS 32767L
 #define N_INC_PER_INNER 32
 
-TestingClass* _TestingClass = NULL;
 extern int (*callback_func)(const char *);
 
 extern unsigned long usec_per_test;
 extern void *memset(void *b, int c, size_t len);
 extern void *memcpy(void *restrict dst, const void *restrict src, size_t n);
 
-//============================================================================
-// Tests.
-//============================================================================
-
-static void Testing_destroy (Testing* self)
+uint64_t DateTime_getMicrosecondTime ()
 {
-	if (!self)
-		return;
-
-	verifyCorrectClass(self,Testing);
-
-        clearObjectSelf;
-}
-
-
-static void Testing_describe (Testing* self, FILE *outputFile)
-{
-        if (!self)
-                return;
-        verifyCorrectClass(self,Testing);
-
-        if (!outputFile)
-                outputFile = stdout;
-
-        fprintf (outputFile, "%s", self->is_a->className);
+	struct timeval tv;
+	struct timezone tz;
+	memset (&tv, 0, sizeof(struct timeval));
+	memset (&tz, 0, sizeof(struct timezone));
+	gettimeofday (&tv, &tz);
+	uint64_t microseconds = tv.tv_sec;
+	microseconds *= 1000000LU;
+	microseconds += tv.tv_usec;
+	return microseconds;
 }
 
 //----------------------------------------------------------------------------
@@ -77,10 +56,9 @@ static void Testing_describe (Testing* self, FILE *outputFile)
 // Purpose:	Calculates and prints a result.
 // Returns:	10 times the number of megabytes per second.
 //----------------------------------------------------------------------------
-static int Testing_calculate_result (Testing* self, unsigned long chunk_size, long long total_loops, uint64_t diff)
+static int Testing_calculate_result (unsigned long chunk_size, long long total_loops, uint64_t diff)
 {
 	if (!diff) {
-		warning (__FUNCTION__, "Zero time difference... ignoring.");
 		return 0;
 	}
 
@@ -101,7 +79,7 @@ static int Testing_calculate_result (Testing* self, unsigned long chunk_size, lo
 // Name:	Testing_write
 // Purpose:	Performs write on chunk of memory of specified size.
 //----------------------------------------------------------------------------
-long Testing_write (Testing *self, unsigned long size, TestingMode mode, bool random)
+long Testing_write (unsigned long size, TestingMode mode, bool random)
 {
 	unsigned char *chunk;
 	unsigned char *chunk0;
@@ -111,14 +89,16 @@ long Testing_write (Testing *self, unsigned long size, TestingMode mode, bool ra
 	unsigned long diff=0, t0;
 	unsigned long **chunk_ptrs = NULL;
 
-	if (size & 255)
-		error (__FUNCTION__, "Chunk size is not multiple of 256.");
+	if (size & 255) {
+		return 0;
+	}
 
 	//-------------------------------------------------
 	chunk0 = malloc (size+128);
 	chunk = chunk0;
-	if (!chunk)
-		error (__FUNCTION__, "Out of memory");
+	if (!chunk) {
+		return 0;
+	}
 
 	unsigned long tmp = (unsigned long) chunk;
 	if (tmp & 31) {
@@ -133,8 +113,9 @@ long Testing_write (Testing *self, unsigned long size, TestingMode mode, bool ra
 	if (random) {
 		unsigned long nChunks = size/256;
 		chunk_ptrs = (unsigned long**) malloc (sizeof (unsigned long*) * nChunks);
-		if (!chunk_ptrs)
-			error (__FUNCTION__, "Out of memory.");
+		if (!chunk_ptrs) {
+			return 0;
+		}
 
 		//-----------------------------------------
 		// Store pointers to all chunks in an array.
@@ -190,7 +171,7 @@ long Testing_write (Testing *self, unsigned long size, TestingMode mode, bool ra
 		diff = DateTime_getMicrosecondTime () - t0;
 	}
 
-	int result = $(self, calculate_result, size, total_count, diff);
+	int result = Testing_calculate_result(size, total_count, diff);
 
 	free ((void*)chunk0);
 
@@ -205,7 +186,7 @@ long Testing_write (Testing *self, unsigned long size, TestingMode mode, bool ra
 // Name:	Testing_read
 // Purpose:	Performs sequential read on chunk of memory of specified size.
 //----------------------------------------------------------------------------
-long Testing_read (Testing *self, unsigned long size, TestingMode mode, bool random)
+long Testing_read (unsigned long size, TestingMode mode, bool random)
 {
 	unsigned long long loops;
 	unsigned long long total_count = 0;
@@ -214,13 +195,15 @@ long Testing_read (Testing *self, unsigned long size, TestingMode mode, bool ran
 	unsigned long *chunk0;
 	unsigned long **chunk_ptrs = NULL;
 
-	if (size & 127)
-		error (__FUNCTION__, "Chunk size is not multiple of 128.");
+	if (size & 127) {
+		return 0;
+	}
 
 	//-------------------------------------------------
 	chunk0 = chunk = malloc (size+128);
-	if (!chunk)
-		error (__FUNCTION__, "Out of memory");
+	if (!chunk) {
+		return 0;
+	}
 
 	memset (chunk, 0, size);
 
@@ -237,8 +220,9 @@ long Testing_read (Testing *self, unsigned long size, TestingMode mode, bool ran
 	if (random) {
 		int nChunks = size/256;
 		chunk_ptrs = (unsigned long**) malloc (sizeof (unsigned long*) * nChunks);
-		if (!chunk_ptrs)
-			error (__FUNCTION__, "Out of memory.");
+		if (!chunk_ptrs) {
+			return 0;
+		}
 
 		//----------------------------------------
 		// Store pointers to all chunks into array.
@@ -294,7 +278,7 @@ long Testing_read (Testing *self, unsigned long size, TestingMode mode, bool ran
 		diff = DateTime_getMicrosecondTime () - t0;
 	}
 
-	int result = $(self, calculate_result, size, total_count, diff);
+	int result = Testing_calculate_result(size, total_count, diff);
 
 	free (chunk0);
 
@@ -304,7 +288,7 @@ long Testing_read (Testing *self, unsigned long size, TestingMode mode, bool ran
 	return result;
 }
 
-long Testing_registerToRegisterTest (Testing *self)
+long Testing_registerToRegisterTest ()
 {
 	long long total_count = 0;
         time_t t0 = DateTime_getMicrosecondTime ();
@@ -330,7 +314,7 @@ long Testing_registerToRegisterTest (Testing *self)
 	return 0;
 }
 
-static long Testing_vectorToVectorTest128 (Testing *self)
+long Testing_vectorToVectorTest128 ()
 {
 	long long total_count = 0;
         time_t t0 = DateTime_getMicrosecondTime ();
@@ -355,7 +339,7 @@ static long Testing_vectorToVectorTest128 (Testing *self)
 	return 0;
 }
 
-static long Testing_memsetTest (Testing *self)
+long Testing_memsetTest ()
 {
 	char *a1;
 	unsigned long t, t0;
@@ -365,8 +349,9 @@ static long Testing_memsetTest (Testing *self)
 	#define NT_SIZE2 (100)
 
 	a1 = malloc (NT_SIZE);
-	if (!a1)
-		error (__FUNCTION__, "Out of memory");
+	if (!a1) {
+		return 0;
+	}
 
 	//--------------------------------------
 	t0 = DateTime_getMicrosecondTime ();
@@ -377,24 +362,26 @@ static long Testing_memsetTest (Testing *self)
 	uint64_t dt = t-t0;
 	free (a1);
 
-	$(self, calculate_result, NT_SIZE, NT_SIZE2, dt);
+    Testing_calculate_result(NT_SIZE, NT_SIZE2, dt);
 
 	return 0;
 }
 
-static long Testing_memcpyTest (Testing *self)
+long Testing_memcpyTest ()
 {
 	char *a1, *a2;
 	unsigned long t, t0;
 	int i;
 
 	a1 = malloc (NT_SIZE);
-	if (!a1)
-		error (__FUNCTION__, "Out of memory");
+	if (!a1) {
+		return 0;
+	}
 
 	a2 = malloc (NT_SIZE);
-	if (!a2)
-		error (__FUNCTION__, "Out of memory");
+	if (!a2) {
+		return 0;
+	}
 
 	//--------------------------------------
 	t0 = DateTime_getMicrosecondTime ();
@@ -407,12 +394,12 @@ static long Testing_memcpyTest (Testing *self)
 	free (a1);
 	free (a2);
 
-	$(self, calculate_result, NT_SIZE, NT_SIZE2, t-t0);
+    Testing_calculate_result(NT_SIZE, NT_SIZE2, t-t0);
 
 	return 0;
 }
 
-static long Testing_incrementRegisters (Testing *self)
+long Testing_incrementRegisters ()
 {
         time_t t0 = DateTime_getMicrosecondTime ();
 
@@ -433,7 +420,7 @@ static long Testing_incrementRegisters (Testing *self)
 	return 0;
 }
 
-static long Testing_incrementStack (Testing *self)
+long Testing_incrementStack ()
 {
         time_t t0 = DateTime_getMicrosecondTime ();
 
@@ -452,38 +439,4 @@ static long Testing_incrementStack (Testing *self)
 		printf ("64-bit stack value increments per second: %.2Lf billion\n", d);
 	}
 	return 0;
-}
-
-TestingClass* TestingClass_prepare ()
-{
-	PREPARE_CLASS_STRUCT(Testing,Object)
-
-	SET_OVERRIDDEN_METHOD_POINTER(Testing,describe);
-	SET_OVERRIDDEN_METHOD_POINTER(Testing,destroy);
-
-	SET_METHOD_POINTER(Testing,read);
-	SET_METHOD_POINTER(Testing,write);
-	SET_METHOD_POINTER(Testing,memsetTest);
-	SET_METHOD_POINTER(Testing,memcpyTest);
-	SET_METHOD_POINTER(Testing,calculate_result);
-	SET_METHOD_POINTER(Testing,registerToRegisterTest);
-	SET_METHOD_POINTER(Testing,vectorToVectorTest128);
-	SET_METHOD_POINTER(Testing,incrementRegisters);
-	SET_METHOD_POINTER(Testing,incrementStack);
-
-	VALIDATE_CLASS_STRUCT(_TestingClass);
-	return _TestingClass;
-}
-
-Testing *Testing_init (Testing *self)
-{
- 	if (!_TestingClass)
-                TestingClass_prepare ();
-
-        ooc_bzero (self, sizeof(Testing));
-        Object_init ((Object*) self);
-
-        self->is_a = _TestingClass;
-
-        return self;
 }

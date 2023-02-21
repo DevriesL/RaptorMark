@@ -23,7 +23,6 @@
 #include <unistd.h>
 #include <time.h>
 
-#include "defs.h"
 #include "Testing.h"
 
 int (*callback_func)(const char *) = NULL;
@@ -113,20 +112,10 @@ static double chunk_sizes_log2 [sizeof(chunk_sizes)/sizeof(int)];
 // Output multiplexor. 
 //============================================================================
 
-void 
+void
 dataAddDatum (long x, long y)
 {
 
-}
-
-//----------------------------------------------------------------------------
-// Name:	usage
-//----------------------------------------------------------------------------
-void
-usage ()
-{
-	printf ("Usage: bandwidth [--slow] [--fast] [--faster] [--fastest] [--limit] [--title string] [--csv file] [--nice]\n");
-	exit (0);
 }
 
 //----------------------------------------------------------------------------
@@ -135,8 +124,6 @@ usage ()
 int
 mbw (int argc, char *argv[], void *callback_ptr)
 {
-	Testing *routines = new(Testing);
-
 	callback_func = callback_ptr;
 
 	int i, chunk_size;
@@ -169,10 +156,6 @@ mbw (int argc, char *argv[], void *callback_ptr)
 		if (!strcmp ("--fastest", s)) {
 			usec_per_test = 50000;	// 0.05 seconds per test.
 		}
-		else {
-			if ('-' == *s)
-				usage ();
-		}
 	}
 
 	for (i = 0; chunk_sizes[i] && i < sizeof(chunk_sizes)/sizeof(int); i++) {
@@ -188,7 +171,7 @@ mbw (int argc, char *argv[], void *callback_ptr)
 	//
 	i = 0;
 	while ((chunk_size = chunk_sizes [i++]) && chunk_size <= chunk_limit) {
-		long amount = $(routines, read, chunk_size, NO_SSE2, false);
+		long amount = Testing_read(chunk_size, NO_SSE2, false);
 		dataAddDatum (chunk_size, amount);
 	}
 
@@ -197,7 +180,7 @@ mbw (int argc, char *argv[], void *callback_ptr)
 	//
 	i = 0;
 	while ((chunk_size = chunk_sizes [i++]) && chunk_size <= chunk_limit) {
-		long amount = $(routines, read, chunk_size, NEON_128BIT, false);
+		long amount = Testing_read(chunk_size, NEON_128BIT, false);
 		dataAddDatum (chunk_size, amount);
 	}
 
@@ -209,7 +192,7 @@ mbw (int argc, char *argv[], void *callback_ptr)
 	i = 0;
 	while ((chunk_size = chunk_sizes [i++]) && chunk_size <= chunk_limit) {
 		if (!(chunk_size & 128)) {
-			long amount = $(routines, write, chunk_size, NO_SSE2, false);
+			long amount = Testing_write(chunk_size, NO_SSE2, false);
 			dataAddDatum (chunk_size, amount);
 		}
 	}
@@ -219,7 +202,7 @@ mbw (int argc, char *argv[], void *callback_ptr)
 	//
 	i = 0;
 	while ((chunk_size = chunk_sizes [i++]) && chunk_size <= chunk_limit) {
-		long amount = $(routines, write, chunk_size, NEON_128BIT, false);
+		long amount = Testing_write(chunk_size, NEON_128BIT, false);
 		dataAddDatum (chunk_size, amount);
 	}
 
@@ -232,7 +215,7 @@ mbw (int argc, char *argv[], void *callback_ptr)
 	i = 0;
 	while ((chunk_size = chunk_sizes [i++]) && chunk_size <= chunk_limit) {
 		if (!(chunk_size & 128)) {
-			long amount = $(routines, read, chunk_size, NO_SSE2, true);
+			long amount = Testing_read(chunk_size, NO_SSE2, true);
 			dataAddDatum (chunk_size, amount);
 		}
 	}
@@ -242,24 +225,20 @@ mbw (int argc, char *argv[], void *callback_ptr)
 	//------------------------------------------------------------
 	// Register to register.
 	//
-	$(routines, registerToRegisterTest);
-	$(routines, vectorToVectorTest128);
+	Testing_registerToRegisterTest();
+	Testing_vectorToVectorTest128();
 
 	//------------------------------------------------------------
 	// Register vs stack.
 	//
-	$(routines, incrementRegisters);
-	$(routines, incrementStack);
+	Testing_incrementRegisters();
+	Testing_incrementStack();
 
 	//------------------------------------------------------------
 	// C library performance.
 	//
-	$(routines, memsetTest);
-	$(routines, memcpyTest);
-
-	release (routines);
-
-	deallocateClasses();
+	Testing_memsetTest();
+	Testing_memcpyTest();
 
 	return 0;
 }

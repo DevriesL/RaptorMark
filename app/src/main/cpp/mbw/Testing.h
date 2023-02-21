@@ -26,57 +26,21 @@
 #include <stdbool.h>
 #include <math.h>
 
-#include "OOC/Object.h"
-
 typedef enum {
-        NO_SSE2,
+    NO_SSE2,
 
-        // ARM
-        NEON_64BIT,
-        NEON_128BIT,
+    // ARM
+    NEON_64BIT,
+    NEON_128BIT,
 } TestingMode;
 
-#define DECLARE_TESTING_METHODS(TYPE_POINTER) \
-	long (*read) (TYPE_POINTER, unsigned long size, TestingMode mode, bool random); \
-	long (*write) (TYPE_POINTER, unsigned long size, TestingMode mode, bool random); \
-	long (*copy) (TYPE_POINTER, unsigned long size, TestingMode mode); \
-	long (*memsetTest) (TYPE_POINTER); \
-	long (*memcpyTest) (TYPE_POINTER); \
-	long (*registerToRegisterTest) (TYPE_POINTER);\
-	long (*registerToVectorTest) (TYPE_POINTER);\
-	long (*vectorToRegisterTest) (TYPE_POINTER);\
-	long (*vectorToVectorTest128) (TYPE_POINTER);\
-	long (*vectorToVectorTest256) (TYPE_POINTER);\
-	long (*vectorToRegister8) (TYPE_POINTER);\
-	long (*vectorToRegister16) (TYPE_POINTER);\
-	long (*vectorToRegister32) (TYPE_POINTER);\
-	long (*vectorToRegister64) (TYPE_POINTER);\
-	long (*registerToVector8) (TYPE_POINTER);\
-	long (*registerToVector16) (TYPE_POINTER);\
-	long (*registerToVector32) (TYPE_POINTER);\
-	long (*registerToVector64) (TYPE_POINTER);\
-	long (*stackPop) (TYPE_POINTER);\
-	long (*stackPush) (TYPE_POINTER);\
-	long (*incrementRegisters) (TYPE_POINTER);\
-	long (*incrementStack) (TYPE_POINTER);\
-	int (*calculate_result) (TYPE_POINTER, unsigned long chunk_size, long long total_loops, uint64_t diff);
-
-struct testing;
-
-typedef struct testingclass {
-	DECLARE_OBJECT_CLASS_VARS
-        DECLARE_OBJECT_METHODS(struct testing*)
-        DECLARE_TESTING_METHODS(struct testing*)
-} TestingClass;
-
-extern TestingClass *_TestingClass;
-
-typedef struct testing {
-        TestingClass *is_a;
-	DECLARE_OBJECT_INSTANCE_VARS(struct testing*)
-} Testing;
-
-extern Testing *Testing_new ();
-extern Testing *Testing_init (Testing *self);
+extern long Testing_read (unsigned long size, TestingMode mode, bool random);
+extern long Testing_write (unsigned long size, TestingMode mode, bool random);
+extern long Testing_registerToRegisterTest ();
+extern long Testing_vectorToVectorTest128 ();
+extern long Testing_memsetTest ();
+extern long Testing_memcpyTest ();
+extern long Testing_incrementRegisters ();
+extern long Testing_incrementStack ();
 
 #endif
