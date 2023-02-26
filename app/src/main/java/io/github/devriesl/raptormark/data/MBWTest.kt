@@ -1,6 +1,6 @@
 package io.github.devriesl.raptormark.data
 
-class MBWTest(testCase: TestCases, settingSharedPrefs: SettingSharedPrefs): BenchmarkTest(
+class MBWTest(testCase: TestCases, settingSharedPrefs: SettingSharedPrefs) : BenchmarkTest(
     testCase, settingSharedPrefs
 ) {
     override fun nativeTest(jsonCommand: String): Int {
@@ -8,6 +8,13 @@ class MBWTest(testCase: TestCases, settingSharedPrefs: SettingSharedPrefs): Benc
     }
 
     override fun testOptionsBuilder(): String {
-        TODO("Not yet implemented")
+        return ""
+    }
+
+    companion object {
+        @JvmStatic
+        fun parseResult(result: String): TestResult.MBW {
+            return TestResult.MBW()
+        }
     }
 }

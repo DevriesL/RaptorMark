@@ -12,12 +12,13 @@
     <string name="start_button_desc">Start benchmark test</string>
     <string name="stop_button_desc">Stop benchmark test</string>
     <string name="mbw_test_title">Memory Bandwidth</string>
-    <string name="seq_rd_test_title">Sequential Read Throughput</string>
-    <string name="seq_wr_test_title">Sequential Write Throughput</string>
-    <string name="rand_rd_test_title">Random Read Throughput</string>
-    <string name="rand_wr_test_title">Random Write Throughput</string>
+    <string name="fio_test_title">Storage Throughput</string>
+    <string name="seq_rd_test_title">Sequential Read</string>
+    <string name="seq_wr_test_title">Sequential Write</string>
+    <string name="rand_rd_test_title">Random Read</string>
+    <string name="rand_wr_test_title">Random Write</string>
+    <string name="app_perf_title">Application Performance</string>
     <string name="rand_4n_lat_title">99.99% Latency</string>
-    <string name="latency_test_title">Async Read/Write Latency</string>
 
     <!-- Benchmark result formats -->
     <string name="sum_of_bw_test_result_format">%1$d MB/s</string>

@@ -26,7 +26,7 @@ object Constants {
     const val CONSTANT_ETA_PRINT_VALUE = "always"
     const val CONSTANT_OUTPUT_FORMAT_VALUE = "json"
 
-    const val MEM_BANDWIDTH_VALUE = "MBW"
+    const val MBW_APP_PERF_VALUE = "app"
     const val IO_TYPE_SEQ_RD_VALUE = "read"
     const val IO_TYPE_SEQ_WR_VALUE = "write"
     const val IO_TYPE_RAND_RD_VALUE = "randread"

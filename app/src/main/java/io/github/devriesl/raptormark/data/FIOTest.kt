@@ -5,9 +5,9 @@ import org.json.JSONArray
 import org.json.JSONObject
 import java.io.File
 
-class FIOTest(testCase: TestCases, settingSharedPrefs: SettingSharedPrefs): BenchmarkTest(
-    testCase, settingSharedPrefs
-) {
+class FIOTest(
+    testCase: TestCases, settingSharedPrefs: SettingSharedPrefs
+) : BenchmarkTest(testCase, settingSharedPrefs) {
     private val filePath = getRandomFilePath()
 
     override fun nativeTest(jsonCommand: String): Int {
@@ -45,7 +45,7 @@ class FIOTest(testCase: TestCases, settingSharedPrefs: SettingSharedPrefs): Benc
         options.put(
             createOption(
                 Constants.BLOCK_SIZE_OPT_NAME,
-                if (testCase.isRand) {
+                if (testCase.isRandFIO()) {
                     SettingOptions.RAND_BLOCK_SIZE.dataImpl.getValue(settingSharedPrefs)
                 } else {
                     SettingOptions.SEQ_BLOCK_SIZE.dataImpl.getValue(settingSharedPrefs)
@@ -73,10 +73,12 @@ class FIOTest(testCase: TestCases, settingSharedPrefs: SettingSharedPrefs): Benc
         )
 
         options.put(createOption(Constants.ETA_PRINT_OPT_NAME, Constants.CONSTANT_ETA_PRINT_VALUE))
-        options.put(createOption(
-            Constants.OUTPUT_FORMAT_OPT_NAME,
-            Constants.CONSTANT_OUTPUT_FORMAT_VALUE
-        ))
+        options.put(
+            createOption(
+                Constants.OUTPUT_FORMAT_OPT_NAME,
+                Constants.CONSTANT_OUTPUT_FORMAT_VALUE
+            )
+        )
 
         root.put("options", options)
 
@@ -93,5 +95,42 @@ class FIOTest(testCase: TestCases, settingSharedPrefs: SettingSharedPrefs): Benc
 
     companion object {
         const val FILE_SUFFIX_LENGTH = 8
+
+        @JvmStatic
+        fun parseResult(result: String): TestResult.FIO {
+            var jobsId: String? = null
+            var jobsRw = String()
+            var sumOfBwBytes: Long = 0
+            var sumOf4NClatNs: Long = 0
+
+            val jsonResult = JSONObject(result)
+            val jobsArray = jsonResult.getJSONArray("jobs")
+            for (i in 0 until jobsArray.length()) {
+                val jobObject: JSONObject = jobsArray.getJSONObject(i)
+
+                if (jobsId.isNullOrEmpty()) {
+                    jobsId = jobObject.getString("jobname")
+                    when {
+                        jobsId.contains("RD") -> {
+                            jobsRw = "read"
+                        }
+                        jobsId.contains("WR") -> {
+                            jobsRw = "write"
+                        }
+                    }
+                }
+
+                val rwObject: JSONObject = jobObject.getJSONObject(jobsRw)
+                sumOfBwBytes += rwObject.getLong("bw_bytes")
+                val clatObject: JSONObject = rwObject.getJSONObject("clat_ns")
+                val percentileObject: JSONObject = clatObject.getJSONObject("percentile")
+                sumOf4NClatNs += percentileObject.getLong("99.990000")
+            }
+
+            val sumOfBw = (sumOfBwBytes / 1000 / 1000).toInt()
+            val avgOf4NClat = (sumOf4NClatNs / jobsArray.length() / 1000).toInt()
+
+            return TestResult.FIO(sumOfBw, avgOf4NClat)
+        }
     }
 }

@@ -1,17 +1,19 @@
 package io.github.devriesl.raptormark
 
 import androidx.room.TypeConverter
-import java.time.OffsetDateTime
-import java.time.format.DateTimeFormatter
+import io.github.devriesl.raptormark.data.TestCases
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 
 class Converters {
     @TypeConverter
-    fun toOffsetDateTime(value: String?): OffsetDateTime? {
-        return value?.let { OffsetDateTime.parse(it) }
+    fun toResults(value: String): Map<TestCases, String> {
+        return Json.decodeFromString(value)
     }
 
     @TypeConverter
-    fun fromOffsetDateTime(date: OffsetDateTime?): String? {
-        return date?.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME)
+    fun fromResults(results: Map<TestCases, String>): String {
+        return Json.encodeToString(results)
     }
 }

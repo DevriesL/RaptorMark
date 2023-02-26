@@ -21,10 +21,11 @@ class BenchmarkViewModel @Inject constructor(
     private val mutableBenchmarkState = MutableStateFlow(BenchmarkState())
 
     val testItems: List<BenchmarkTest> =
-        TestCases.values().map {
-            when (it) {
-                TestCases.MBW -> MBWTest(it, settingSharedPrefs)
-                else -> FIOTest(it, settingSharedPrefs)
+        TestCases.values().mapNotNull {
+            when {
+                it.isMBW() -> MBWTest(it, settingSharedPrefs)
+                it.isFIO() -> FIOTest(it, settingSharedPrefs)
+                else -> null
             }
         }
 
@@ -39,7 +40,7 @@ class BenchmarkViewModel @Inject constructor(
                 try {
                     if (forceStop) return@forEach
 
-                    testRecord.setResult(it.testCase, it.runTest())
+                    testRecord.setResult(it.testCase, it.runTest() ?: return@forEach)
                 } catch (ex: Exception) {
                     Log.e(it.testCase.name, "Error running test", ex)
                     return@forEach

@@ -18,6 +18,10 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import io.github.devriesl.raptormark.R
+import io.github.devriesl.raptormark.data.TestResult
+import io.github.devriesl.raptormark.data.isFIO
+import io.github.devriesl.raptormark.data.isMBW
+import io.github.devriesl.raptormark.data.isRandFIO
 import io.github.devriesl.raptormark.viewmodels.BenchmarkViewModel
 
 @Composable
@@ -28,14 +32,23 @@ fun BenchmarkContent(
         val state by benchmarkViewModel.benchmarkState.collectAsState()
 
         LazyColumn {
-            items(benchmarkViewModel.testItems) { testItem ->
+            item {
+                Text(text = stringResource(id = R.string.mbw_test_title))
+            }
+            items(benchmarkViewModel.testItems.filter { it.testCase.isMBW() }) { testItem ->
+
+            }
+            item {
+                Text(text = stringResource(id = R.string.fio_test_title))
+            }
+            items(benchmarkViewModel.testItems.filter { it.testCase.isFIO() }) { testItem ->
                 val testResult by testItem.testResult.collectAsState()
 
-                TestItem(
+                FIOTestItem(
                     title = testItem.testCase.title,
-                    bandwidth = testResult.bandwidth,
-                    showLatency = testItem.testCase.isRand,
-                    latency = testResult.latency
+                    bandwidth = (testResult as? TestResult.FIO)?.bandwidth,
+                    showLatency = testItem.testCase.isRandFIO(),
+                    latency = (testResult as? TestResult.FIO)?.latency
                 )
                 Divider()
             }
