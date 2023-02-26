@@ -30,6 +30,8 @@
     <!-- Setting resources -->
     <string name="dismiss_button_content">Dismiss</string>
     <string name="apply_button_content">Apply</string>
+    <string name="measurement_time_title">Measurement Time</string>
+    <string name="measurement_time_desc">Time taken to test memory bandwidth performance.</string>
     <string name="target_path_title">Target Path</string>
     <string name="target_path_desc">File directory path for benchmarking.</string>
     <string name="target_path_default">Application Default</string>

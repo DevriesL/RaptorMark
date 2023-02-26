@@ -11,6 +11,7 @@ object Constants {
     const val IO_ENGINE_OPT_NAME = "ioengine"
     const val NUM_THREADS_OPT_NAME = "numjobs"
 
+    const val DEFAULT_MEASUREMENT_TIME_VALUE = "faster"
     const val DEFAULT_IO_DEPTH_VALUE = "8"
     const val DEFAULT_RUNTIME_LIMIT_VALUE = "60"
     const val DEFAULT_SEQ_BLOCK_SIZE_VALUE = "1024k"

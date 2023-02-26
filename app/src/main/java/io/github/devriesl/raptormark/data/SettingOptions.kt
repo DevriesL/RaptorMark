@@ -11,6 +11,7 @@ import io.github.devriesl.raptormark.BuildConfig
 import io.github.devriesl.raptormark.Constants.DEFAULT_IO_DEPTH_VALUE
 import io.github.devriesl.raptormark.Constants.DEFAULT_IO_ENGINE_VALUE
 import io.github.devriesl.raptormark.Constants.DEFAULT_IO_SIZE_VALUE
+import io.github.devriesl.raptormark.Constants.DEFAULT_MEASUREMENT_TIME_VALUE
 import io.github.devriesl.raptormark.Constants.DEFAULT_NUM_THREADS_VALUE
 import io.github.devriesl.raptormark.Constants.DEFAULT_RAND_BLOCK_SIZE_VALUE
 import io.github.devriesl.raptormark.Constants.DEFAULT_RUNTIME_LIMIT_VALUE
@@ -29,6 +30,43 @@ enum class SettingOptions(
     @StringRes val desc: Int,
     val dataImpl: ISettingData
 ) {
+    MEASUREMENT_TIME(
+        R.string.measurement_time_title,
+        R.string.measurement_time_desc,
+        object : ISettingData {
+            override fun getValue(settingSharedPrefs: SettingSharedPrefs): String {
+                return settingSharedPrefs.getConfig(
+                    MEASUREMENT_TIME.name,
+                    DEFAULT_MEASUREMENT_TIME_VALUE
+                )
+            }
+
+            override fun onDialogContent(
+                settingSharedPrefs: SettingSharedPrefs,
+                itemIndex: Int,
+                closeDialog: (Int, String?) -> Unit
+            ): @Composable () -> Unit {
+                val speedList = arrayListOf("slow", "normal", "fast", "faster", "fastest")
+                val currentValue = settingSharedPrefs.getConfig(
+                    MEASUREMENT_TIME.name,
+                    DEFAULT_MEASUREMENT_TIME_VALUE
+                )
+
+                return {
+                    SingleChoiceDialog(
+                        title = MEASUREMENT_TIME.title,
+                        defaultChoice = currentValue,
+                        choiceList = speedList,
+                        itemIndex = itemIndex,
+                        closeDialog = closeDialog
+                    )
+                }
+            }
+
+            override fun setDialogResult(settingSharedPrefs: SettingSharedPrefs, result: String) {
+                settingSharedPrefs.setConfig(MEASUREMENT_TIME.name, result)
+            }
+        }),
     TARGET_PATH(R.string.target_path_title, R.string.target_path_desc, object : ISettingData {
         override fun getValue(settingSharedPrefs: SettingSharedPrefs): String {
             val uri = URI(settingSharedPrefs.getTestDirPath())
@@ -247,7 +285,10 @@ enum class SettingOptions(
             return {
                 SingleChoiceDialog(
                     title = IO_ENGINE.title,
-                    defaultChoice = settingSharedPrefs.getConfig(IO_ENGINE.name, DEFAULT_IO_ENGINE_VALUE),
+                    defaultChoice = settingSharedPrefs.getConfig(
+                        IO_ENGINE.name,
+                        DEFAULT_IO_ENGINE_VALUE
+                    ),
                     choiceList = engineList,
                     itemIndex = itemIndex,
                     closeDialog = closeDialog

@@ -29,7 +29,7 @@
 
 int (*callback_func)(const char *) = NULL;
 
-static bool limit_at_128MB = true;
+static bool limit_at_128MB = false;
 static bool test_seq_rd = false;
 static bool test_seq_wr = false;
 static bool test_rand_rd = false;
@@ -96,19 +96,14 @@ static int chunk_sizes[] = {
         14 * 1024 * 1024,
         15 * 1024 * 1024, // Xeon E6-2630 has 15MB L3
         16 * 1024 * 1024,
-        20 * 1024 * 1024, // Xeon E5-2690 has 20MB L3
-        21 * 1024 * 1024,
         32 * 1024 * 1024,
         48 * 1024 * 1024,
         64 * 1024 * 1024,
         72 * 1024 * 1024,
         96 * 1024 * 1024,
         128 * 1024 * 1024,
-        160 * 1024 * 1024,
         192 * 1024 * 1024,
-        224 * 1024 * 1024,
         256 * 1024 * 1024,
-        320 * 1024 * 1024,
         512 * 1024 * 1024,
         0
 };
@@ -148,6 +143,8 @@ mbw(int argc, char *argv[], void *callback_ptr) {
             usec_per_test = 20000000;    // 20 seconds per test.
         } else if (!strcmp("--limit", s)) {
             limit_at_128MB = true;
+        } else if (!strcmp("--normal", s)) {
+            usec_per_test = 5000000; // 5 second per test.
         } else if (!strcmp("--fast", s)) {
             usec_per_test = 1000000; // 1 second per test.
         } else if (!strcmp("--faster", s)) {

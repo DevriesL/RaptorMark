@@ -16,6 +16,13 @@ class MBWTest(testCase: TestCases, settingSharedPrefs: SettingSharedPrefs) : Ben
 
         root.put("shortopts", false)
 
+        options.put(
+            createOption(
+                SettingOptions.MEASUREMENT_TIME.dataImpl.getValue(
+                    settingSharedPrefs
+                )
+            )
+        )
         options.put(createOption(testCase.type))
 
         root.put("options", options)
