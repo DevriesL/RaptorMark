@@ -4,7 +4,9 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import org.json.JSONObject
 import java.io.IOException
-import kotlin.reflect.full.declaredMemberFunctions
+import kotlin.reflect.full.companionObject
+import kotlin.reflect.full.companionObjectInstance
+import kotlin.reflect.full.declaredFunctions
 
 abstract class BenchmarkTest(
     val testCase: TestCases,
@@ -13,10 +15,14 @@ abstract class BenchmarkTest(
     private val nativeListener = object : NativeListener {
         override fun onTestResult(result: String) {
             nativeResult = result
-            val parseResultMethod = this::class.declaredMemberFunctions.find {
+            this@BenchmarkTest::class.companionObject?.declaredFunctions?.find {
                 it.name == parseResultMethodName
+            }?.let { parseResultMethod ->
+                mutableTestResult.value = parseResultMethod.call(
+                    this@BenchmarkTest::class.companionObjectInstance,
+                    result
+                ) as? TestResult
             }
-            mutableTestResult.value = parseResultMethod?.call(result) as? TestResult
         }
     }
 
