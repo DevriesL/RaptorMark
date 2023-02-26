@@ -14,13 +14,13 @@ abstract class BenchmarkTest(
 ) {
     private val nativeListener = object : NativeListener {
         override fun onTestResult(result: String) {
-            nativeResult = result
+            nativeResult = listOfNotNull(nativeResult, result).joinToString(System.lineSeparator())
             this@BenchmarkTest::class.companionObject?.declaredFunctions?.find {
                 it.name == parseResultMethodName
             }?.let { parseResultMethod ->
                 mutableTestResult.value = parseResultMethod.call(
                     this@BenchmarkTest::class.companionObjectInstance,
-                    result
+                    nativeResult
                 ) as? TestResult
             }
         }
@@ -51,7 +51,7 @@ abstract class BenchmarkTest(
         return nativeResult
     }
 
-    fun createOption(name: String, value: String): JSONObject {
+    fun createOption(name: String, value: String? = null): JSONObject {
         val jsonOption = JSONObject()
         jsonOption.put("name", name)
         jsonOption.put("value", value)

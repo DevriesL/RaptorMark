@@ -18,7 +18,7 @@ enum class TestCases(
     MBW_SEQ_WR(R.string.seq_wr_test_title, IO_TYPE_SEQ_WR_VALUE),
     MBW_RAND_RD(R.string.rand_rd_test_title, IO_TYPE_RAND_RD_VALUE),
     MBW_RAND_WR(R.string.rand_wr_test_title, IO_TYPE_RAND_WR_VALUE),
-    MBW_RAND_APP(R.string.app_perf_title, MBW_APP_PERF_VALUE),
+    MBW_APP_PERF(R.string.app_perf_title, MBW_APP_PERF_VALUE),
     FIO_SEQ_RD(R.string.seq_rd_test_title, IO_TYPE_SEQ_RD_VALUE),
     FIO_SEQ_WR(R.string.seq_wr_test_title, IO_TYPE_SEQ_WR_VALUE),
     FIO_RAND_RD(R.string.rand_rd_test_title, IO_TYPE_RAND_RD_VALUE),
@@ -30,7 +30,7 @@ fun TestCases.isMBW(): Boolean = this in listOf(
     TestCases.MBW_SEQ_WR,
     TestCases.MBW_RAND_RD,
     TestCases.MBW_RAND_WR,
-    TestCases.MBW_RAND_APP
+    TestCases.MBW_APP_PERF
 )
 
 fun TestCases.isFIO(): Boolean = this in listOf(
@@ -40,4 +40,7 @@ fun TestCases.isFIO(): Boolean = this in listOf(
     TestCases.FIO_RAND_WR
 )
 
-fun TestCases.isRandFIO(): Boolean = this in listOf(TestCases.FIO_RAND_RD, TestCases.FIO_RAND_WR)
+fun TestCases.isFIORand(): Boolean = this in listOf(TestCases.FIO_RAND_RD, TestCases.FIO_RAND_WR)
+
+fun TestCases.isMBWApp(): Boolean = this in listOf(TestCases.MBW_APP_PERF)
+

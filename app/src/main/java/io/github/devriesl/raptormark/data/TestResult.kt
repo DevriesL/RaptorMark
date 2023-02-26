@@ -6,5 +6,8 @@ sealed class TestResult {
         val latency: Int
     ) : TestResult()
 
-    class MBW : TestResult()
+    class MBW(
+        val bandwidth: List<Pair<Int, Int>>,
+        val vectorBandwidth: List<Pair<Int, Int>>
+    ) : TestResult()
 }

@@ -18,10 +18,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import io.github.devriesl.raptormark.R
-import io.github.devriesl.raptormark.data.TestResult
-import io.github.devriesl.raptormark.data.isFIO
-import io.github.devriesl.raptormark.data.isMBW
-import io.github.devriesl.raptormark.data.isRandFIO
+import io.github.devriesl.raptormark.data.*
 import io.github.devriesl.raptormark.viewmodels.BenchmarkViewModel
 
 @Composable
@@ -36,7 +33,15 @@ fun BenchmarkContent(
                 Text(text = stringResource(id = R.string.mbw_test_title))
             }
             items(benchmarkViewModel.testItems.filter { it.testCase.isMBW() }) { testItem ->
+                val testResult by testItem.testResult.collectAsState()
 
+                MBWTestItem(
+                    title = testItem.testCase.title,
+                    bandwidth = (testResult as? TestResult.MBW)?.bandwidth,
+                    vectorBandwidth = (testResult as? TestResult.MBW)?.vectorBandwidth,
+                    showChart = testItem.testCase.isMBWApp()
+                )
+                Divider()
             }
             item {
                 Text(text = stringResource(id = R.string.fio_test_title))
@@ -47,7 +52,7 @@ fun BenchmarkContent(
                 FIOTestItem(
                     title = testItem.testCase.title,
                     bandwidth = (testResult as? TestResult.FIO)?.bandwidth,
-                    showLatency = testItem.testCase.isRandFIO(),
+                    showLatency = testItem.testCase.isFIORand(),
                     latency = (testResult as? TestResult.FIO)?.latency
                 )
                 Divider()

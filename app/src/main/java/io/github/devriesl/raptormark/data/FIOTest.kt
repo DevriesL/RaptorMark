@@ -45,7 +45,7 @@ class FIOTest(
         options.put(
             createOption(
                 Constants.BLOCK_SIZE_OPT_NAME,
-                if (testCase.isRandFIO()) {
+                if (testCase.isFIORand()) {
                     SettingOptions.RAND_BLOCK_SIZE.dataImpl.getValue(settingSharedPrefs)
                 } else {
                     SettingOptions.SEQ_BLOCK_SIZE.dataImpl.getValue(settingSharedPrefs)
