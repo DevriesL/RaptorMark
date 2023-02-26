@@ -18,6 +18,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import io.github.devriesl.raptormark.R
 import io.github.devriesl.raptormark.ui.widget.LineChart
 
 const val BANDWIDTH_STEP = 80000 // 8GB
@@ -35,6 +36,10 @@ fun MBWTestItem(
     val shouldShowChart = isAppPerf.not() && isTestNotStarted.not()
     var expandState by rememberSaveable { mutableStateOf<Boolean?>(null) }
     val maxYValue = maxOf(bandwidth.maxYValue(), vectorBandwidth.maxYValue())
+
+    val bandwidthColor = Color(0xFF025DF4)
+    val vectorBandwidthColor = Color(0xFF21A97A)
+
     Box(
         modifier = Modifier
             .padding(horizontal = 16.dp)
@@ -73,8 +78,8 @@ fun MBWTestItem(
             if ((shouldShowChart && isTestCompleted.not()) || expandState == true) {
                 LineChart(
                     linesData = listOf(
-                        Color(0xFF025DF4) to bandwidth.orEmpty(),
-                        Color(0xFF21A97A) to vectorBandwidth.orEmpty(),
+                        bandwidthColor to bandwidth.orEmpty(),
+                        vectorBandwidthColor to vectorBandwidth.orEmpty(),
                     ),
                     maxYValue = maxYValue,
                     modifier = Modifier
@@ -82,6 +87,64 @@ fun MBWTestItem(
                         .fillMaxWidth()
                         .height(128.dp)
                 )
+            }
+            if (isTestCompleted) {
+                Row(
+                    modifier = Modifier
+                        .wrapContentHeight()
+                        .fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text(
+                        text = stringResource(
+                            if (isAppPerf) {
+                                R.string.memset_title
+                            } else {
+                                R.string.non_vector_title
+                            }
+                        ),
+                        style = MaterialTheme.typography.subtitle1
+                    )
+                    Text(
+                        text = "${
+                            (if (isAppPerf) {
+                                bandwidth?.getOrNull(0)?.second
+                            } else {
+                                bandwidth?.takeLast(4)?.map { it.second }?.average()?.toInt()
+                            } ?: 0) / 10000f
+                        } GB/s",
+                        color = bandwidthColor
+                    )
+                }
+                Row(
+                    modifier = Modifier
+                        .wrapContentHeight()
+                        .fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text(
+                        text = stringResource(
+                            if (isAppPerf) {
+                                R.string.memcpy_title
+                            } else {
+                                R.string.neon_vector_title
+                            }
+                        ),
+                        style = MaterialTheme.typography.subtitle1
+                    )
+                    Text(
+                        text = "${
+                            (if (isAppPerf) {
+                                bandwidth?.getOrNull(1)?.second
+                            } else {
+                                vectorBandwidth?.takeLast(4)?.map { it.second }?.average()?.toInt()
+                            } ?: 0) / 10000f
+                        } GB/s",
+                        color = vectorBandwidthColor
+                    )
+                }
             }
         }
     }

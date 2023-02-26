@@ -19,6 +19,10 @@
     <string name="rand_wr_test_title">Random Write</string>
     <string name="app_perf_title">Application Performance</string>
     <string name="rand_4n_lat_title">99.99% Latency</string>
+    <string name="non_vector_title">Non-Vector</string>
+    <string name="neon_vector_title">NEON Vector</string>
+    <string name="memset_title">memset Function</string>
+    <string name="memcpy_title">memcpy Function</string>
 
     <!-- Benchmark result formats -->
     <string name="sum_of_bw_test_result_format">%1$d MB/s</string>
