@@ -17,8 +17,9 @@ class BenchmarkViewModel @Inject constructor(
     private val testRecordRepo: TestRecordRepo
 ) : ViewModel() {
     @Volatile
-    private var forceStop = false;
+    private var forceStop = false
     private val mutableBenchmarkState = MutableStateFlow(BenchmarkState())
+    var onTestStateChanged: ((Boolean) -> Unit)? = null
 
     val testItems: List<BenchmarkTest> =
         TestCases.values().mapNotNull {
@@ -33,6 +34,7 @@ class BenchmarkViewModel @Inject constructor(
         get() = mutableBenchmarkState
 
     fun onTestStart() {
+        onTestStateChanged?.invoke(true)
         mutableBenchmarkState.value = mutableBenchmarkState.value.copy(running = true)
         val testRecord = TestRecord()
         NativeHandler.postNativeThread {
@@ -56,6 +58,7 @@ class BenchmarkViewModel @Inject constructor(
 
     fun onTestStop() {
         forceStop = true
+        onTestStateChanged?.invoke(false)
     }
 }
 

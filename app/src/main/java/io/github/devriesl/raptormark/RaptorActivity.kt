@@ -1,6 +1,7 @@
 package io.github.devriesl.raptormark
 
 import android.os.Bundle
+import android.view.WindowManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
@@ -28,6 +29,14 @@ class RaptorActivity : ComponentActivity() {
                 historyViewModel = historyViewModel,
                 settingViewModel = settingViewModel
             )
+        }
+
+        benchmarkViewModel.onTestStateChanged = {
+            if (it) {
+                window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+            } else {
+                window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+            }
         }
     }
 }
