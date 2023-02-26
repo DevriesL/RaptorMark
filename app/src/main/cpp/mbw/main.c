@@ -169,6 +169,7 @@ mbw(int argc, char *argv[], void *callback_ptr) {
     }
 
     unsigned long chunk_limit = limit_at_128MB ? 128 << 20 : 1 << 31;
+    unsigned long random_chunk_limit = 128 << 20;
 
     // SEQ READS
     if (test_seq_rd) {
@@ -222,7 +223,7 @@ mbw(int argc, char *argv[], void *callback_ptr) {
         srand(time(NULL));
 
         i = 0;
-        while ((chunk_size = chunk_sizes[i++]) && chunk_size <= chunk_limit) {
+        while ((chunk_size = chunk_sizes[i++]) && chunk_size <= random_chunk_limit) {
             if (!(chunk_size & 128)) {
                 long amount = Testing_read(chunk_size, NO_SSE2, true);
                 dataAddDatum(chunk_size, amount);
@@ -235,7 +236,7 @@ mbw(int argc, char *argv[], void *callback_ptr) {
         srand(time(NULL));
 
         i = 0;
-        while ((chunk_size = chunk_sizes[i++]) && chunk_size <= chunk_limit) {
+        while ((chunk_size = chunk_sizes[i++]) && chunk_size <= random_chunk_limit) {
             long amount = Testing_read(chunk_size, NEON_128BIT, true);
             dataAddDatum(chunk_size, amount);
         }
@@ -249,7 +250,7 @@ mbw(int argc, char *argv[], void *callback_ptr) {
         srand(time(NULL));
 
         i = 0;
-        while ((chunk_size = chunk_sizes[i++]) && chunk_size <= chunk_limit) {
+        while ((chunk_size = chunk_sizes[i++]) && chunk_size <= random_chunk_limit) {
             if (!(chunk_size & 128)) {
                 long amount = Testing_write(chunk_size, NO_SSE2, true);
                 dataAddDatum(chunk_size, amount);
@@ -262,7 +263,7 @@ mbw(int argc, char *argv[], void *callback_ptr) {
         srand(time(NULL));
 
         i = 0;
-        while ((chunk_size = chunk_sizes[i++]) && chunk_size <= chunk_limit) {
+        while ((chunk_size = chunk_sizes[i++]) && chunk_size <= random_chunk_limit) {
             long amount = Testing_write(chunk_size, NEON_128BIT, true);
             dataAddDatum(chunk_size, amount);
         }

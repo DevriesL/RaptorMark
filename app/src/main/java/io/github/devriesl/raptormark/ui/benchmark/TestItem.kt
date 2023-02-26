@@ -15,7 +15,7 @@ fun TestItem(
                 title = testCase.title,
                 bandwidth = testResult?.bandwidth,
                 vectorBandwidth = testResult?.vectorBandwidth,
-                showChart = testCase.isMBWApp()
+                isAppPerf = testCase.isMBWApp()
             )
         }
         testCase.isFIO() -> {
