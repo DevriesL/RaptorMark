@@ -21,14 +21,7 @@ class BenchmarkViewModel @Inject constructor(
     private val mutableBenchmarkState = MutableStateFlow(BenchmarkState())
     var onTestStateChanged: ((Boolean) -> Unit)? = null
 
-    val testItems: List<BenchmarkTest> =
-        TestCases.values().mapNotNull {
-            when {
-                it.isMBW() -> MBWTest(it, settingSharedPrefs)
-                it.isFIO() -> FIOTest(it, settingSharedPrefs)
-                else -> null
-            }
-        }
+    var testItems: List<BenchmarkTest> = updateTestItems(false)
 
     val benchmarkState: StateFlow<BenchmarkState>
         get() = mutableBenchmarkState
@@ -60,8 +53,44 @@ class BenchmarkViewModel @Inject constructor(
         forceStop = true
         onTestStateChanged?.invoke(false)
     }
+
+    fun enableMBW(enable: Boolean) {
+        if (benchmarkState.value.running) return
+        mutableBenchmarkState.value = mutableBenchmarkState.value.copy(enableMBWTest = enable)
+        testItems = updateTestItems()
+    }
+
+    fun enableFIO(enable: Boolean) {
+        if (benchmarkState.value.running) return
+        mutableBenchmarkState.value = mutableBenchmarkState.value.copy(enableFIOTest = enable)
+        testItems = updateTestItems()
+    }
+
+    private fun updateTestItems(isInitialized: Boolean = true): List<BenchmarkTest> {
+        return TestCases.values().mapNotNull { testCase ->
+            when {
+                testCase.isMBW() && benchmarkState.value.enableMBWTest -> {
+                    if (isInitialized) {
+                        testItems.find { it.testCase == testCase }
+                    } else {
+                        null
+                    } ?: MBWTest(testCase, settingSharedPrefs)
+                }
+                testCase.isFIO() && benchmarkState.value.enableFIOTest -> {
+                    if (isInitialized) {
+                        testItems.find { it.testCase == testCase }
+                    } else {
+                        null
+                    } ?: FIOTest(testCase, settingSharedPrefs)
+                }
+                else -> null
+            }
+        }
+    }
 }
 
 data class BenchmarkState(
-    val running: Boolean = false
+    val running: Boolean = false,
+    val enableMBWTest: Boolean = true,
+    val enableFIOTest: Boolean = true
 )

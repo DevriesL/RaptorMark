@@ -1,14 +1,9 @@
 package io.github.devriesl.raptormark.ui.benchmark
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.Divider
-import androidx.compose.material.ExtendedFloatingActionButton
-import androidx.compose.material.Icon
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -30,32 +25,58 @@ fun BenchmarkContent(
 
         LazyColumn {
             item {
-                Text(text = stringResource(id = R.string.mbw_test_title))
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 8.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text(text = stringResource(id = R.string.mbw_test_title))
+                    Checkbox(
+                        checked = state.enableMBWTest,
+                        onCheckedChange = { benchmarkViewModel.enableMBW(it) })
+                }
             }
-            items(benchmarkViewModel.testItems.filter { it.testCase.isMBW() }) { testItem ->
-                val testResult by testItem.testResult.collectAsState()
+            if (state.enableMBWTest) {
+                items(benchmarkViewModel.testItems.filter { it.testCase.isMBW() }) { testItem ->
+                    val testResult by testItem.testResult.collectAsState()
 
-                MBWTestItem(
-                    title = testItem.testCase.title,
-                    bandwidth = (testResult as? TestResult.MBW)?.bandwidth,
-                    vectorBandwidth = (testResult as? TestResult.MBW)?.vectorBandwidth,
-                    showChart = testItem.testCase.isMBWApp()
-                )
-                Divider()
+                    MBWTestItem(
+                        title = testItem.testCase.title,
+                        bandwidth = (testResult as? TestResult.MBW)?.bandwidth,
+                        vectorBandwidth = (testResult as? TestResult.MBW)?.vectorBandwidth,
+                        isAppPerf = testItem.testCase.isMBWApp()
+                    )
+                    Divider()
+                }
             }
             item {
-                Text(text = stringResource(id = R.string.fio_test_title))
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 8.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text(text = stringResource(id = R.string.fio_test_title))
+                    Checkbox(
+                        checked = state.enableFIOTest,
+                        onCheckedChange = { benchmarkViewModel.enableFIO(it) })
+                }
             }
-            items(benchmarkViewModel.testItems.filter { it.testCase.isFIO() }) { testItem ->
-                val testResult by testItem.testResult.collectAsState()
+            if (state.enableFIOTest) {
+                items(benchmarkViewModel.testItems.filter { it.testCase.isFIO() }) { testItem ->
+                    val testResult by testItem.testResult.collectAsState()
 
-                FIOTestItem(
-                    title = testItem.testCase.title,
-                    bandwidth = (testResult as? TestResult.FIO)?.bandwidth,
-                    showLatency = testItem.testCase.isFIORand(),
-                    latency = (testResult as? TestResult.FIO)?.latency
-                )
-                Divider()
+                    FIOTestItem(
+                        title = testItem.testCase.title,
+                        bandwidth = (testResult as? TestResult.FIO)?.bandwidth,
+                        showLatency = testItem.testCase.isFIORand(),
+                        latency = (testResult as? TestResult.FIO)?.latency
+                    )
+                    Divider()
+                }
             }
         }
 
