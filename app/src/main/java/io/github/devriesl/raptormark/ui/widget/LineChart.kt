@@ -17,41 +17,57 @@ import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.nativeCanvas
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.unit.*
 import java.lang.Float.min
 
 @Composable
 fun LineChart(
     linesData: List<Pair<Color, List<Pair<Int, Int>>>>,
     maxYValue: Int,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    yLabelTextSize: TextUnit = 12.sp,
+    xLabelTextSize: TextUnit = 12.sp,
+    strokeWidth: Dp = 2.dp,
+    xLabelPaddingTop: Dp = 12.dp
 ) {
     val lineBound = remember { mutableStateOf(Float.MAX_VALUE) }
-
+    val xLabelSpaceHeightPx = with(LocalDensity.current) {
+        xLabelTextSize.toPx() + xLabelPaddingTop.toPx()
+    }
     Canvas(
         modifier = modifier
             .drawBehind {
-                drawYAxisWithLabels(maxYValue)
+                drawYAxisWithLabels(
+                    maxValue = maxYValue,
+                    labelTextSize = yLabelTextSize,
+                    density = this@drawBehind,
+                    strokeWidth = strokeWidth,
+                    bottomPadding = xLabelSpaceHeightPx.toDp()
+                )
             }
             .padding(horizontal = 16.dp)
+
     ) {
         linesData.forEach { (color, lineData) ->
-            lineBound.value = min(size.width.div(lineData.count().times(1.2F)), lineBound.value)
-            val scaleFactor = size.height.div(maxYValue)
-            val radius = size.width.div(60)
-            val strokeWidth = 2.dp.toPx()
+            // cut some height for X label place
+            val lineSize = Size(size.width, size.height - xLabelSpaceHeightPx)
+            lineBound.value = min(lineSize.width.div(lineData.count().times(1.2F)), lineBound.value)
+            val scaleFactor = lineSize.height.div(maxYValue)
+            val strokeWidthPx = 2.dp.toPx()
             val path = Path().apply {
-                moveTo(0f, size.height)
+                moveTo(0f, lineSize.height)
             }
 
             lineData.forEachIndexed { index, data ->
                 val centerOffset =
-                    dataToOffSet(index, lineBound.value, size, data.second, scaleFactor)
+                    dataToOffSet(index, lineBound.value, lineSize, data.second, scaleFactor)
                 if (index == 0 || index == lineData.lastIndex) {
                     drawXLabel(
-                        data.first,
-                        centerOffset,
-                        radius
+                        data = data.first,
+                        centerOffset = centerOffset + Offset(0f,  xLabelSpaceHeightPx),
+                        labelTextSize = xLabelTextSize,
+                        density = this@Canvas
                     )
                 }
                 if (lineData.size > 1) {
@@ -62,11 +78,11 @@ fun LineChart(
                 }
             }
             if (lineData.size > 1) {
-                val pathEffect = PathEffect.cornerPathEffect(strokeWidth)
+                val pathEffect = PathEffect.cornerPathEffect(strokeWidthPx)
                 drawPath(
                     path = path,
                     color = color,
-                    style = Stroke(width = strokeWidth, pathEffect = pathEffect),
+                    style = Stroke(width = strokeWidthPx, pathEffect = pathEffect),
                 )
             }
         }
@@ -74,46 +90,56 @@ fun LineChart(
 }
 
 internal fun DrawScope.drawYAxisWithLabels(
-    maxValue: Int
+    maxValue: Int,
+    labelTextSize: TextUnit,
+    density: Density,
+    strokeWidth: Dp = 2.dp,
+    // x label text space
+    bottomPadding: Dp = 0.dp
 ) {
-    val graphYAxisEndPoint = size.height.div(4)
+    val graphYAxisEndPoint = (size.height - with(density) { bottomPadding.toPx() }).div(4)
     val pathEffect = PathEffect.dashPathEffect(floatArrayOf(40f, 20f), 0f)
     val labelScaleFactor = maxValue.div(4)
-
+    val textPxSize = with(density) { labelTextSize.toPx() }
+    val strokeWidthPx = with(density) { strokeWidth.toPx() }
     repeat(5) { index ->
         val yAxisEndPoint = graphYAxisEndPoint.times(index)
         val yLabelText = "${(labelScaleFactor.times(4.minus(index)) / 10000)} GB/s"
 
         drawIntoCanvas {
             it.nativeCanvas.apply {
+                val textPaint = Paint().apply {
+                    textSize = textPxSize
+                    textAlign = Paint.Align.CENTER
+                }
+                val rect = android.graphics.Rect().apply {
+                    textPaint.getTextBounds(yLabelText, 0, yLabelText.length, this)
+                }
                 drawText(
                     yLabelText,
-                    0F.minus(25),
-                    yAxisEndPoint.minus(10),
-                    Paint().apply {
-                        textSize = size.width.div(30)
-                        textAlign = Paint.Align.CENTER
-                    }
+                    0f,
+                     yAxisEndPoint - strokeWidthPx / 2 + rect.height() / 2 - rect.bottom,
+                    textPaint
                 )
             }
         }
-        if (index != 0) {
-            drawLine(
-                start = Offset(x = 0f, y = yAxisEndPoint),
-                end = Offset(x = size.width, y = yAxisEndPoint),
-                color = Color(0xFF969696),
-                pathEffect = pathEffect,
-                alpha = 0.1F,
-                strokeWidth = size.width.div(200)
-            )
-        }
+        drawLine(
+            start = Offset(x = 0f, y = yAxisEndPoint - strokeWidthPx),
+            end = Offset(x = size.width, y = yAxisEndPoint - strokeWidthPx),
+            color = Color(0xFF969696),
+            pathEffect = pathEffect,
+            alpha = 0.1F,
+            strokeWidth = strokeWidthPx
+        )
+
     }
 }
 
 internal fun DrawScope.drawXLabel(
     data: Int,
     centerOffset: Offset,
-    radius: Float
+    labelTextSize: TextUnit,
+    density: Density
 ) {
     val xLabelText = when {
         data >= 1024 * 1024 -> "${data / 1024 / 1024} MB"
@@ -125,9 +151,9 @@ internal fun DrawScope.drawXLabel(
             drawText(
                 xLabelText,
                 centerOffset.x,
-                size.height.plus(radius.times(4)),
+                size.height,
                 Paint().apply {
-                    textSize = size.width.div(30)
+                    textSize = with(density) { labelTextSize.toPx() }
                     textAlign = Paint.Align.CENTER
                 }
             )
