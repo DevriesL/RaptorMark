@@ -47,11 +47,12 @@ fun LineChart(
                 )
             }
             .padding(horizontal = 16.dp)
+            .padding(start = 8.dp)
 
     ) {
+        // cut some height for X label place
+        val lineSize = Size(size.width, size.height - xLabelSpaceHeightPx)
         linesData.forEach { (color, lineData) ->
-            // cut some height for X label place
-            val lineSize = Size(size.width, size.height - xLabelSpaceHeightPx)
             lineBound.value = min(lineSize.width.div(lineData.count().times(1.2F)), lineBound.value)
             val scaleFactor = lineSize.height.div(maxYValue)
             val strokeWidthPx = 2.dp.toPx()
