@@ -33,7 +33,7 @@ fun FIOTestItem(
     }
     Box(
         modifier = Modifier
-            .padding(horizontal = 16.dp)
+            .padding(horizontal = 32.dp)
             .defaultMinSize(minHeight = minHeight)
             .fillMaxWidth()
     ) {
