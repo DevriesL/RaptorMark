@@ -4,21 +4,19 @@ import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.Saver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.saveable.rememberSaveableStateHolder
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
 import io.github.devriesl.raptormark.R
 import io.github.devriesl.raptormark.ui.benchmark.BenchmarkContent
 import io.github.devriesl.raptormark.ui.history.HistoryContent
 import io.github.devriesl.raptormark.ui.setting.SettingContent
 import io.github.devriesl.raptormark.ui.theme.RaptorMarkTheme
+import io.github.devriesl.raptormark.ui.widget.*
 import io.github.devriesl.raptormark.viewmodels.BenchmarkViewModel
 import io.github.devriesl.raptormark.viewmodels.HistoryViewModel
 import io.github.devriesl.raptormark.viewmodels.MainViewModel
@@ -42,23 +40,37 @@ fun RaptorApp(
             derivedStateOf { sections.indexOf(selectedSection) }
         }
         val saveableStateHolder = rememberSaveableStateHolder()
+        val topAppBarScrollBehavior = TopAppBarDefault.enterAlwaysScrollBehavior()
+
         BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
             val widthClass = rememberSizeClass(size = maxWidth)
             Scaffold(
                 topBar = {
                     Column {
-                        AppTopBar(mainViewModel)
                         if (widthClass == SizeClass.Compact) {
+                            ScrollableTopAppBar(scrollBehavior = topAppBarScrollBehavior) {
+                                AppTopBar(mainViewModel = mainViewModel)
+                            }
                             AppTopTab(
                                 selectedIndex = selectedIndex,
                                 sections = sections,
                                 setSelectedSection = setSelectedSection
                             )
+                        } else {
+                            AppTopBar(mainViewModel = mainViewModel)
                         }
                     }
                 },
                 content = { scaffoldPadding ->
-                    Row(modifier = Modifier.padding(scaffoldPadding)) {
+                    val modifier = if (widthClass == SizeClass.Compact) {
+                        Modifier
+                            .padding(scaffoldPadding)
+                            .nestedScroll(topAppBarScrollBehavior.nestedScrollConnection)
+                    } else {
+                        Modifier
+                            .padding(scaffoldPadding)
+                    }
+                    Row(modifier = modifier) {
                         if (widthClass != SizeClass.Compact) {
                             NavigationRail(
                                 backgroundColor = MaterialTheme.colors.surface
