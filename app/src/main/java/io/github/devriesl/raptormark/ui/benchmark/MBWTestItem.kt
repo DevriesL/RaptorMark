@@ -1,17 +1,15 @@
 package io.github.devriesl.raptormark.ui.benchmark
 
 import androidx.annotation.StringRes
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.KeyboardArrowDown
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -42,10 +40,10 @@ fun MBWTestItem(
 
     Box(
         modifier = Modifier
-            .padding(horizontal = 16.dp)
             .fillMaxWidth()
     ) {
         Column {
+            val expanded = (shouldShowChart && isTestCompleted.not()) || expandState == true
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier
@@ -53,7 +51,7 @@ fun MBWTestItem(
                         expandState = (expandState == true).not()
                     })
                     .height(48.dp)
-                    .padding(horizontal = 16.dp)
+                    .padding(horizontal = 32.dp)
                     .fillMaxWidth()
             ) {
                 Text(
@@ -61,9 +59,10 @@ fun MBWTestItem(
                     style = MaterialTheme.typography.subtitle1,
                     modifier = Modifier.weight(1f)
                 )
+
                 if (shouldShowChart) {
                     val rotate by animateFloatAsState(
-                        targetValue = if ((shouldShowChart && isTestCompleted.not()) || expandState == true) 180f else 0f
+                        targetValue = if (expanded) 180f else 0f
                     )
                     Icon(
                         imageVector = Icons.Outlined.KeyboardArrowDown,
@@ -75,7 +74,9 @@ fun MBWTestItem(
                     )
                 }
             }
-            if ((shouldShowChart && isTestCompleted.not()) || expandState == true) {
+            AnimatedVisibility(
+                visible = expanded,
+            ) {
                 LineChart(
                     linesData = listOf(
                         bandwidthColor to bandwidth.orEmpty(),
@@ -83,14 +84,18 @@ fun MBWTestItem(
                     ),
                     maxYValue = maxYValue,
                     modifier = Modifier
-                        .padding(16.dp)
+                        .padding(vertical = 16.dp)
+                        //Workaround for y label text padding
+                        .padding(start = 54.dp, end = 32.dp)
                         .fillMaxWidth()
                         .height(128.dp)
                 )
             }
             if (isTestCompleted) {
+                val horizontalPadding = 32.dp
                 Row(
                     modifier = Modifier
+                        .padding(horizontal = horizontalPadding)
                         .wrapContentHeight()
                         .fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically,
@@ -104,7 +109,7 @@ fun MBWTestItem(
                                 R.string.non_vector_title
                             }
                         ),
-                        style = MaterialTheme.typography.subtitle1
+                        style = MaterialTheme.typography.subtitle2
                     )
                     Text(
                         text = "${
@@ -114,11 +119,13 @@ fun MBWTestItem(
                                 bandwidth?.takeLast(4)?.map { it.second }?.average()?.toInt()
                             } ?: 0) / 10000f
                         } GB/s",
-                        color = bandwidthColor
+                        color = bandwidthColor,
+                        style = MaterialTheme.typography.body2
                     )
                 }
                 Row(
                     modifier = Modifier
+                        .padding(horizontal = horizontalPadding)
                         .wrapContentHeight()
                         .fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically,
@@ -132,7 +139,7 @@ fun MBWTestItem(
                                 R.string.neon_vector_title
                             }
                         ),
-                        style = MaterialTheme.typography.subtitle1
+                        style = MaterialTheme.typography.subtitle2
                     )
                     Text(
                         text = "${
@@ -142,7 +149,8 @@ fun MBWTestItem(
                                 vectorBandwidth?.takeLast(4)?.map { it.second }?.average()?.toInt()
                             } ?: 0) / 10000f
                         } GB/s",
-                        color = vectorBandwidthColor
+                        color = vectorBandwidthColor,
+                        style = MaterialTheme.typography.body2
                     )
                 }
             }
