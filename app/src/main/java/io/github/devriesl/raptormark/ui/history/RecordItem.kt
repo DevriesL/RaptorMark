@@ -1,5 +1,6 @@
 package io.github.devriesl.raptormark.ui.history
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -18,6 +19,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import io.github.devriesl.raptormark.R
 import io.github.devriesl.raptormark.data.TestRecord
+import io.github.devriesl.raptormark.data.isMBW
 import io.github.devriesl.raptormark.ui.benchmark.TestItem
 import java.sql.Timestamp
 import java.text.SimpleDateFormat
@@ -59,10 +61,16 @@ fun RecordItem(
             )
         }
 
-        if (expandState) {
+        AnimatedVisibility(expandState) {
             Column {
-                testRecord.results.forEach { (testCase, result) ->
+                testRecord.results.entries.forEachIndexed { index, (testCase, result) ->
                     TestItem(testCase, result)
+                    if (testCase.isMBW()) {
+                        Spacer(modifier = Modifier.height(8.dp))
+                    }
+                    if (index < testRecord.results.size - 1) {
+                        Divider(modifier = Modifier.padding(horizontal = 32.dp))
+                    }
                 }
             }
         }

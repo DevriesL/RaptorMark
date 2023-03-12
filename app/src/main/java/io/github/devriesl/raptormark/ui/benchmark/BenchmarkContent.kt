@@ -3,9 +3,10 @@ package io.github.devriesl.raptormark.ui.benchmark
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.*
 import androidx.compose.runtime.*
@@ -53,54 +54,83 @@ fun BenchmarkContent(
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 8.dp),
+                        .clickable {
+                            benchmarkViewModel.enableMBW(!state.enableMBWTest)
+                        }
+                        .heightIn(48.dp)
+                        .padding(horizontal = 16.dp),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Text(text = stringResource(id = R.string.mbw_test_title))
                     Checkbox(
                         checked = state.enableMBWTest,
-                        onCheckedChange = { benchmarkViewModel.enableMBW(it) })
+                        onCheckedChange = null
+                    )
                 }
             }
             if (state.enableMBWTest) {
-                items(benchmarkViewModel.testItems.filter { it.testCase.isMBW() }) { testItem ->
+
+                val mbwItems = benchmarkViewModel.testItems.filter { it.testCase.isMBW() }
+                itemsIndexed(mbwItems) { index, testItem ->
                     val testResult by testItem.testResult.collectAsState()
 
-                    MBWTestItem(
-                        title = testItem.testCase.title,
-                        bandwidth = (testResult as? TestResult.MBW)?.bandwidth,
-                        vectorBandwidth = (testResult as? TestResult.MBW)?.vectorBandwidth,
-                        isAppPerf = testItem.testCase.isMBWApp()
-                    )
-                    Divider()
+                    Column {
+                        MBWTestItem(
+                            title = testItem.testCase.title,
+                            bandwidth = (testResult as? TestResult.MBW)?.bandwidth,
+                            vectorBandwidth = (testResult as? TestResult.MBW)?.vectorBandwidth,
+                            isAppPerf = testItem.testCase.isMBWApp()
+                        )
+                        Divider(modifier = Modifier.padding(top = if (testResult == null) 0.dp else 8.dp).run {
+                            if (index != mbwItems.lastIndex) {
+                                padding(horizontal = 32.dp)
+                            } else {
+                                this
+                            }
+                        })
+                    }
                 }
             }
             item {
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 8.dp),
+                        .clickable {
+                            benchmarkViewModel.enableFIO(!state.enableFIOTest)
+                        }
+                        .heightIn(48.dp)
+                        .padding(horizontal = 16.dp),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Text(text = stringResource(id = R.string.fio_test_title))
                     Checkbox(
                         checked = state.enableFIOTest,
-                        onCheckedChange = { benchmarkViewModel.enableFIO(it) })
+                        onCheckedChange = null
+                    )
                 }
             }
             if (state.enableFIOTest) {
-                items(benchmarkViewModel.testItems.filter { it.testCase.isFIO() }) { testItem ->
+                val fioItems = benchmarkViewModel.testItems.filter { it.testCase.isFIO() }
+                itemsIndexed(fioItems) { index, testItem ->
                     val testResult by testItem.testResult.collectAsState()
 
-                    FIOTestItem(
-                        title = testItem.testCase.title,
-                        bandwidth = (testResult as? TestResult.FIO)?.bandwidth,
-                        showLatency = testItem.testCase.isFIORand(),
-                        latency = (testResult as? TestResult.FIO)?.latency
-                    )
-                    Divider()
+                    Column {
+                        FIOTestItem(
+                            title = testItem.testCase.title,
+                            bandwidth = (testResult as? TestResult.FIO)?.bandwidth,
+                            showLatency = testItem.testCase.isFIORand(),
+                            latency = (testResult as? TestResult.FIO)?.latency
+                        )
+                        Divider(modifier = Modifier.run {
+                            if (index != fioItems.lastIndex) {
+                                padding(horizontal = 32.dp)
+                            } else {
+                                this
+                            }
+                        })
+                    }
                 }
             }
         }
