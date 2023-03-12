@@ -62,11 +62,15 @@ fun RaptorApp(
                     }
                 },
                 content = { scaffoldPadding ->
-                    Row(
-                        modifier = Modifier
+                    val modifier = if (widthClass == SizeClass.Compact) {
+                        Modifier
                             .padding(scaffoldPadding)
                             .nestedScroll(topAppBarScrollBehavior.nestedScrollConnection)
-                    ) {
+                    } else {
+                        Modifier
+                            .padding(scaffoldPadding)
+                    }
+                    Row(modifier = modifier) {
                         if (widthClass != SizeClass.Compact) {
                             NavigationRail(
                                 backgroundColor = MaterialTheme.colors.surface
