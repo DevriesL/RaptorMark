@@ -1,9 +1,6 @@
 package io.github.devriesl.raptormark.ui
 
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.Text
-import androidx.compose.material.TopAppBar
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -11,9 +8,11 @@ import io.github.devriesl.raptormark.R
 import io.github.devriesl.raptormark.ui.widget.ContributorsDialog
 import io.github.devriesl.raptormark.viewmodels.MainViewModel
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AppTopBar(
-    mainViewModel: MainViewModel
+    mainViewModel: MainViewModel,
+    scrollBehavior: TopAppBarScrollBehavior? = null
 ) {
     var openDialog by remember { mutableStateOf(false) }
 
@@ -29,7 +28,8 @@ fun AppTopBar(
                     contentDescription = stringResource(id = R.string.contributors_dialog_title)
                 )
             }
-        }
+        },
+        scrollBehavior = scrollBehavior
     )
 
     if (openDialog) {
