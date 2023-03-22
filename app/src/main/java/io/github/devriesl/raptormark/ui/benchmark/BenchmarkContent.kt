@@ -2,9 +2,6 @@ package io.github.devriesl.raptormark.ui.benchmark
 
 import androidx.annotation.StringRes
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.animateColorAsState
-import androidx.compose.animation.core.Spring
-import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.updateTransition
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -179,29 +176,9 @@ fun ExpandableCard(
     expandedContent: @Composable ColumnScope.() -> Unit
 ) {
     val expandedState = updateTransition(targetState = expanded, "expandedCard")
-    val containerColor by animateColorAsState(
-        targetValue = if (expandedState.targetState == expandedState.targetState) {
-            MaterialTheme.colorScheme.surfaceVariant
-        } else {
-            MaterialTheme.colorScheme.surface
-        },
-        animationSpec = spring(stiffness = Spring.StiffnessMediumLow)
-    )
-    val contentColor by animateColorAsState(
-        targetValue = if (expandedState.targetState == expandedState.targetState) {
-            MaterialTheme.colorScheme.onSurfaceVariant
-        } else {
-            MaterialTheme.colorScheme.onSurface
-        },
-        animationSpec = spring(stiffness = Spring.StiffnessMediumLow)
-    )
-    Card(
-        colors = CardDefaults.cardColors(
-            containerColor = containerColor,
-            contentColor = contentColor
-        ),
-        modifier = modifier
-    ) {
+    val containerColor = MaterialTheme.colorScheme.surfaceVariant
+    val contentColor = MaterialTheme.colorScheme.onSurfaceVariant
+    Card(modifier = modifier) {
         ListItem(
             colors = ListItemDefaults.colors(
                 containerColor = containerColor,
