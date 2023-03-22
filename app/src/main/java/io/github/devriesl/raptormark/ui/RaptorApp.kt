@@ -105,7 +105,7 @@ fun RaptorApp(
                                 when (selectedSection) {
                                     AppSections.BENCHMARK -> BenchmarkContent(benchmarkViewModel)
                                     AppSections.HISTORY -> HistoryContent(historyViewModel)
-                                    AppSections.SETTING -> SettingContent(settingViewModel)
+                                    AppSections.SETTING -> SettingContent(settingViewModel, isWidthCompact)
                                 }
                             }
                         }

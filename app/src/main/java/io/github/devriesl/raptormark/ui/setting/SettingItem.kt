@@ -3,47 +3,58 @@ package io.github.devriesl.raptormark.ui.setting
 import androidx.annotation.StringRes
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.*
+import androidx.compose.foundation.shape.CornerSize
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingItem(
     @StringRes title: Int,
     @StringRes desc: Int,
     data: String,
+    isCard: Boolean,
+    isFirst: Boolean,
+    isLast: Boolean,
     openDialog: () -> Unit
 ) {
-    Box(
-        modifier = Modifier
-            .clickable(onClick = openDialog)
-            .padding(horizontal = 16.dp)
-            .defaultMinSize(minHeight = 64.dp)
-            .fillMaxWidth()
-    ) {
-        Row(modifier = Modifier.paddingFromBaseline(28.dp)) {
-            Text(
-                text = stringResource(title),
-                style = MaterialTheme.typography.subtitle1,
-                modifier = Modifier.weight(1f)
-            )
-            Spacer(modifier = Modifier.width(28.dp))
-            Text(
-                text = data,
-                color = LocalContentColor.current.copy(ContentAlpha.medium),
-                textAlign = TextAlign.End,
-                modifier = Modifier.defaultMinSize(40.dp),
-            )
-        }
-        Text(
-            text = stringResource(desc),
-            style = MaterialTheme.typography.body2,
-            color = LocalContentColor.current.copy(ContentAlpha.medium),
-            modifier = Modifier.paddingFromBaseline(48.dp)
+    val shape = when {
+        !isCard -> RectangleShape
+        isFirst -> MaterialTheme.shapes.medium.copy(
+            bottomEnd = CornerSize(0),
+            bottomStart = CornerSize(0)
         )
+        isLast -> MaterialTheme.shapes.medium.copy(
+            topStart = CornerSize(0),
+            topEnd = CornerSize(0)
+        )
+        else -> RectangleShape
     }
+    val colors = if (isCard) {
+        ListItemDefaults.colors(
+            containerColor = MaterialTheme.colorScheme.surfaceVariant,
+            leadingIconColor = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+    } else {
+        ListItemDefaults.colors()
+    }
+    ListItem(
+        colors = colors,
+        headlineText = {
+            Text(text = stringResource(id = title))
+        },
+        supportingText = {
+            Text(text = stringResource(id = desc))
+        },
+        trailingContent = {
+            Text(text = data)
+        },
+        modifier = Modifier
+            .clip(shape)
+            .clickable(onClick = openDialog)
+    )
 }
