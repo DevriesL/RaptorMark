@@ -4,9 +4,9 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.KeyboardArrowDown
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -46,14 +46,14 @@ fun RecordItem(
         ) {
             Text(
                 text = date,
-                color = if (expandState) MaterialTheme.colors.primary else LocalContentColor.current,
-                style = MaterialTheme.typography.subtitle1,
+                color = if (expandState) MaterialTheme.colorScheme.primary else LocalContentColor.current,
+                style = MaterialTheme.typography.titleMedium,
                 modifier = Modifier.weight(1f)
             )
             val rotate by animateFloatAsState(targetValue = if (expandState) 180f else 0f)
             Icon(
                 imageVector = Icons.Outlined.KeyboardArrowDown,
-                tint = LocalContentColor.current.copy(ContentAlpha.medium),
+                tint = LocalContentColor.current.copy(0.6f),
                 contentDescription = null,
                 modifier = Modifier.graphicsLayer {
                     rotationZ = rotate
@@ -70,6 +70,8 @@ fun RecordItem(
                     }
                     if (index < testRecord.results.size - 1) {
                         Divider(modifier = Modifier.padding(horizontal = 32.dp))
+                    } else {
+                        Spacer(modifier = Modifier.height(8.dp))
                     }
                 }
             }

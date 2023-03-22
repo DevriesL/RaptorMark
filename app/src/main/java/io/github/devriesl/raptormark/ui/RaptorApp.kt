@@ -104,7 +104,7 @@ fun RaptorApp(
                             saveableStateHolder.SaveableStateProvider(selectedSection) {
                                 when (selectedSection) {
                                     AppSections.BENCHMARK -> BenchmarkContent(benchmarkViewModel)
-                                    AppSections.HISTORY -> HistoryContent(historyViewModel)
+                                    AppSections.HISTORY -> HistoryContent(historyViewModel, isWidthCompact)
                                     AppSections.SETTING -> SettingContent(settingViewModel, isWidthCompact)
                                 }
                             }
