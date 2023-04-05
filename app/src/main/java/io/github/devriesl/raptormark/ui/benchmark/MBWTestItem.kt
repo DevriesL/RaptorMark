@@ -5,9 +5,12 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.KeyboardArrowDown
+import androidx.compose.material3.Icon
+import androidx.compose.material3.LocalContentColor
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
@@ -56,7 +59,7 @@ fun MBWTestItem(
             ) {
                 Text(
                     text = stringResource(title),
-                    style = MaterialTheme.typography.subtitle1,
+                    style = MaterialTheme.typography.titleMedium,
                     modifier = Modifier.weight(1f)
                 )
 
@@ -66,7 +69,7 @@ fun MBWTestItem(
                     )
                     Icon(
                         imageVector = Icons.Outlined.KeyboardArrowDown,
-                        tint = LocalContentColor.current.copy(ContentAlpha.medium),
+                        tint = LocalContentColor.current.copy(0.6f),
                         contentDescription = null,
                         modifier = Modifier.graphicsLayer {
                             rotationZ = rotate
@@ -109,7 +112,7 @@ fun MBWTestItem(
                                 R.string.non_vector_title
                             }
                         ),
-                        style = MaterialTheme.typography.subtitle2
+                        style = MaterialTheme.typography.titleSmall
                     )
                     Text(
                         text = "${
@@ -120,7 +123,7 @@ fun MBWTestItem(
                             } ?: 0) / 10000f
                         } GB/s",
                         color = bandwidthColor,
-                        style = MaterialTheme.typography.body2
+                        style = MaterialTheme.typography.bodySmall
                     )
                 }
                 Row(
@@ -139,7 +142,7 @@ fun MBWTestItem(
                                 R.string.neon_vector_title
                             }
                         ),
-                        style = MaterialTheme.typography.subtitle2
+                        style = MaterialTheme.typography.titleSmall
                     )
                     Text(
                         text = "${
@@ -150,7 +153,7 @@ fun MBWTestItem(
                             } ?: 0) / 10000f
                         } GB/s",
                         color = vectorBandwidthColor,
-                        style = MaterialTheme.typography.body2
+                        style = MaterialTheme.typography.bodySmall
                     )
                 }
             }

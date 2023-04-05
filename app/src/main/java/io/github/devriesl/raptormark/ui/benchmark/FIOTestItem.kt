@@ -2,7 +2,7 @@ package io.github.devriesl.raptormark.ui.benchmark
 
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.*
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -11,6 +11,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import io.github.devriesl.raptormark.R
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FIOTestItem(
     @StringRes title: Int,
@@ -54,7 +55,7 @@ fun FIOTestItem(
         ) {
             Text(
                 text = stringResource(title),
-                style = MaterialTheme.typography.subtitle1,
+                style = MaterialTheme.typography.titleMedium,
                 onTextLayout = {
                     twoLine = it.lineCount > 1
                 },
@@ -78,17 +79,18 @@ fun FIOTestItem(
                 modifier = Modifier.paddingFromBaseline(if (twoLine) 68.dp else 48.dp)
             ) {
                 CompositionLocalProvider(
-                    LocalTextStyle provides MaterialTheme.typography.body2,
-                    LocalContentAlpha provides ContentAlpha.medium
+                    LocalContentColor provides MaterialTheme.colorScheme.onSurfaceVariant
                 ) {
                     Text(
                         text = stringResource(id = R.string.rand_4n_lat_title),
+                        style = MaterialTheme.typography.bodyMedium,
                         modifier = Modifier.weight(1f)
                     )
                     Text(
                         text = latencyText,
-                        modifier = Modifier.weight(2f),
-                        textAlign = TextAlign.End
+                        style = MaterialTheme.typography.labelSmall,
+                        textAlign = TextAlign.End,
+                        modifier = Modifier.weight(2f)
                     )
                 }
             }

@@ -5,6 +5,10 @@ import android.view.WindowManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
+import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.platform.LocalView
+import androidx.core.view.WindowCompat
 import dagger.hilt.android.AndroidEntryPoint
 import io.github.devriesl.raptormark.ui.RaptorApp
 import io.github.devriesl.raptormark.viewmodels.BenchmarkViewModel
@@ -21,8 +25,17 @@ class RaptorActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
+        WindowCompat.setDecorFitsSystemWindows(window, false)
         setContent {
+            val isDarkTheme = isSystemInDarkTheme()
+            val view = LocalView.current
+            LaunchedEffect(key1 = isDarkTheme) {
+                window.statusBarColor = 0x00000000
+                WindowCompat.getInsetsController(window, view).apply {
+                    isAppearanceLightStatusBars = !isDarkTheme
+                    isAppearanceLightNavigationBars = !isDarkTheme
+                }
+            }
             RaptorApp(
                 mainViewModel = mainViewModel,
                 benchmarkViewModel = benchmarkViewModel,

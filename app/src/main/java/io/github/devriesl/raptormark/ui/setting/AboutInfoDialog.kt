@@ -4,10 +4,11 @@ import android.content.Context
 import androidx.annotation.StringRes
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.Text
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -18,8 +19,7 @@ import androidx.compose.ui.window.Dialog
 import io.github.devriesl.raptormark.BuildConfig
 import io.github.devriesl.raptormark.R
 import io.github.devriesl.raptormark.ui.widget.DialogContent
-import io.github.devriesl.raptormark.ui.widget.DialogHeader
-import io.github.devriesl.raptormark.ui.widget.DialogHeaderDefaults
+import io.github.devriesl.raptormark.ui.widget.DialogContentDefaults
 
 @Composable
 fun AboutInfoDialog(
@@ -35,19 +35,24 @@ fun AboutInfoDialog(
 
     Dialog(onDismissRequest = { closeDialog(itemIndex, null) }) {
         DialogContent(
+            title = {
+                Text(text = stringResource(id = title))
+            },
             modifier = Modifier
                 .fillMaxWidth()
                 .wrapContentHeight()
         ) {
-            Column {
-                DialogHeader(
-                    text = stringResource(title),
-                    modifier = Modifier.padding(horizontal = DialogHeaderDefaults.HEADER_HORIZONTAL_PADDING)
-                )
+            val horizontalPadding = DialogContentDefaults.DIALOG_PADDING.calculateStartPadding(
+                LocalLayoutDirection.current
+            )
+            Column(
+                modifier = Modifier
+                    .padding(DialogContentDefaults.CONTENT_PADDING)
+            ) {
 
                 fun Modifier.normalTextModifier(): Modifier {
                     return Modifier
-                        .padding(horizontal = 16.dp)
+                        .padding(horizontal = horizontalPadding)
                         .then(this)
                 }
 
@@ -88,7 +93,7 @@ fun AboutInfoDialog(
                         .clickable(onClick = onClick)
                         .padding(
                             vertical = 4.dp,
-                            horizontal = 16.dp
+                            horizontal = horizontalPadding
                         )
                         .then(this)
                 }

@@ -1,14 +1,15 @@
 package io.github.devriesl.raptormark.ui.benchmark
 
+import androidx.annotation.StringRes
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.updateTransition
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material.*
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -35,11 +36,11 @@ fun BenchmarkContent(
 
         val listState = rememberLazyListState()
         val hideOnScrollState = rememberHideOnScrollState()
-        val canHide by remember(constraints.maxHeight) {
-            derivedStateOf { listState.layoutInfo.viewportSize.height >= constraints.maxHeight }
-        }
+//        val canHide by remember(constraints.maxHeight) {
+//            derivedStateOf { listState.layoutInfo.viewportSize.height >= constraints.maxHeight }
+//        }
         val nestedScrollConnection = remember(hideOnScrollState) {
-            HideOnScrollNestedScrollConnection(hideOnScrollState) { canHide }
+            HideOnScrollNestedScrollConnection(hideOnScrollState) { true }
         }
         var floatingActionButtonHeight by remember {
             mutableStateOf(0)
@@ -47,90 +48,78 @@ fun BenchmarkContent(
 
         LazyColumn(
             state = listState,
-            contentPadding = PaddingValues(bottom = with(LocalDensity.current) { floatingActionButtonHeight.toDp() }),
-            modifier = Modifier.nestedScroll(nestedScrollConnection)
+            contentPadding = PaddingValues(
+                top = 8.dp,
+                bottom = with(LocalDensity.current) { floatingActionButtonHeight.toDp() } + 8.dp,
+                start = 16.dp,
+                end = 16.dp
+            ),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+            modifier = Modifier
+                .nestedScroll(nestedScrollConnection)
+                .fillMaxHeight()
         ) {
             item {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clickable {
-                            benchmarkViewModel.enableMBW(!state.enableMBWTest)
-                        }
-                        .heightIn(48.dp)
-                        .padding(horizontal = 16.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween
+                ExpandableCard(
+                    expanded = state.enableMBWTest,
+                    onExpandedChange = {
+                        benchmarkViewModel.enableMBW(it)
+                    },
+                    title = R.string.mbw_test_title
                 ) {
-                    Text(text = stringResource(id = R.string.mbw_test_title))
-                    Checkbox(
-                        checked = state.enableMBWTest,
-                        onCheckedChange = null
-                    )
-                }
-            }
-            if (state.enableMBWTest) {
-
-                val mbwItems = benchmarkViewModel.testItems.filter { it.testCase.isMBW() }
-                itemsIndexed(mbwItems) { index, testItem ->
-                    val testResult by testItem.testResult.collectAsState()
-
+                    val mbwItems = remember(benchmarkViewModel.testItems) {
+                        benchmarkViewModel.testItems.filter { it.testCase.isMBW() }
+                    }
                     Column {
-                        MBWTestItem(
-                            title = testItem.testCase.title,
-                            bandwidth = (testResult as? TestResult.MBW)?.bandwidth,
-                            vectorBandwidth = (testResult as? TestResult.MBW)?.vectorBandwidth,
-                            isAppPerf = testItem.testCase.isMBWApp()
-                        )
-                        Divider(modifier = Modifier.padding(top = if (testResult == null) 0.dp else 8.dp).run {
-                            if (index != mbwItems.lastIndex) {
-                                padding(horizontal = 32.dp)
-                            } else {
-                                this
+                        mbwItems.forEachIndexed { index, testItem ->
+                            val testResult by testItem.testResult.collectAsState()
+                            Column {
+                                MBWTestItem(
+                                    title = testItem.testCase.title,
+                                    bandwidth = (testResult as? TestResult.MBW)?.bandwidth,
+                                    vectorBandwidth = (testResult as? TestResult.MBW)?.vectorBandwidth,
+                                    isAppPerf = testItem.testCase.isMBWApp()
+                                )
+                                if (index != mbwItems.lastIndex) {
+                                    Divider(
+                                        modifier = Modifier
+                                            .padding(top = if (testResult == null) 0.dp else 8.dp)
+                                            .padding(horizontal = 32.dp)
+                                    )
+                                }
                             }
-                        })
+                        }
+                        Spacer(modifier = Modifier.height(8.dp))
                     }
                 }
             }
+
             item {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clickable {
-                            benchmarkViewModel.enableFIO(!state.enableFIOTest)
-                        }
-                        .heightIn(48.dp)
-                        .padding(horizontal = 16.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween
+                ExpandableCard(
+                    expanded = state.enableFIOTest,
+                    onExpandedChange = { benchmarkViewModel.enableFIO(it)},
+                    title = R.string.fio_test_title
                 ) {
-                    Text(text = stringResource(id = R.string.fio_test_title))
-                    Checkbox(
-                        checked = state.enableFIOTest,
-                        onCheckedChange = null
-                    )
-                }
-            }
-            if (state.enableFIOTest) {
-                val fioItems = benchmarkViewModel.testItems.filter { it.testCase.isFIO() }
-                itemsIndexed(fioItems) { index, testItem ->
-                    val testResult by testItem.testResult.collectAsState()
 
-                    Column {
-                        FIOTestItem(
-                            title = testItem.testCase.title,
-                            bandwidth = (testResult as? TestResult.FIO)?.bandwidth,
-                            showLatency = testItem.testCase.isFIORand(),
-                            latency = (testResult as? TestResult.FIO)?.latency
-                        )
-                        Divider(modifier = Modifier.run {
-                            if (index != fioItems.lastIndex) {
-                                padding(horizontal = 32.dp)
-                            } else {
-                                this
-                            }
-                        })
+                    val fioItems = remember(benchmarkViewModel.testItems) {
+                        benchmarkViewModel.testItems.filter { it.testCase.isFIO() }
                     }
+                    fioItems.forEachIndexed { index, testItem ->
+                        val testResult by testItem.testResult.collectAsState()
+
+                        Column {
+                            FIOTestItem(
+                                title = testItem.testCase.title,
+                                bandwidth = (testResult as? TestResult.FIO)?.bandwidth,
+                                showLatency = testItem.testCase.isFIORand(),
+                                latency = (testResult as? TestResult.FIO)?.latency
+                            )
+                            if (index != fioItems.lastIndex) {
+                                Divider(modifier = Modifier.padding(horizontal = 32.dp))
+                            }
+                        }
+                    }
+                    Spacer(modifier = Modifier.height(8.dp))
                 }
             }
         }
@@ -147,7 +136,7 @@ fun BenchmarkContent(
         ) {
             Box(
                 modifier = Modifier
-                    .padding(bottom = 24.dp, end = 24.dp)
+                    .padding(top = 8.dp, bottom = 24.dp, start = 24.dp, end = 24.dp)
             ) {
                 if (state.running) {
                     ExtendedFloatingActionButton(
@@ -173,6 +162,43 @@ fun BenchmarkContent(
                     )
                 }
             }
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun ExpandableCard(
+    expanded: Boolean,
+    onExpandedChange: (Boolean) -> Unit,
+    @StringRes title: Int,
+    modifier: Modifier = Modifier,
+    expandedContent: @Composable ColumnScope.() -> Unit
+) {
+    val expandedState = updateTransition(targetState = expanded, "expandedCard")
+    val containerColor = MaterialTheme.colorScheme.surfaceVariant
+    val contentColor = MaterialTheme.colorScheme.onSurfaceVariant
+    Card(modifier = modifier) {
+        ListItem(
+            colors = ListItemDefaults.colors(
+                containerColor = containerColor,
+                headlineColor = contentColor,
+                trailingIconColor = containerColor
+            ),
+            headlineText = {
+                Text(text = stringResource(id = title))
+            },
+            trailingContent = {
+                Checkbox(checked = expandedState.targetState, onCheckedChange = null)
+            },
+            modifier = Modifier.clickable {
+                onExpandedChange(!expanded)
+            }
+        )
+        AnimatedVisibility(expandedState.targetState) {
+            Column(
+                content = expandedContent
+            )
         }
     }
 }

@@ -3,6 +3,7 @@ package io.github.devriesl.raptormark.ui.widget
 import android.graphics.Paint
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -10,13 +11,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Path
-import androidx.compose.ui.graphics.PathEffect
+import androidx.compose.ui.graphics.*
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
-import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.*
 import java.lang.Float.min
@@ -35,12 +33,14 @@ fun LineChart(
     val xLabelSpaceHeightPx = with(LocalDensity.current) {
         xLabelTextSize.toPx() + xLabelPaddingTop.toPx()
     }
+    val contentColor = LocalContentColor.current
     Canvas(
         modifier = modifier
             .drawBehind {
                 drawYAxisWithLabels(
                     maxValue = maxYValue,
                     labelTextSize = yLabelTextSize,
+                    contentColor = contentColor,
                     density = this@drawBehind,
                     strokeWidth = strokeWidth,
                     bottomPadding = xLabelSpaceHeightPx.toDp()
@@ -68,6 +68,7 @@ fun LineChart(
                         data = data.first,
                         centerOffset = centerOffset + Offset(0f,  xLabelSpaceHeightPx),
                         labelTextSize = xLabelTextSize,
+                        contentColor = contentColor,
                         density = this@Canvas
                     )
                 }
@@ -93,6 +94,7 @@ fun LineChart(
 internal fun DrawScope.drawYAxisWithLabels(
     maxValue: Int,
     labelTextSize: TextUnit,
+    contentColor: Color,
     density: Density,
     strokeWidth: Dp = 2.dp,
     // x label text space
@@ -112,6 +114,7 @@ internal fun DrawScope.drawYAxisWithLabels(
                 val textPaint = Paint().apply {
                     textSize = textPxSize
                     textAlign = Paint.Align.CENTER
+                    color = contentColor.toArgb()
                 }
                 val rect = android.graphics.Rect().apply {
                     textPaint.getTextBounds(yLabelText, 0, yLabelText.length, this)
@@ -140,6 +143,7 @@ internal fun DrawScope.drawXLabel(
     data: Int,
     centerOffset: Offset,
     labelTextSize: TextUnit,
+    contentColor: Color,
     density: Density
 ) {
     val xLabelText = when {
@@ -156,6 +160,7 @@ internal fun DrawScope.drawXLabel(
                 Paint().apply {
                     textSize = with(density) { labelTextSize.toPx() }
                     textAlign = Paint.Align.CENTER
+                    color = contentColor.toArgb()
                 }
             )
         }
