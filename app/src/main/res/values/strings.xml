@@ -66,5 +66,6 @@
     <string name="about_author_weibo_uid">2213561393</string>
     <string name="state_loading_description">loading</string>
     <string name="state_loading_failed_click_retry_description">loading failed, click to retry</string>
+    <string name="stop_click_tooltip">Test will stop when the current item finished.</string>
 
 </resources>

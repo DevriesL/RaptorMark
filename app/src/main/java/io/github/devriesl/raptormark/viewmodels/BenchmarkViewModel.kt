@@ -1,13 +1,14 @@
 package io.github.devriesl.raptormark.viewmodels
 
 import android.util.Log
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.github.devriesl.raptormark.data.*
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -18,17 +19,14 @@ class BenchmarkViewModel @Inject constructor(
 ) : ViewModel() {
     @Volatile
     private var forceStop = false
-    private val mutableBenchmarkState = MutableStateFlow(BenchmarkState())
-    var onTestStateChanged: ((Boolean) -> Unit)? = null
+
+    var benchmarkState by mutableStateOf(BenchmarkState())
+        private set
 
     var testItems: List<BenchmarkTest> = updateTestItems(false)
 
-    val benchmarkState: StateFlow<BenchmarkState>
-        get() = mutableBenchmarkState
-
     fun onTestStart() {
-        onTestStateChanged?.invoke(true)
-        mutableBenchmarkState.value = mutableBenchmarkState.value.copy(running = true)
+        benchmarkState = benchmarkState.copy(running = true)
         val testRecord = TestRecord()
         NativeHandler.postNativeThread {
             testItems.forEach {
@@ -45,38 +43,37 @@ class BenchmarkViewModel @Inject constructor(
                 testRecordRepo.insertTestRecord(testRecord)
             }
             forceStop = false
-            mutableBenchmarkState.value = mutableBenchmarkState.value.copy(running = false)
+            benchmarkState = benchmarkState.copy(running = false)
         }
     }
 
     fun onTestStop() {
         forceStop = true
-        onTestStateChanged?.invoke(false)
     }
 
     fun enableMBW(enable: Boolean) {
-        if (benchmarkState.value.running) return
-        mutableBenchmarkState.value = mutableBenchmarkState.value.copy(enableMBWTest = enable)
+        if (benchmarkState.running) return
+        benchmarkState = benchmarkState.copy(enableMBWTest = enable)
         testItems = updateTestItems()
     }
 
     fun enableFIO(enable: Boolean) {
-        if (benchmarkState.value.running) return
-        mutableBenchmarkState.value = mutableBenchmarkState.value.copy(enableFIOTest = enable)
+        if (benchmarkState.running) return
+        benchmarkState = benchmarkState.copy(enableFIOTest = enable)
         testItems = updateTestItems()
     }
 
     private fun updateTestItems(isInitialized: Boolean = true): List<BenchmarkTest> {
         return TestCases.values().mapNotNull { testCase ->
             when {
-                testCase.isMBW() && benchmarkState.value.enableMBWTest -> {
+                testCase.isMBW() && benchmarkState.enableMBWTest -> {
                     if (isInitialized) {
                         testItems.find { it.testCase == testCase }
                     } else {
                         null
                     } ?: MBWTest(testCase, settingSharedPrefs)
                 }
-                testCase.isFIO() && benchmarkState.value.enableFIOTest -> {
+                testCase.isFIO() && benchmarkState.enableFIOTest -> {
                     if (isInitialized) {
                         testItems.find { it.testCase == testCase }
                     } else {

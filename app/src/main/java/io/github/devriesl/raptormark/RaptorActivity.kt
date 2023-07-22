@@ -7,14 +7,19 @@ import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
+import androidx.lifecycle.flowWithLifecycle
+import androidx.lifecycle.lifecycleScope
 import dagger.hilt.android.AndroidEntryPoint
 import io.github.devriesl.raptormark.ui.RaptorApp
 import io.github.devriesl.raptormark.viewmodels.BenchmarkViewModel
 import io.github.devriesl.raptormark.viewmodels.HistoryViewModel
 import io.github.devriesl.raptormark.viewmodels.MainViewModel
 import io.github.devriesl.raptormark.viewmodels.SettingViewModel
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class RaptorActivity : ComponentActivity() {
@@ -43,13 +48,17 @@ class RaptorActivity : ComponentActivity() {
                 settingViewModel = settingViewModel
             )
         }
-
-        benchmarkViewModel.onTestStateChanged = {
-            if (it) {
-                window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-            } else {
-                window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-            }
+        lifecycleScope.launch {
+            snapshotFlow {
+                benchmarkViewModel.benchmarkState.running
+            }.flowWithLifecycle(lifecycle)
+                .collectLatest { running ->
+                    if (running) {
+                        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+                    } else {
+                        window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+                    }
+                }
         }
     }
 }
