@@ -24,21 +24,21 @@ import io.github.devriesl.raptormark.data.*
 import io.github.devriesl.raptormark.ui.widget.HideOnScrollNestedScrollConnection
 import io.github.devriesl.raptormark.ui.widget.rememberHideOnScrollState
 import io.github.devriesl.raptormark.viewmodels.BenchmarkViewModel
+import kotlinx.coroutines.launch
 
 @Composable
 fun BenchmarkContent(
-    benchmarkViewModel: BenchmarkViewModel
+    benchmarkViewModel: BenchmarkViewModel,
+    snackbarHostState: SnackbarHostState
 ) {
     BoxWithConstraints(
         modifier = Modifier.fillMaxSize()
     ) {
-        val state by benchmarkViewModel.benchmarkState.collectAsState()
+        val state = benchmarkViewModel.benchmarkState
 
+        val coroutineScope = rememberCoroutineScope()
         val listState = rememberLazyListState()
         val hideOnScrollState = rememberHideOnScrollState()
-//        val canHide by remember(constraints.maxHeight) {
-//            derivedStateOf { listState.layoutInfo.viewportSize.height >= constraints.maxHeight }
-//        }
         val nestedScrollConnection = remember(hideOnScrollState) {
             HideOnScrollNestedScrollConnection(hideOnScrollState) { true }
         }
@@ -72,13 +72,17 @@ fun BenchmarkContent(
                     }
                     Column {
                         mbwItems.forEachIndexed { index, testItem ->
-                            val testResult by testItem.testResult.collectAsState()
+                            val testResult = testItem.testResult
                             Column {
                                 MBWTestItem(
                                     title = testItem.testCase.title,
-                                    bandwidth = (testResult as? TestResult.MBW)?.bandwidth,
-                                    vectorBandwidth = (testResult as? TestResult.MBW)?.vectorBandwidth,
-                                    isAppPerf = testItem.testCase.isMBWApp()
+                                    bandwidth = remember(testResult) {
+                                        (testResult as? TestResult.MBW)?.bandwidth
+                                    },
+                                    vectorBandwidth = remember(testResult) {
+                                        (testResult as? TestResult.MBW)?.vectorBandwidth
+                                    },
+                                    isAppPerf = remember(testItem) { testItem.testCase.isMBWApp() }
                                 )
                                 if (index != mbwItems.lastIndex) {
                                     Divider(
@@ -105,14 +109,14 @@ fun BenchmarkContent(
                         benchmarkViewModel.testItems.filter { it.testCase.isFIO() }
                     }
                     fioItems.forEachIndexed { index, testItem ->
-                        val testResult by testItem.testResult.collectAsState()
+                        val testResult = testItem.testResult
 
                         Column {
                             FIOTestItem(
                                 title = testItem.testCase.title,
-                                bandwidth = (testResult as? TestResult.FIO)?.bandwidth,
-                                showLatency = testItem.testCase.isFIORand(),
-                                latency = (testResult as? TestResult.FIO)?.latency
+                                bandwidth = remember(testResult) { (testResult as? TestResult.FIO)?.bandwidth },
+                                showLatency = remember(testItem) { testItem.testCase.isFIORand() },
+                                latency = remember(testResult) { (testResult as? TestResult.FIO)?.latency }
                             )
                             if (index != fioItems.lastIndex) {
                                 Divider(modifier = Modifier.padding(horizontal = 32.dp))
@@ -139,6 +143,7 @@ fun BenchmarkContent(
                     .padding(top = 8.dp, bottom = 24.dp, start = 24.dp, end = 24.dp)
             ) {
                 if (state.running) {
+                    val tooltipString = stringResource(R.string.stop_click_tooltip)
                     ExtendedFloatingActionButton(
                         text = { Text(stringResource(R.string.stop_button_label)) },
                         icon = {
@@ -147,7 +152,12 @@ fun BenchmarkContent(
                                 contentDescription = stringResource(R.string.stop_button_desc)
                             )
                         },
-                        onClick = { benchmarkViewModel.onTestStop() }
+                        onClick = {
+                            benchmarkViewModel.onTestStop()
+                            coroutineScope.launch {
+                                snackbarHostState.showSnackbar(tooltipString)
+                            }
+                        }
                     )
                 } else {
                     ExtendedFloatingActionButton(

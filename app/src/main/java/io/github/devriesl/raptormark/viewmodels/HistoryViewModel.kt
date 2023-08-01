@@ -1,14 +1,14 @@
 package io.github.devriesl.raptormark.viewmodels
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.github.devriesl.raptormark.data.TestRecord
 import io.github.devriesl.raptormark.data.TestRecordRepo
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -16,13 +16,13 @@ import javax.inject.Inject
 class HistoryViewModel @Inject constructor(
     private val testRecordRepo: TestRecordRepo
 ) : ViewModel() {
-    private val mutableTestRecords = MutableStateFlow<List<TestRecord>>(emptyList())
-    val testRecords: StateFlow<List<TestRecord>> = mutableTestRecords
+    var testRecords: List<TestRecord> by mutableStateOf(emptyList())
+        private set
 
     init {
         viewModelScope.launch(Dispatchers.IO) {
             testRecordRepo.testRecords.collect {
-                mutableTestRecords.value = it
+                testRecords = it
             }
         }
     }

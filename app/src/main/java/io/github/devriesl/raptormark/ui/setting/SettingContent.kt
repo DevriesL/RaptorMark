@@ -4,7 +4,6 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -16,7 +15,7 @@ fun SettingContent(
     isWidthCompact: Boolean
 ) {
     Box(modifier = Modifier.fillMaxSize()) {
-        val dialogContent by settingViewModel.dialogContent.collectAsState()
+        val dialogContent = settingViewModel.dialogContent
 
         LazyColumn(
             contentPadding = PaddingValues(
@@ -30,8 +29,7 @@ fun SettingContent(
             modifier = Modifier.fillMaxHeight()
         ) {
             itemsIndexed(settingViewModel.settingItems) { index, settingItem ->
-                val data by settingItem.data.collectAsState()
-
+                val data by settingItem.data
                 SettingItem(
                     title = settingItem.option.title,
                     desc = settingItem.option.desc,

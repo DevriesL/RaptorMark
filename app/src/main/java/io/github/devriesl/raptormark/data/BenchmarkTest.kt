@@ -1,7 +1,8 @@
 package io.github.devriesl.raptormark.data
 
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import org.json.JSONObject
 import java.io.IOException
 import kotlin.reflect.full.companionObject
@@ -18,7 +19,7 @@ abstract class BenchmarkTest(
             this@BenchmarkTest::class.companionObject?.declaredFunctions?.find {
                 it.name == parseResultMethodName
             }?.let { parseResultMethod ->
-                mutableTestResult.value = parseResultMethod.call(
+                testResult = parseResultMethod.call(
                     this@BenchmarkTest::class.companionObjectInstance,
                     nativeResult
                 ) as? TestResult
@@ -26,9 +27,8 @@ abstract class BenchmarkTest(
         }
     }
 
-    private val mutableTestResult = MutableStateFlow<TestResult?>(null)
-    val testResult: StateFlow<TestResult?>
-        get() = mutableTestResult
+    var testResult: TestResult? by mutableStateOf(null)
+        private set
 
     var nativeResult: String? = null
 

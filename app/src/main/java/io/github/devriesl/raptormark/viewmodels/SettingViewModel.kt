@@ -1,18 +1,22 @@
 package io.github.devriesl.raptormark.viewmodels
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.github.devriesl.raptormark.data.SettingOptions
 import io.github.devriesl.raptormark.data.SettingSharedPrefs
-import kotlinx.coroutines.flow.MutableStateFlow
 import javax.inject.Inject
 
 @HiltViewModel
 class SettingViewModel @Inject constructor(
     private val settingSharedPrefs: SettingSharedPrefs
 ) : ViewModel() {
-    val dialogContent = MutableStateFlow<@Composable (() -> Unit)?>(null)
+    var dialogContent by mutableStateOf<@Composable (() -> Unit)?>(null)
+        private set
+
     val settingItems: List<SettingItemData> = SettingOptions.values().map {
         SettingItemData(it).also { settingItemData ->
             settingItemData.data.value = it.dataImpl.getValue(settingSharedPrefs)
@@ -21,8 +25,8 @@ class SettingViewModel @Inject constructor(
 
     fun openDialog(settingItemData: SettingItemData) {
         val itemIndex = settingItems.indexOf(settingItemData)
-        if (dialogContent.value == null) {
-            dialogContent.value = settingItemData.option.dataImpl.onDialogContent(
+        if (dialogContent == null) {
+            dialogContent = settingItemData.option.dataImpl.onDialogContent(
                 settingSharedPrefs,
                 itemIndex,
                 this::closeDialog
@@ -39,10 +43,10 @@ class SettingViewModel @Inject constructor(
         }
         settingItems[itemIndex].data.value =
             settingItems[itemIndex].option.dataImpl.getValue(settingSharedPrefs)
-        dialogContent.value = null
+        dialogContent = null
     }
 }
 
 data class SettingItemData(val option: SettingOptions) {
-    val data = MutableStateFlow(String())
+    val data = mutableStateOf(String())
 }

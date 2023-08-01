@@ -32,7 +32,7 @@ fun HistoryContent(
             },
             modifier = Modifier.fillMaxHeight()
         ) {
-            items(historyViewModel.testRecords.value) { testRecord ->
+            items(historyViewModel.testRecords) { testRecord ->
                 if (isWidthCompact) {
                     RecordItem(testRecord)
                     Divider()

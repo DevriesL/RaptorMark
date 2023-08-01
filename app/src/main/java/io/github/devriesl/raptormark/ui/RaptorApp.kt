@@ -5,6 +5,8 @@ import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
 import androidx.compose.material3.windowsizeclass.WindowSizeClass
@@ -62,7 +64,14 @@ fun RaptorApp(
             } else {
                 TopAppBarDefaults.pinnedScrollBehavior()
             }
+
+            val snackbarHostState = remember {
+                SnackbarHostState()
+            }
             Scaffold(
+                snackbarHost = {
+                    SnackbarHost(hostState = snackbarHostState)
+                },
                 topBar = {
                     Column {
                         if (isWidthCompact) {
@@ -79,9 +88,10 @@ fun RaptorApp(
                     }
                 },
                 content = { scaffoldPadding ->
-                    Row(modifier = Modifier
-                        .padding(scaffoldPadding)
-                        .nestedScroll(topAppBarScrollBehavior.nestedScrollConnection)
+                    Row(
+                        modifier = Modifier
+                            .padding(scaffoldPadding)
+                            .nestedScroll(topAppBarScrollBehavior.nestedScrollConnection)
                     ) {
                         if (!isWidthCompact) {
                             // Material 3 guide: using drawer when width >= 1240.dp
@@ -103,9 +113,16 @@ fun RaptorApp(
                         Box {
                             saveableStateHolder.SaveableStateProvider(selectedSection) {
                                 when (selectedSection) {
-                                    AppSections.BENCHMARK -> BenchmarkContent(benchmarkViewModel)
-                                    AppSections.HISTORY -> HistoryContent(historyViewModel, isWidthCompact)
-                                    AppSections.SETTING -> SettingContent(settingViewModel, isWidthCompact)
+                                    AppSections.BENCHMARK -> BenchmarkContent(benchmarkViewModel, snackbarHostState)
+                                    AppSections.HISTORY -> HistoryContent(
+                                        historyViewModel,
+                                        isWidthCompact
+                                    )
+
+                                    AppSections.SETTING -> SettingContent(
+                                        settingViewModel,
+                                        isWidthCompact
+                                    )
                                 }
                             }
                         }
