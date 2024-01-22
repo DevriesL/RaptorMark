@@ -1,0 +1,71 @@
+<resources>
+    <string name="app_name">RaptorMark</string>
+
+    <string name="benchmark_page_title">效能測試</string>
+    <string name="history_page_title">歷史紀錄</string>
+    <string name="setting_page_title">設定</string>
+    <string name="contributors_dialog_title">貢獻者</string>
+
+    <!-- Benchmark resources -->
+    <string name="start_button_label">開始</string>
+    <string name="stop_button_label">停止</string>
+    <string name="start_button_desc">開始效能測試</string>
+    <string name="stop_button_desc">停止效能測試</string>
+    <string name="mbw_test_title">記憶體頻寬</string>
+    <string name="fio_test_title">儲存吞吐量</string>
+    <string name="seq_rd_test_title">順序讀取</string>
+    <string name="seq_wr_test_title">順序寫入</string>
+    <string name="rand_rd_test_title">隨機讀取</string>
+    <string name="rand_wr_test_title">隨機寫入</string>
+    <string name="app_perf_title">應用程式效能</string>
+    <string name="rand_4n_lat_title">99.99% 延遲</string>
+    <string name="non_vector_title">非向量</string>
+    <string name="neon_vector_title">NEON 向量</string>
+    <string name="memset_title">memset 函數</string>
+    <string name="memcpy_title">memcpy 函數</string>
+
+    <!-- Benchmark result formats -->
+    <string name="sum_of_bw_test_result_format">%1$d MB/s</string>
+    <string name="avg_of_4n_lat_result_format">%1$d μs</string>
+
+    <!-- History resources -->
+    <string name="test_record_date_format">yyyy-MM-dd HH:mm:ss</string>
+
+    <!-- Setting resources -->
+    <string name="dismiss_button_content">取消</string>
+    <string name="apply_button_content">套用</string>
+    <string name="measurement_time_title">測量時間</string>
+    <string name="measurement_time_desc">測試記憶體頻寬效能所需的時間。</string>
+    <string name="target_path_title">目標路徑</string>
+    <string name="target_path_desc">用於效能測試的檔案目錄路徑。</string>
+    <string name="target_path_default">應用程式預設</string>
+    <string name="target_path_custom">自定義路徑</string>
+    <string name="io_depth_title">IO 深度</string>
+    <string name="io_depth_desc">非同步 I/O 佇列深度。</string>
+    <string name="runtime_limit_title">執行時間限制</string>
+    <string name="runtime_limit_desc">指定結束效能測試的時間期限。</string>
+    <string name="seq_block_size_title">順序 Block 大小</string>
+    <string name="seq_block_size_desc">用於順序 I/O 單位的 Block 大小（以 bytes 為單位）。</string>
+    <string name="rand_block_size_title">隨機 Block 大小</string>
+    <string name="rand_block_size_desc">用於隨機 I/O 單位的 Block 大小（以 bytes 為單位）。</string>
+    <string name="io_size_title">大小</string>
+    <string name="io_size_desc">每個線程的檔案 I/O 總大小。</string>
+    <string name="engine_config_title">IO 引擎</string>
+    <string name="engine_config_desc">用於發出 I/O 操作的引擎。</string>
+    <string name="num_threads_title">線程</string>
+    <string name="num_threads_desc">I/O 操作的線程數量。</string>
+    <string name="about_title">關於</string>
+    <string name="about_desc">關於此應用程式。</string>
+
+    <!-- About resources -->
+    <string name="about_version_text">版本：</string>
+    <string name="about_author_text">開發者</string>
+    <string name="about_author_name">Devries</string>
+    <string name="about_author_email">therkduan@gmail.com</string>
+    <string name="about_author_weibo">https://weibo.com/2213561393</string>
+    <string name="about_author_weibo_uid">2213561393</string>
+    <string name="state_loading_description">載入中</string>
+    <string name="state_loading_failed_click_retry_description">載入失敗，點擊重試</string>
+    <string name="stop_click_tooltip">當前項目完成後測試將停止。</string>
+
+</resources>
