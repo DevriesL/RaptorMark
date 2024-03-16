@@ -19,7 +19,6 @@ import io.github.devriesl.raptormark.R
 import io.github.devriesl.raptormark.data.network.LoadState
 import io.github.devriesl.raptormark.viewmodels.MainViewModel
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ContributorsDialog(
     mainViewModel: MainViewModel,
@@ -74,7 +73,7 @@ fun ContributorsDialog(
                             key = { it.id }
                         ) { contributor ->
                             ListItem(
-                                headlineText = {
+                                headlineContent = {
                                     Text(text = contributor.userName)
                                 },
                                 leadingContent = {

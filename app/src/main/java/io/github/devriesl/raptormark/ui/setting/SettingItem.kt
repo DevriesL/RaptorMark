@@ -2,7 +2,6 @@ package io.github.devriesl.raptormark.ui.setting
 
 import androidx.annotation.StringRes
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -11,7 +10,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.stringResource
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingItem(
     @StringRes title: Int,
@@ -44,10 +42,10 @@ fun SettingItem(
     }
     ListItem(
         colors = colors,
-        headlineText = {
+        headlineContent = {
             Text(text = stringResource(id = title))
         },
-        supportingText = {
+        supportingContent = {
             Text(text = stringResource(id = desc))
         },
         trailingContent = {

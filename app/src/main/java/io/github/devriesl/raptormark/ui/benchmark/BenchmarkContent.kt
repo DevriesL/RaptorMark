@@ -176,7 +176,6 @@ fun BenchmarkContent(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ExpandableCard(
     expanded: Boolean,
@@ -195,7 +194,7 @@ fun ExpandableCard(
                 headlineColor = contentColor,
                 trailingIconColor = containerColor
             ),
-            headlineText = {
+            headlineContent = {
                 Text(text = stringResource(id = title))
             },
             trailingContent = {

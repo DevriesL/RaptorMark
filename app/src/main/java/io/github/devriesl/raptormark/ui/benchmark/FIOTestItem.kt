@@ -11,7 +11,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import io.github.devriesl.raptormark.R
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FIOTestItem(
     @StringRes title: Int,

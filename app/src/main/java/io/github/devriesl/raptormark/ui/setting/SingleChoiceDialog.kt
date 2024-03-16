@@ -15,7 +15,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import io.github.devriesl.raptormark.ui.widget.*
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SingleChoiceDialog(
     @StringRes title: Int,
@@ -40,7 +39,7 @@ fun SingleChoiceDialog(
                 ) {
                     items(choiceList) { choice ->
                         ListItem(
-                            headlineText = {
+                            headlineContent = {
                                 Row(
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {

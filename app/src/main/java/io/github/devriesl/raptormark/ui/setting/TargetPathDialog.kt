@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
@@ -21,7 +20,6 @@ import io.github.devriesl.raptormark.ui.widget.DialogContent
 import io.github.devriesl.raptormark.ui.widget.DialogContentDefaults
 import kotlinx.coroutines.delay
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
 @Composable
 fun TargetPathDialog(
     @StringRes title: Int,
@@ -80,7 +78,7 @@ fun TargetPathDialog(
         ) {
             Column(modifier = Modifier.padding(DialogContentDefaults.CONTENT_PADDING)) {
                 ListItem(
-                    headlineText = {
+                    headlineContent = {
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             RadioButton(
                                 selected = !selectCustomPath.value,
