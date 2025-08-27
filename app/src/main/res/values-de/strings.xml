@@ -20,6 +20,8 @@
     <string name="sum_of_iops_test_result_format">%1$d IOPS</string>
     <string name="calculated_scores_result_format">Punktzahl: %1$d</string>
     <string name="test_record_date_format">yyyy-MM-dd HH:mm:ss</string>
+    <string name="sort_by_score">Nach Punktzahl sortieren</string>
+    <string name="sort_by_date">Nach Datum sortieren</string>
     <string name="dismiss_button_content">Verwerfen</string>
     <string name="apply_button_content">Anwenden</string>
     <string name="target_path_title">Zielpfad</string>

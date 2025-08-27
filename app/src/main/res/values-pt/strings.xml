@@ -20,6 +20,8 @@
     <string name="sum_of_iops_test_result_format">%1$d IOPS</string>
     <string name="calculated_scores_result_format">Pontuação: %1$d</string>
     <string name="test_record_date_format">yyyy-MM-dd HH:mm:ss</string>
+    <string name="sort_by_score">Ordenar por Pontuação</string>
+    <string name="sort_by_date">Ordenar por Data</string>
     <string name="dismiss_button_content">Dispensar</string>
     <string name="apply_button_content">Aplicar</string>
     <string name="target_path_title">Caminho de Destino</string>

@@ -26,6 +26,8 @@
 
     <!-- History resources -->
     <string name="test_record_date_format">yyyy-MM-dd HH:mm:ss</string>
+    <string name="sort_by_score">依分數排序</string>
+    <string name="sort_by_date">依日期排序</string>
 
     <!-- Setting resources -->
     <string name="dismiss_button_content">取消</string>
