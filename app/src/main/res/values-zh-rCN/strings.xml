@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">RaptorMark</string>
 
-    <string name="benchmark_page_title">基准测试</string>
+    <string name="benchmark_page_title">性能测试</string>
     <string name="history_page_title">历史记录</string>
     <string name="setting_page_title">设置</string>
     <string name="contributors_dialog_title">贡献者</string>
@@ -9,8 +9,8 @@
     <!-- Benchmark resources -->
     <string name="start_button_label">开始</string>
     <string name="stop_button_label">停止</string>
-    <string name="start_button_desc">开始基准测试</string>
-    <string name="stop_button_desc">停止基准测试</string>
+    <string name="start_button_desc">开始性能测试</string>
+    <string name="stop_button_desc">停止性能测试</string>
     <string name="seq_rd_test_title">顺序读取</string>
     <string name="seq_wr_test_title">顺序写入</string>
     <string name="rand_rd_test_title">随机读取</string>
@@ -22,7 +22,7 @@
     <string name="sum_of_bw_test_result_format">%1$d MB/s</string>
     <string name="avg_of_lat_test_result_format">%1$d μs</string>
     <string name="sum_of_iops_test_result_format">%1$d IOPS</string>
-    <string name="calculated_scores_result_format">得分: %1$d</string>
+    <string name="calculated_scores_result_format">分数：%1$d</string>
 
     <!-- History resources -->
     <string name="test_record_date_format">yyyy-MM-dd HH:mm:ss</string>
@@ -33,37 +33,37 @@
     <string name="dismiss_button_content">取消</string>
     <string name="apply_button_content">应用</string>
     <string name="target_path_title">目标路径</string>
-    <string name="target_path_desc">用于基准测试的文件目录路径。</string>
+    <string name="target_path_desc">用于性能测试的文件目录路径。</string>
     <string name="target_path_default">应用默认</string>
     <string name="target_path_custom">自定义路径</string>
     <string name="io_depth_title">IO 深度</string>
     <string name="io_depth_desc">异步 I/O 队列深度。</string>
-    <string name="runtime_limit_title">运行时限</string>
-    <string name="runtime_limit_desc">指定在此时间段结束基准测试。</string>
+    <string name="runtime_limit_title">运行时长限制</string>
+    <string name="runtime_limit_desc">终止性能测试的指定时长。</string>
     <string name="seq_block_size_title">顺序块大小</string>
-    <string name="seq_block_size_desc">用于顺序 I/O 的字节块大小。</string>
+    <string name="seq_block_size_desc">顺序 I/O 单元使用的字节块大小。</string>
     <string name="rand_block_size_title">随机块大小</string>
-    <string name="rand_block_size_desc">用于随机 I/O 的字节块大小。</string>
+    <string name="rand_block_size_desc">随机 I/O 单元使用的字节块大小。</string>
     <string name="io_size_title">大小</string>
     <string name="io_size_desc">每个线程的文件 I/O 总大小。</string>
     <string name="engine_config_title">IO 引擎</string>
     <string name="engine_config_desc">用于执行 I/O 操作的引擎。</string>
     <string name="num_threads_title">线程数</string>
-    <string name="num_threads_desc">用于 I/O 操作的线程数。</string>
+    <string name="num_threads_desc">I/O 操作的线程数量。</string>
     <string name="about_title">关于</string>
-    <string name="about_desc">关于本应用程序。</string>
+    <string name="about_desc">关于此应用。</string>
 
     <!-- About resources -->
     <string name="about_version_text">版本：</string>
     <string name="about_author_text">开发者</string>
     <string name="about_author_name">Devries</string>
-    <string name="about_script_text">FIO 脚本来自</string>
+    <string name="about_script_text">FIO 脚本来源</string>
     <string name="about_script_name">HOMOLAB</string>
     <string name="about_author_email">therkduan@gmail.com</string>
     <string name="about_author_weibo">https://weibo.com/2213561393</string>
     <string name="about_author_weibo_uid">2213561393</string>
     <string name="state_loading_description">加载中</string>
     <string name="state_loading_failed_click_retry_description">加载失败，点击重试</string>
-    <string name="stop_click_tooltip">测试将在当前项目完成后停止。</string>
+    <string name="stop_click_tooltip">当前项目完成后将停止测试。</string>
 
 </resources>
